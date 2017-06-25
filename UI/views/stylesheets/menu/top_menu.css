@@ -1,0 +1,116 @@
+/**********************/
+/* feuille de style   */
+/* top_menu.css       */
+/* Pierre Contri      */
+/* cree le 11/11/2005 */
+/* mdf  le 15/02/2015 */
+/**********************/
+
+@import "menu.css";
+
+#containtDivMenu {
+  position: fixed;
+  top: 0px;
+  z-index: 1;
+  display: block;
+  width: 100%;
+}
+
+#divMenu {
+  display: inline-block;
+  visibility: visible;
+  width: 100%;
+}
+
+#divMiniMenu {
+  display: none;
+  visibility: hidden;
+}
+
+/** body management for menu ie, ff **/
+
+/*
+#idPage {
+  position: relative;
+  clear: both;
+
+  height: 80%;
+  height: calc(100% - 100px);
+  z-index: 1;
+
+  display: block;
+
+  padding: 10px 0px 5px 0px;
+}
+*/
+/*
+#divTitlePage {
+  position: relative;
+  left: 0px;
+  color: #507896;
+}
+*/
+/** Menu **/
+div.nav>ul.nav {
+  width: 100%;
+}
+
+div.nav>ul.nav>li.nav:last-child,
+#sitemapEntry {
+  float: right;
+}
+
+div.nav>ul.nav>li.nav {
+  list-style-position:inside;
+}
+
+div.nav>ul.nav {
+  position: relative;
+  text-align: left;
+  vertical-align: baseline;
+  width: 100%;
+  display: block;
+}
+
+div.nav>ul.nav>li.tab {
+  float: left;
+  height: 17px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+div.nav>ul.nav>li.tab>a {
+}
+
+div.nav>ul.nav>li.tab>ul.nav {
+  position: relative;
+  width: 200px;
+  margin-left: 0px;
+  margin-bottom: 0px;
+  margin-right: -200px;
+  text-align: left;
+  visibility: hidden;
+  display: none;
+  vertical-align: middle;
+  left: -20px;
+  top: 13px;
+}
+
+div.nav>ul.nav>li.tab>ul.nav>li.tab {
+  width: 100%;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  height: 17px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px dotted;
+}
+
+.titleCategory.selected {
+  width: 100%;
+  border: 0px none;
+}

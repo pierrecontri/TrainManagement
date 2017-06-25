@@ -1,0 +1,105 @@
+/**********************/
+/* feuille de style   */
+/* sitmus.css         */
+/* Pierre Contri      */
+/* cree le 11/11/2005 */
+/* mdf  le 06/04/2012 */
+/**********************/
+
+@import "menu.css";
+
+#divMenu {
+  display: block;
+  visibility: visible;
+}
+
+#divMiniMenu {
+  display: none;
+  visibility: hidden;
+}
+
+/** body management for menu ie, ff **/
+html>body>#divCorps {
+  height: 90%;
+  height: calc(100% - 150px);
+
+  width: 80%;
+  width: calc(100% - 235px);
+
+  position: relative;
+  left: 120px;
+  overflow: auto;
+  text-align: center;
+}
+
+#divTitlePage {
+  position: relative;
+
+  width: 80%;
+  width: calc(100% - 290px);
+  
+  left: 120px;
+  padding: 25px;
+
+  z-index: 1;
+}
+/** Menu **/
+div.nav.increased {
+  width: 160px;
+}
+
+div.nav.reduced {
+  width: 15px;
+}
+
+div.nav {
+  position: fixed;
+  width: 200px;
+  left: 5px;
+  top: 4px;
+
+  border: 0px none;
+  text-align: center;
+  vertical-align: middle;
+
+  z-index: 2;
+}
+
+div.nav>ul.nav>li.tab {
+  width: inherits;
+  height: 17px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+div.nav>ul.nav>li.tab>ul.nav {
+  position: relative;
+  width: 280px;
+  margin-top: -35px; /* size of content a (37px) minus border - 2px */
+  margin-left: 180px;
+  margin-right: -1px;
+  border-top: 1px solid;
+  border-left: 0px none;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  text-align: left;
+  visibility: hidden;
+  display: none;
+}
+
+div.nav>ul.nav>li.tab>ul.nav>li.tab {
+  width: 100%;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  height: 17px;
+  text-align: left;
+  border-bottom: 1px dotted;
+}
+
+div.nav>ul.nav>li.tab>ul.nav>li.tab:last-child {
+  border-bottom: 0px none;
+}

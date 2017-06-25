@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
+    <title>Train Management</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="author" content="Pierre Contri">
+    <meta name="description" content="Site web de composition musicales et publications informatiques">
+    <meta name="keywords" content="Pierre Contri, musique instrumentale, programmation informatique, jeu du pong, casse briques, developer, Moselle">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="./views/stylesheets/default_small.css" type="text/css" media="screen and (max-width: 480px)">
+    <link rel="stylesheet" href="./views/stylesheets/default_medium.css" type="text/css" media="screen and (min-width: 480px) and (max-width: 1024px)">
+    <link rel="stylesheet" href="./views/stylesheets/default_large.css" type="text/css" media="screen and (min-width: 1024px)">
+    <link rel="stylesheet" href="./views/stylesheets/print.css" type="text/css" media="print">
+
+    <script type="text/javascript" src="./scripts/siteManagement.js"></script>
+    <script type="text/javascript" src="./scripts/trainManagement.js"></script>
+    <script type="text/javascript" src="./scripts/waitingManagement.js"></script>
+      
+  </head>
+
+  <body id="corps" onload="javascript:initApplication();">
+    <noscript>Your browser does not support JavaScript!</noscript>
+
+<div id="divCorps" class="container">
+    <nav class="navbar">
+      <div id="divTitlePage" class="container">
+        <div class="navbar-header">
+          <h1 id="docTitle">Train Management by Pierre Contri</h1>
+        </div>
+      </div>
+    </nav>
+      <div id="divContentHeader" class="jumbotron">
+          <h2>Dashboard</h2>
+
+      </div>
+      <!-- Page content -->
+      <div class="page" id="idPage">
+  <p>On this dashboard, you can control switchs, lights, railways sections of your train</p>
+
+
+
+
+  <div class="paragrapheText">
+
+  </div>
+
+
+  <div id="switchsContainer_1" class="switchsContainer">
+    <div>Main Track</div>
+  </div>
+
+  <div id="switchsContainer_2" class="switchsContainer">
+    <div>Spur Track</div>
+  </div>
+
+
+      </div> <!-- end div page -->
+    </div>
+
+    <form id="formSite" action="http://localhost:8088/train_control/get_status" method="post">
+      <!-- divManageForm -->
+      <div id="divManageForm">
+        <input id="category" name="category" value="breakBricks" type="hidden">
+        <input id="site" name="site" value="pong2" type="hidden">
+        <input id="submitbutton" name="submitbutton" value="Refresh" type="submit">
+      </div>
+      <!-- end divManageForm -->
+    </form>
+
+  </body>
+
+</html>

@@ -17,27 +17,6 @@ class Controler(object):
     str_return = "This controler give some basics functions:\n%s" % concat_name_function
     return { 'help': str_return }
 
-  def get_status(self):
-    return { 'Status': 'System OK' }
-
-  def get_switch_info(self, params):
-    return { "Switch #%s" % (params[0]) : "OK" }
-
-  def set_switch(self, params):
-    pass
-
-  def get_light_info(self):
-    pass
-
-  def set_light(self):
-    pass
-
-  def get_direction_info(self):
-    pass
-
-  def set_direction(self):
-    pass
-
   def start_demo(self):
 
     from sys import path as sys_pth
@@ -46,8 +25,8 @@ class Controler(object):
     local_directory = pth.dirname(pth.abspath(__file__))
     import_list = [local_directory
                         , pth.join(local_directory, "..","UnitTests")
-                        , pth.join(local_directory, "..","ElectronicComponents")
-                        , pth.join(local_directory, "..","ElectronicModel")
+                        #, pth.join(local_directory, "..","ElectronicComponents")
+                        ,# pth.join(local_directory, "..","ElectronicModel")
     ]
 
     for to_import in import_list:
@@ -70,12 +49,37 @@ class Controler(object):
 
     return {'start_demo': 'done'}
 
-  def do(self, what, params):
+  def get_status(self):
+    return { 'Status': 'System OK' }
+
+  def get_switch_info(self, params):
+    params["result"] = "OK"
+    return
+
+  def set_switch_value(self, params):
+    # add the controler code here
+    self.get_switch_info(params)
+    return params
+
+  def get_light_info(self):
+    pass
+
+  def set_light(self):
+    pass
+
+  def get_direction_info(self):
+    pass
+
+  def set_direction(self):
+    pass
+
+  def do(self, what, params = {}):
 
     fct_do = Controler.__dict__[what] #if self.contains_function(what) else ""
     args_specs = inspect.getargspec(fct_do)
 
     return fct_do(self, params) if  "params" in args_specs.args else fct_do(self)
+
 
 # Unit Tests
 if __name__ == '__main__':

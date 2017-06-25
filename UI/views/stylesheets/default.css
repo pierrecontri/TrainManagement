@@ -1,0 +1,131 @@
+/**********************/
+/* feuille de style   */
+/* sitmus.css         */
+/* Pierre Contri      */
+/* cree le 11/11/2005 */
+/* mdf  le 29/02/2008 */
+/**********************/
+
+@import "global.css";
+@import "menu/left_menu.css";
+
+/** corps **/
+BODY {
+  color: #507896;
+  background-color: rgb(80,80,80);
+}
+
+P {
+  color: #507896;
+  background-color: rgb(235,235,235);
+  text-align: left;
+}
+
+A {
+  color: #507896;
+}
+
+H2 {
+  margin-left: -0.02cm;
+  margin-bottom: 0cm;
+  border: 1px solid #000000;
+  padding: 0.04cm;
+  font-size: 15pt;
+  text-align: left;
+  /*font-style: italic;*/
+  font-weight: bold;
+}
+
+H3 {
+  text-align: left;
+/*
+  margin-left: 3cm;
+  text-indent: -2.73cm;
+
+  margin-bottom: 0cm;
+*/
+}
+
+H4 {
+  text-align: left;
+  font-style: italic;
+  /*text-decoration: underline;*/
+  margin-left: 1.53cm;
+  margin-bottom: 0cm;
+}
+
+H5 {
+
+}
+
+.cvExperienceDescribe {
+  margin-left: 1.48cm;
+  text-indent: 0.03cm;
+  margin-bottom: 0cm;
+}
+
+TABLE.skills {
+  width: 680px;
+  border: 0px none;
+}
+
+TR.skills {
+  vertical-align: top;
+}
+
+TD.skills {
+  width: 332px;
+  vertical-align: top;
+}
+
+/** Menu **/
+.tab, .subtabs, .subtab {
+  border-color: #507896;
+}
+
+.tab.selected,
+.subtab.selected,
+a.selected {
+  color : #780A02;
+  background-color: #D5DDE3;
+}
+
+.tab.unselected,
+.subtab.unselected {
+  color: #808040;
+  background-color: #A3B7B9;
+}
+/** end menu **/
+
+/** Elements **/
+#divCorps {
+  background-color: rgb(235,235,235);
+}
+
+#idPage {
+  text-align: center;
+  position: relative;
+
+  overflow: auto;
+
+  border-left: 2px solid #507896;
+  border-top: 2px solid #507896;
+
+  margin-left: 10px;
+  padding: 10px;
+
+  color: #507896;
+  background-color : rgb(235,235,235);
+}
+
+#divTitlePage {
+  position: relative;
+  height: 40px;
+
+  text-align: center;
+  font-weight: bold;
+  font-size: 24pt;
+  font-style : italic;
+
+  z-index: 1;
+}

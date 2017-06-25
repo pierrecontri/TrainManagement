@@ -1,0 +1,147 @@
+/**********************/
+/* feuille de style   */
+/* sitmus.css         */
+/* Pierre Contri      */
+/* cree le 11/11/2005 */
+/* mdf  le 15/02/2015 */
+/**********************/
+
+@import "global.css";
+@import "menu/top_menu.css";
+
+/** corps **/
+BODY {
+  color: #2a6496;
+}
+
+P {
+  color: #2a6496;
+}
+
+A {
+  color: #2a6496;
+}
+
+H2 {
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+}
+
+H3 {
+  text-align: left;
+}
+
+H4 {
+  text-align: left;
+  font-style: italic;
+  margin-left: 1.53cm;
+  margin-bottom: 0cm;
+}
+
+
+.cvExperienceDescribe {
+  margin-left: 1.48cm;
+  text-indent: 0.03cm;
+  margin-bottom: 0cm;
+}
+
+.PictureDocument {
+  border: 1px solid #8CA5AF;
+  text-align: center;
+}
+
+.MusicDocument {
+  border: 1px dashed;
+  background-color: rgb(250, 250, 250);
+}
+
+.ContentObj {
+  /* border: 1px dashed; */
+}
+
+/** Menu **/
+.tab, .subtabs, .subtab {
+  border-color: white !important;
+}
+
+div.nav>ul.nav>li.tab>ul.nav {
+  border-color: white;
+}
+
+div.nav>ul.nav>li.tab:hover  {
+  cursor: pointer;
+}
+
+A.unselected {
+  color: #777;
+}
+
+A.unselected:hover {
+  color: white;
+  /*font-style : italic;*/
+}
+
+.tab.selected,
+.tab.unselected:hover,
+a.selected {
+  color: white;
+  /*background-color: #080808;*/
+  background-color: rgb(42, 100, 150);
+}
+
+.tab.unselected {
+  color: #808040;
+  background-color: #222;
+}
+
+#divTitlePage {
+  font-weight: bold;
+  font-size: 12pt;
+
+  position: relative;
+  margin-top: 60px;
+  margin-bottom: 10px;
+  border-top: 1px solid #507896;
+  border-bottom: 1px solid #507896;
+  text-align: center;
+}
+
+#divMenu {
+  background-color: #222;
+}
+
+/** end menu **/
+
+/** Elements **/
+#divCorps,
+#divTitlePage,
+#divMenu>ul {
+  /*border-left: 1px solid #507896;*/
+  /*
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  */
+  position: relative;
+  max-width: 1014px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#divCorps {
+  /*display: initial;*/
+}
+
+#idPage {
+  text-align: center;
+  position: relative;
+
+  overflow: auto;
+
+  color: #2a6496;
+  background-color: white;
+
+  padding-left: 10px;
+  padding-right: 10px;
+}
