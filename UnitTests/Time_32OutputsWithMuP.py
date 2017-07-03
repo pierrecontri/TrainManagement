@@ -5,13 +5,22 @@ sys.path.append(os.path.realpath("ElectronicComponents"))
 sys.path.append(os.path.realpath("ElectronicModel"))
 
 import time ## Import 'time' library. Allows us to use 'sleep'
+import queue
 from ElectronicComponents import *
 from ElectronicModel import *
 
 # port for stop button
 STOP_BUTTON = 21
 
-def time_32outputs():
+def time_32outputs( master_thread_queue = None ):
+
+    t_queue = None
+
+    # manage the thread queue if not null
+    if master_thread_queue is not None:
+        t_queue = queue.Queue()
+        master_thread_queue.append(t_queue)
+
     #init electronic components
     InitGPIO.init_electronic()
     stop_button = StopButton(STOP_BUTTON)
@@ -21,10 +30,14 @@ def time_32outputs():
     seven_digits_3 = SevenDigits( component_interface = sixteen_outputs, led_not_on = True, use_car_matrix = True, digits_rangs = 1 )
     seven_digits_4 = SevenDigits( component_interface = sixteen_outputs, led_not_on = True, use_car_matrix = True, digits_rangs = 0 )
 
+    print("Time ON")
+
     sixteen_outputs.allow_output(True)
     blinking_point = False
 
-    while not stop_button.stop_state:
+    do_stop = False
+
+    while not stop_button.stop_state and not do_stop:
         tmp_struct_time = time.localtime()
         str_hour = ("0" if tmp_struct_time.tm_hour < 10 else "") + str(tmp_struct_time.tm_hour)
         str_min  = ("0" if tmp_struct_time.tm_min  < 10 else "") + str(tmp_struct_time.tm_min)
@@ -35,15 +48,20 @@ def time_32outputs():
         seven_digits_4.write_output( str_hour[1] + ("." if blinking_point else " ") )
         blinking_point = not(blinking_point)
         time.sleep(0.4)
+        # thread management if exists
+        if t_queue is not None and t_queue.qsize() > 0:
+            msg = t_queue.get(False)
+            if msg == "stop": do_stop = True
     
     seven_digits_1.write_output("  ")
     seven_digits_2.write_output("  ")
     seven_digits_3.write_output("  ")
     seven_digits_4.write_output("  ")
-    time.sleep(1)
 
     # clean the GPIO
     InitGPIO.clean()
+
+    print("Time Off")
 
 
 if __name__ == '__main__':

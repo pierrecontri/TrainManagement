@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 # ---------------- Add Path  --------------------------------------------------
+import sys
 from sys import path as sys_pth
 import os.path as pth
 
@@ -25,11 +26,15 @@ _allow_origin = '*'
 _allow_methods = 'PUT, GET, POST, DELETE, OPTIONS'
 _allow_headers = 'Authorization, Origin, Accept, Content-Type, Content-Length, X-Requested-With, X-CSRF-Token'
 
-import Controler.TrainManagementControler as tmc
+dynamic_controler_name = sys.argv[1] if len(sys.argv) > 1 else "ElectronicControler.DummyControler"
 
-controler = tmc.Controler()
+dynamic_controler = __import__(dynamic_controler_name, fromlist=["*"])
 
-to_json_string = lambda jsonObj: json.dumps(jsonObj)
+# Create the real controler
+controler = dynamic_controler.Controler()
+
+print("Controler name loaded: %s" % dynamic_controler.__name__)
+print("Controler class name: %s" % type(controler))
 
 def json_app_rqt():
     # about request
@@ -39,7 +44,6 @@ def json_app_resp():
     # about response
     response.headers['Access-Control-Allow-Origin'] = _allow_origin
     response.headers['Access-Control-Allow-Methods'] = _allow_methods
-    # response.headers['Access-Control-Allow-Headers'] = _allow_headers
     response.headers['Content-Type'] = 'application/json; charset=utf-8'
 
 def json_app():
@@ -51,6 +55,7 @@ def get_json_request(rqt):
         json_text = ''.join(json_wrap.readlines())
         json_data = json.loads(json_text)
         return json_data
+
 
 if __name__ == "__main__":
 
@@ -84,15 +89,15 @@ if __name__ == "__main__":
         data = get_json_request(request)
         print(data)
 
-        return controler.do( control, data)
-
-        # paramsObj = { 'val1' : val1, 'val2' : val2 }
-        # return controler.do( control, paramsObj )
+        return controler.do( control, data )
 
     @get("/start_demo")
     def start_demo():
         return controler.start_demo()
 
+    @get("/stop_demo")
+    def start_demo():
+        return controler.stop_demo()
     run(host='0.0.0.0', port=8088)
 
 
@@ -101,11 +106,8 @@ if __name__ == "__main__":
   # print("")
   # exit()
 
-# json_body = json.dumps(controler.do(control_name, (param1, param2)))
-
-
-# ## Start this Web Service like
-# python .\WSRestTestMimeRender23.py
+# ## Start this Web Service like and pass the ElectronicControler
+# python .\TrainManagementWebServer3.py ElectronicControler.DummyControler
 
 # ## Call this WebService in Powershell like
 # $acceptHeader = new-object 'collections.generic.dictionary[string,string]'

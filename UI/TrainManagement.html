@@ -40,12 +40,14 @@
       <div class="page" id="idPage">
   <p>On this dashboard, you can control switchs, lights, railways sections of your train</p>
 
-
-
+  <div id="connection">
+    <input id="server_name" type="text" value="localhost" />
+  </div>
 
   <div class="paragrapheText">
 
   </div>
+
 
 
   <div id="switchsContainer_1" class="switchsContainer">
@@ -56,6 +58,15 @@
     <div>Spur Track</div>
   </div>
 
+  <div id="demo_part">
+    <input type="button" value="Start Demo" onclick="javascript:start_demo();" />
+    <input type="button" value="Stop Demo" onclick="javascript:stop_demo();" />
+    <div id="test_demo_result">
+    </div>
+  </div>
+
+  <div id="wsError">
+  </div>
 
       </div> <!-- end div page -->
     </div>

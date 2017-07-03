@@ -6,6 +6,21 @@
 
 */
 
+function start_demo() {
+  send_command('start_demo', { }, return_test_demo);
+}
+
+function stop_demo() {
+  send_command('stop_demo', { }, return_test_demo);
+}
+
+function return_test_demo(jsonResponse) {
+  var divReturnTestDemo = document.getElementById("test_demo_result");
+  if(!divReturnTestDemo) return;
+
+  divReturnTestDemo.innerHTML = jsonResponse.result;
+}
+
 function returnSwitch(jsonResponse) {
   console.log(jsonResponse);
   if (jsonResponse != null && jsonResponse.result != null && jsonResponse.switchName != null && jsonResponse.switchValue != null) {

@@ -60,7 +60,9 @@ function getJsonCategory(category) {
     }
     else {
       if (xmlhttp.readyState === 4) {
-        //document.getElementById('idPage').innerHTML = '<h3>Error ' + xmlhttp.status + ' on getting page "' + category + '"</h3>';
+        var wsError = document.getElementById('wsError');
+        if (wsError)
+          wsError.innerHTML = '<h3>Error ' + xmlhttp.status + ' on getting page "' + category + '"</h3>';
       }
     }
   };
@@ -85,19 +87,22 @@ function send_command(cmdName, jsonObj, returnHandler) {
     }
     else {
       if (xmlhttp.readyState === 4) {
-        //document.getElementById('idPage').innerHTML = '<h3>Error ' + xmlhttp.status + ' on getting page "' + category + '"</h3>';
+        var wsError = document.getElementById('wsError');
+        if (wsError)
+          wsError.innerHTML = '<h3>Error ' + xmlhttp.status + ' on getting page "' + category + '"</h3>';
       }
     }
   };
 
-  urlControl = "http://localhost:8088/train_control/" + cmdName;
+  var divServerName = document.getElementById('server_name');
+console.log(divServerName);
+  var tmpServerName = (divServerName) ? divServerName.value : "localhost";
+console.log(tmpServerName);
+  var urlControl = "http://" + tmpServerName + ":8088/train_control/" + cmdName;
   var str_json_post = JSON.stringify(jsonObj);
 
   xmlhttp.open("POST", urlControl, true);
-
   xmlhttp.setRequestHeader("Content-Type", "text/plain");
-  //xmlhttp.setRequestHeader("Content-Length", str_json_post.length);
-
   xmlhttp.send(str_json_post);
 }
 
