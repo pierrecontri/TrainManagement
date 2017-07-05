@@ -72,7 +72,6 @@ if __name__ == "__main__":
         # finally:
         return html_page
 
-    # @route("/test/:control/:value", METHOD="GET")
     @get("/test/:control/:value")
     def test(control, value):
         respObj = {'message': 'test ok with control %s and value %s' % (control, value) }

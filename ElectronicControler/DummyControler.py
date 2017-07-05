@@ -15,6 +15,7 @@ if __name__ == "__main__":
     # -----------------------------------------------------------------------------
 
 from Controler.TrainManagementControler import TrainManagementControler
+import random
 
 class Controler(TrainManagementControler):
 
@@ -33,7 +34,7 @@ class Controler(TrainManagementControler):
         return {'stop_demo': 'done'}
 
     def get_switch_info(self, params):
-        params["result"] = "OK"
+        params["result"] = "OK" if round(random.random(), 0) == 1 else "NOK"
         return
   
     def set_switch_value(self, params):
@@ -42,13 +43,10 @@ class Controler(TrainManagementControler):
         return params
 
 
-def get_controler():
-    return Controler()
-
 # units tests
 if __name__ == "__main__":
     print("DummyControler")
-    ctrl = get_controler()
+    ctrl = Controler()
     ctrl.do("get_help")
     from time import sleep
     print("Start Demo: %s" % ctrl.start_demo())

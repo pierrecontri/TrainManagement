@@ -89,13 +89,10 @@ PiControler the real controler to manage Raspberry Pi
     return params
 
 
-def get_controler():
-    return Controler()
-
 # units tests
 if __name__ == "__main__":
     print("PiControler")
-    ctrl = get_controler()
+    ctrl = Controler()
     ctrl.do("get_help")
     from time import sleep
     ctrl.start_demo()

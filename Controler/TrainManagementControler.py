@@ -66,4 +66,49 @@ Main Abstract Class for Train Management Controler
 # Unit Tests
 if __name__ == '__main__':
   # due to the abstractmethod, the tests is deported on DummyControler
+  # I'm so stupid guy, I can make test even if it is abstract !
+
+  class TestControler(TrainManagementControler):
+      def start_demo(self):
+        return { "Start demo": "OK" }
+
+      def stop_demo(self):
+        return { "Stop demo": "OK" }
+
+      def get_status(self):
+        return { 'get_status': 'OK' }
+    
+      def get_switch_info(self, params):
+        return { 'get_switch_info': 'OK' }
+    
+      def set_switch_value(self, params):
+        return { 'set_switch_value': 'OK' }
+    
+      def get_light_info(self):
+        return { 'get_light_info': 'OK' }
+    
+      def set_light(self):
+        return { 'set_light': 'OK' }
+    
+      def get_direction_info(self):
+        return { 'get_direction_info': 'OK' }
+    
+      def set_direction(self):
+        return { 'set_direction': 'OK' }
+
+
+  test_controler = TestControler()
+
+  print( test_controler.get_help()['help'] )
+
+  print( test_controler.do("start_demo", {}) )
+  print( test_controler.do("stop_demo", {}) )
+  print( test_controler.do("get_status", {}) )
+  print( test_controler.do("get_switch_info", {}) )
+  print( test_controler.do("set_switch_value", {}) )
+  print( test_controler.do("get_light_info", {}) )
+  print( test_controler.do("set_light", {}) )
+  print( test_controler.do("get_direction_info", {}) )
+  print( test_controler.do("set_direction", {}) )
+
   pass
