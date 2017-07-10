@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-class EightIODigits(object):
+class EightIO(object):
 
     class BIT:
         ON = True
@@ -66,13 +66,13 @@ class EightIODigits(object):
         return calc_value
 
     def get_output_byte_array(self, bits_state) -> int:
-        output_calc = EightIODigits.get_int_from_byte_array(bits_state)
+        output_calc = EightIO.get_int_from_byte_array(bits_state)
         # output inverted 1 => 0 retract the result the one byte
         output_value = 255 ^ output_calc if self.bit_not_on else output_calc
         return output_value
 
     def get_output_int(self, value) -> int:
-        return (255 ^ value if self.led_not_on else value)
+        return (255 ^ value if self.bit_not_on else value)
 
     def clean(self, clean_dc = False) -> int:
         self.write_output(" ")
@@ -81,29 +81,29 @@ class EightIODigits(object):
         return 0
 
 def main():
-    print("Test EightIODigits")
-    eight_io_digits = EightIODigits(component_interface = None, led_not_on = False, use_car_matrix = True, digits_rangs = 0)
+    print("Test EightIO")
+    eight_io_digits = EightIO(component_interface = None, bit_not_on = False, use_car_matrix = True, digits_rangs = 0)
     print(eight_io_digits.write_output(24))
     eight_io_digits.set_point_on()
     print(eight_io_digits.write_output(24))
     eight_io_digits.set_point_off()
     print(eight_io_digits.write_output(24))
 
-    eight_io_digits = EightIODigits(component_interface = None, led_not_on = True, use_car_matrix = True, digits_rangs = 0)
+    eight_io_digits = EightIO(component_interface = None, bit_not_on = True, use_car_matrix = True, digits_rangs = 0)
     print(eight_io_digits.write_output(24))
     eight_io_digits.set_point_on()
     print(eight_io_digits.write_output(24))
     eight_io_digits.set_point_off()
     print(eight_io_digits.write_output(24))
 
-    eight_io_digits = EightIODigits(component_interface = None, led_not_on = True, use_car_matrix = True, digits_rangs = 0)
+    eight_io_digits = EightIO(component_interface = None, bit_not_on = True, use_car_matrix = True, digits_rangs = 0)
     print(eight_io_digits.write_output("a"))
     eight_io_digits.set_point_on()
     print(eight_io_digits.write_output("a"))
     eight_io_digits.set_point_off()
     print(eight_io_digits.write_output("a"))
 
-    eight_io_digits = EightIODigits(component_interface = None, led_not_on = True, use_car_matrix = True, digits_rangs = 1)
+    eight_io_digits = EightIO(component_interface = None, bit_not_on = True, use_car_matrix = True, digits_rangs = 1)
     print(eight_io_digits.write_output("2"))
     eight_io_digits.set_point_on()
     print(eight_io_digits.write_output("2"))
