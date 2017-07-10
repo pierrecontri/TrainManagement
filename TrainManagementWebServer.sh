@@ -1,3 +1,2 @@
-#python3 "./TrainManagement/TrainManagementWebServer.py" ElectronicControler.DummyControler
-python3 "./TrainManagement/TrainManagementWebServer.py" ElectronicControler.PiControler
-pause
+#python3 "./TrainManagementWebServer.py" ElectronicControler.DummyControler
+python3 "./TrainManagementWebServer.py" ElectronicControler.PiControler
