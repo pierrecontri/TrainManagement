@@ -22,11 +22,11 @@ function return_test_demo(jsonResponse) {
 }
 
 function returnSwitch(jsonResponse) {
-  console.log(jsonResponse);
   if (jsonResponse != null && jsonResponse.result != null && jsonResponse.switchName != null && jsonResponse.switchValue != null) {
     var sw = document.getElementById(jsonResponse.switchName);
+    if(sw != null)
     sw.className = (jsonResponse.result != "OK") ? "wayerror"
-                   : ((jsonResponse.switchValue == "ON") ? "wayon" : "wayoff");
+                   : ((jsonResponse.switchValue == 1) ? "wayon" : "wayoff");
   }
 }
 
@@ -85,6 +85,7 @@ function createSwitchElements() {
         tdElem = document.createElement('td');
         var idWay = wayIdNb++;
         tdElem.id = switchId + "_Switch_" + k.toString() + "_Way_" + idWay.toString();
+        tdElem.className = "switchButton";
         tdElem.onclick = switch_click;
         tdElem.innerHTML = "Way&nbsp;" + (idWay + 1).toString();
         trElem.appendChild(tdElem);
@@ -96,13 +97,45 @@ function createSwitchElements() {
   }
 }
 
+function initSwitchs() {
+  console.log("initialize switchs buttons");
+  var lstSwitchsButton = document.getElementsByClassName("switchButton");
+  for (i = 0, nbSwitchs = lstSwitchsButton.length; i < nbSwitchs; i++) {
+    setTimeout(fctGetSwitchValue, 500 * (i + 1), lstSwitchsButton[i].id);
+  }
+}
+
+function fctGetSwitchValue(swId) {
+  send_command('get_switch_value', { 'switchName': swId }, returnSwitch);
+}
+
+function fctSetSwitchValue(swId) {
+  send_command('switch_value', { 'switchName': swId, 'switchValue': '1'}, null);
+}
+
 function switch_click() {
   this.className = "wayclick";
-  send_command('set_switch_value', { 'switchName': this.id, 'switchValue': 'ON'}, returnSwitch);
+  // split id in two parts : id base & switch number
+  var carSeparator = "_";
+  var idArr = this.id.split(carSeparator);
+  // get last number from id (switch number)
+  var switchNumber = parseInt(idArr.pop());
+  var idBase = idArr.join(carSeparator);
+
+  var switchNumberBinomial = ( (switchNumber & 0xFE) == switchNumber ) ? switchNumber + 1 : switchNumber & 0xFE ;
+  var idBinomialSwitch = idBase + "_" + switchNumberBinomial.toString();
+
+  // set information to press switch button
+  fctSetSwitchValue(this.id);
+  // get information about binomial switch
+  setTimeout(fctGetSwitchValue, 150, idBinomialSwitch);
+  setTimeout(fctGetSwitchValue, 300, this.id);
 }
 
 // ----- Main Init -----
 function initApplication() {
   createSwitchBlockCommand();
   createSwitchElements();
+  initSwitchs();
+  console.log("Application initializing done");
 }

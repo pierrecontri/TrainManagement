@@ -95,9 +95,7 @@ function send_command(cmdName, jsonObj, returnHandler) {
   };
 
   var divServerName = document.getElementById('server_name');
-console.log(divServerName);
   var tmpServerName = (divServerName) ? divServerName.value : "localhost";
-console.log(tmpServerName);
   var urlControl = "http://" + tmpServerName + ":8088/train_control/" + cmdName;
   var str_json_post = JSON.stringify(jsonObj);
 

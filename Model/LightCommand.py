@@ -1,0 +1,3 @@
+
+class LightCommand(object):
+  pass

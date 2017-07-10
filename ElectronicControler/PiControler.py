@@ -79,7 +79,7 @@ PiControler the real controler to manage Raspberry Pi
 
     return {'stop_demo': 'done'}
 
-  def get_switch_info(self, params):
+  def get_switch_value(self, params):
     params["result"] = "OK"
     return
 
