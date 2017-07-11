@@ -19,7 +19,7 @@ if __name__ == "__main__":
 import threading
 from Controler.TrainManagementControler import TrainManagementControler
 
-from ElectronicComponents import SN74HC595 as ShiftRegister
+from ElectronicComponents import *
 # from ElectronicModel import EightIO
 
 import queue
@@ -39,7 +39,8 @@ PiControler the real controler to manage Raspberry Pi
 
   def __init__(self):
     TrainManagementControler.__init__(self)
-    self._shift_register = ShiftRegister.SN74HC595( inputs_ports = {'ser':5,'oe':6,'rclk':13,'srclk':19,'srclr':26}, outputs_len = 16 )
+    InitGPIO.init_electronic()
+    self._shift_register = SN74HC595( inputs_ports = {'ser':5,'oe':6,'rclk':13,'srclk':19,'srclr':26}, outputs_len = 16 )
     for t_cmd_switch in self._command_switchs_list: t_cmd_switch.component_interface = self._shift_register
 
   def get_status(self):
