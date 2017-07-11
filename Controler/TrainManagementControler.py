@@ -19,7 +19,11 @@ if __name__ == "__main__":
 
 import inspect
 import abc
+
 from Model import SwitchCommand
+from ElectronicModel import EightIO
+
+import time
 
 class TrainManagementControler(metaclass=abc.ABCMeta):
   """
@@ -28,6 +32,9 @@ Main Abstract Class for Train Management Controler
 
   def __init__(self):
     self._switchs_list = dict()
+    self._command_switchs_list = list()
+    self._command_switchs_list.append( EightIO.EightIO( component_interface = None, bit_not_on = True, digits_rangs = 0 ) )
+    self._command_switchs_list.append( EightIO.EightIO( component_interface = None, bit_not_on = True, digits_rangs = 1 ) )
 
   def contains_function(self, function_name):
     return function_name in dir(self) and type(self.__getattribute__(function_name)).__name__ == 'method'
@@ -64,7 +71,8 @@ Main Abstract Class for Train Management Controler
       # get all connectors in the same group and put it to OFF
       tmp_switch_list = [tmp_switch for tmp_switch in self._switchs_list.values() if tmp_switch.group == self._switchs_list[tmp_sw_name].group and not tmp_switch.name == tmp_sw_name]
       for t_switch in tmp_switch_list: t_switch.state = SwitchCommand.OFF
-      self._switchs_list[tmp_sw_name].switch_value()
+      # self._switchs_list[tmp_sw_name].switch_value()
+      self._switchs_list[tmp_sw_name].state = SwitchCommand.ON
       # call the electronic part
       self.set_switch_value(switch_params)
       switch_params["result"] = "OK"
@@ -74,6 +82,43 @@ Main Abstract Class for Train Management Controler
   def get_switch(self, switch_name):
     if not switch_name in self._switchs_list.keys(): self._switchs_list[switch_name] = SwitchCommand(switch_name, "_".join(switch_name.split("_")[0:-2]))
     return self._switchs_list[switch_name]
+
+  def get_switch_value(self, params):
+    """
+    Return the switch value
+    """
+    params["switchValue"] = self.get_switch(params["switchName"]).state
+    params["result"] = "OK"
+    self.get_switch_value_handle ( "get_switch_value : sw name '%(switchName)s', sw value '%(switchValue)s', result '%(result)s'" % params )
+
+    return params
+  
+  def set_switch_value(self, params):
+    """
+    Set the switch to other value
+    Send order to the electronic component
+    """
+
+    switch_name, switch_value = (params["switchName"], params["switchValue"])
+    print( "set_switch_value : sw name '%s', sw value '%s'" % (switch_name, switch_value) )
+
+    tmp_switch = self.get_switch(params["switchName"])
+    sw_id = int(tmp_switch.name.split("_").pop())
+    block_switch_number = int(sw_id / 8)
+    tmp_switch_value = sw_id % 8
+
+    val_ret = self._command_switchs_list[block_switch_number].write_output( chr( 97 + tmp_switch_value ) )
+
+    self.set_switch_value_handle ("on press:    %s" % bin(val_ret) )
+
+    if tmp_switch.is_press:
+      time.sleep(0.2)
+      val_ret = self._command_switchs_list[block_switch_number].write_output( " " )
+      self.set_switch_value_handle ("after press: %s" % bin(val_ret) )
+
+    params["result"] = "OK"
+
+    return params
 
   @abc.abstractmethod
   def start_demo(self):
@@ -88,11 +133,11 @@ Main Abstract Class for Train Management Controler
     pass
 
   @abc.abstractmethod
-  def get_switch_value(self, params):
+  def get_switch_value_handle(self, params):
     pass
 
   @abc.abstractmethod
-  def set_switch_value(self, params):
+  def set_switch_value_handle(self, params):
     pass
 
   def get_light_info(self):

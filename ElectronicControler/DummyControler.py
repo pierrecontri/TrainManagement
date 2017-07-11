@@ -17,9 +17,29 @@ if __name__ == "__main__":
 
 from Model import SwitchCommand
 from Controler.TrainManagementControler import TrainManagementControler
-import random
+from ElectronicModel import EightIO
+import random, time
+
+class DummyElec(object):
+
+  def __init__(self):
+    self.value = 0
+
+  def write_output(self, value):
+    self.value = value
+    print("DummyElec write_output: %s" % value)
+
+  @property
+  def hold_value(self) -> int:
+    return self.value
 
 class Controler(TrainManagementControler):
+
+  def __init__(self):
+    TrainManagementControler.__init__(self)
+    dummy_elec = DummyElec()
+    for t_cmd_switch in self._command_switchs_list:
+      t_cmd_switch.component_interface = dummy_elec
 
   def get_status(self):
     return { 'Status': 'System OK' }
@@ -32,27 +52,45 @@ class Controler(TrainManagementControler):
   def stop_demo(self):
     return {'stop_demo': 'done'}
 
-  def get_switch_value(self, params):
-    """
-    Return the switch value
-    """
-    params["switchValue"] = self.get_switch(params["switchName"]).state
-    params["result"] = "OK"
-    print( "get_switch_value : sw name '%(switchName)s', sw value '%(switchValue)s', result '%(result)s'" % params )
+  # def get_switch_value(self, params):
+    # """
+    # Return the switch value
+    # """
+    # params["switchValue"] = self.get_switch(params["switchName"]).state
+    # params["result"] = "OK"
+    # print( "get_switch_value : sw name '%(switchName)s', sw value '%(switchValue)s', result '%(result)s'" % params )
 
-    return params
+    # return params
   
-  def set_switch_value(self, params):
-    """
-    Set the switch to other value
-    Send order to the electronic component
-    """
-    switch_name, switch_value = (params["switchName"], params["switchValue"])
-    print( "set_switch_value : sw name '%s', sw value '%s'" % (switch_name, switch_value) )
-    params["result"] = "OK"
+  # def set_switch_value(self, params):
+    # """
+    # Set the switch to other value
+    # Send order to the electronic component
+    # """
 
-    return params
+    # switch_name, switch_value = (params["switchName"], params["switchValue"])
+    # print( "set_switch_value : sw name '%s', sw value '%s'" % (switch_name, switch_value) )
 
+    # tmp_switch = self.get_switch(params["switchName"])
+    # sw_id = int(tmp_switch.name.split("_").pop())
+    # block_switch_number = int(sw_id / 8)
+    # tmp_switch_value = sw_id % 8
+
+    # print("on press:    %s" % bin(self._command_switchs_list[block_switch_number].write_output( chr( 97 + tmp_switch_value ) )) )
+
+    # if tmp_switch.is_press:
+      # time.sleep(0.2)
+      # print("after press: %s" % bin(self._command_switchs_list[block_switch_number].write_output( " " )) )
+
+    # params["result"] = "OK"
+
+    # return params
+
+  def get_switch_value_handle(self, param):
+    print(param)
+
+  def set_switch_value_handle(self, param):
+    print(param)
 
 # units tests
 if __name__ == "__main__":
@@ -65,6 +103,8 @@ if __name__ == "__main__":
   ctrl.register_switch_value(SwitchCommand("sw1_1", "sw1"))
   ctrl.register_switch_value(SwitchCommand("sw2_2", "sw2"))
   ctrl.register_switch_value(SwitchCommand("sw2_3", "sw2"))
+
+  ctrl.register_switch_value(SwitchCommand(name = "sw3_0", group = "sw3", is_press = False))
 
   ctrl.do("get_help")
   from time import sleep

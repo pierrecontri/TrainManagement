@@ -129,13 +129,12 @@ function switch_click() {
   fctSetSwitchValue(this.id);
   // get information about binomial switch
   setTimeout(fctGetSwitchValue, 150, idBinomialSwitch);
-  setTimeout(fctGetSwitchValue, 300, this.id);
+  setTimeout(fctGetSwitchValue, 400, this.id);
 }
 
 // ----- Main Init -----
 function initApplication() {
   createSwitchBlockCommand();
   createSwitchElements();
-  initSwitchs();
   console.log("Application initializing done");
 }

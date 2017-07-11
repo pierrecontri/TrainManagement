@@ -19,7 +19,11 @@ if __name__ == "__main__":
 import threading
 from Controler.TrainManagementControler import TrainManagementControler
 
+from ElectronicComponents import SN74HC595 as ShiftRegister
+# from ElectronicModel import EightIO
+
 import queue
+import time
 
 # thread queues list
 thread_queues_demo = []
@@ -34,7 +38,9 @@ PiControler the real controler to manage Raspberry Pi
   """
 
   def __init__(self):
-    pass
+    TrainManagementControler.__init__(self)
+    self._shift_register = ShiftRegister.SN74HC595( inputs_ports = {'ser':5,'oe':6,'rclk':13,'srclk':19,'srclr':26}, outputs_len = 16 )
+    for t_cmd_switch in self._command_switchs_list: t_cmd_switch.component_interface = self._shift_register
 
   def get_status(self):
     return { 'Status': 'System OK' }
@@ -79,14 +85,38 @@ PiControler the real controler to manage Raspberry Pi
 
     return {'stop_demo': 'done'}
 
-  def get_switch_value(self, params):
-    params["result"] = "OK"
-    return
+  # def get_switch_value(self, params):
+    # params["switchValue"] = self.get_switch(params["switchName"]).state
+    # params["result"] = "OK"
 
-  def set_switch_value(self, params):
-    # add the controler code here
-    self.get_switch_info(params)
-    return params
+    # return params
+
+  # def set_switch_value(self, params):
+    # """
+    # Set the switch to other value
+    # Send order to the electronic component
+    # """
+
+    # tmp_switch = self.get_switch(params["switchName"])
+    # sw_id = int(tmp_switch.name.split("_").pop())
+    # block_switch_number = int(sw_id / 8)
+    # tmp_switch_value = sw_id % 8
+
+    # self._command_switchs_list[block_switch_number].write_output( chr( 97 + tmp_switch_value )
+
+    # if tmp_switch.is_press:
+      # time.sleep(0.2)
+      # self._command_switchs_list[block_switch_number].write_output( " " )
+
+    # params["result"] = "OK"
+
+    # return params
+
+  def get_switch_value_handle(self, param):
+    print(param)
+
+  def set_switch_value_handle(self, param):
+    print(param)
 
 
 # units tests

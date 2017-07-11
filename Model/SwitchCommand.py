@@ -6,20 +6,33 @@ class SwitchCommand(object):
   ON  = 1
   OFF = 0
 
-  def __init__(self, name, group = ""):
-    self.name = name
-    self.value = SwitchCommand.OFF
-    self.group = group
+  def __init__(self, name, group = "", is_press= True):
+    self._name = name
+    self._value = SwitchCommand.OFF
+    self._group = group
+    self._is_press = is_press
 
   def switch_value(self):
-    if self.value == SwitchCommand.ERR: self.value = SwitchCommand.OFF
-    else: self.value = int(not(self.state))
+    if self._value == SwitchCommand.ERR: self_.value = SwitchCommand.OFF
+    else: self._value = int(not(self._value))
     return
 
   @property
   def state(self):
-    return self.value
+    return self._value
 
   @state.setter
   def state(self, val):
-    self.value = val
+    self._value = val
+
+  @property
+  def is_press(self):
+    return self._is_press
+
+  @property
+  def name(self):
+    return self._name
+
+  @property
+  def group(self):
+    return self._group
