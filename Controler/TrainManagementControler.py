@@ -33,8 +33,8 @@ Main Abstract Class for Train Management Controler
   def __init__(self):
     self._switchs_list = dict()
     self._command_switchs_list = list()
-    self._command_switchs_list.append( EightIO.EightIO( component_interface = None, bit_not_on = True, digits_rangs = 0 ) )
-    self._command_switchs_list.append( EightIO.EightIO( component_interface = None, bit_not_on = True, digits_rangs = 1 ) )
+    self._command_switchs_list.append( EightIO( component_interface = None, bit_not_on = False, digits_rangs = 0 ) )
+    self._command_switchs_list.append( EightIO( component_interface = None, bit_not_on = False, digits_rangs = 1 ) )
 
   def contains_function(self, function_name):
     return function_name in dir(self) and type(self.__getattribute__(function_name)).__name__ == 'method'
@@ -107,8 +107,11 @@ Main Abstract Class for Train Management Controler
     block_switch_number = int(sw_id / 8)
     tmp_switch_value = sw_id % 8
 
-    val_ret = self._command_switchs_list[block_switch_number].write_output( chr( 97 + tmp_switch_value ) )
-
+    val_to_send = 1 << tmp_switch_value
+    #print("val_to_send %s" % val_to_send)
+    
+    val_ret = self._command_switchs_list[block_switch_number].write_output( val_to_send )
+    
     self.set_switch_value_handle ("on press:    %s" % bin(val_ret) )
 
     if tmp_switch.is_press:

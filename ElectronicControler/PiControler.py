@@ -7,8 +7,8 @@ if __name__ == "__main__":
     local_directory = pth.dirname(pth.abspath(__file__))
     import_list = [local_directory
                         , pth.join(local_directory,"../Controler")
-                        , pth.join(local_directory,"../ElectronicComponents")
-                        , pth.join(local_directory,"../ElectronicModel")
+#                        , pth.join(local_directory,"../ElectronicComponents")
+#                        , pth.join(local_directory,"../ElectronicModel")
     ]
     
     for to_import in import_list:
@@ -40,7 +40,8 @@ PiControler the real controler to manage Raspberry Pi
   def __init__(self):
     TrainManagementControler.__init__(self)
     InitGPIO.init_electronic()
-    self._shift_register = SN74HC595( inputs_ports = {'ser':5,'oe':6,'rclk':13,'srclk':19,'srclr':26}, outputs_len = 16 )
+    self._shift_register = SN74HC595( inputs_ports = {'ser':5,'oe':6,'rclk':13,'srclk':19,'srclr':26}, outputs_len = 8 )
+    self._shift_register.allow_output(True)
     for t_cmd_switch in self._command_switchs_list: t_cmd_switch.component_interface = self._shift_register
 
   def get_status(self):
@@ -114,10 +115,12 @@ PiControler the real controler to manage Raspberry Pi
     # return params
 
   def get_switch_value_handle(self, param):
-    print(param)
+    #print(param)
+    pass
 
   def set_switch_value_handle(self, param):
-    print(param)
+    #print(param)
+    pass
 
 
 # units tests

@@ -95,11 +95,15 @@ def main():
     print(eight_io_digits.write_output("a"))
     print(eight_io_digits.write_output("a"))
 
-    eight_io_digits = EightIO(component_interface = None, bit_not_on = True, digits_rangs = 1)
-    print(eight_io_digits.write_output("2"))
-    print(eight_io_digits.write_output("2"))
-    print(eight_io_digits.write_output("2"))
+    eight_io_digits = EightIO(component_interface = None, bit_not_on = False, digits_rangs = 1)
+    print(eight_io_digits.write_output(8))
+    print(eight_io_digits.write_output("d"))
+    print(eight_io_digits.write_output(" "))
 
+    eight_io_digits = EightIO(component_interface = None, bit_not_on = False, digits_rangs = 0)
+    print(eight_io_digits.write_output(4))
+    print(eight_io_digits.write_output("c"))
+    print(eight_io_digits.write_output(" "))
 
 if __name__ == '__main__':
     main()

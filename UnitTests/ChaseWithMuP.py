@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
 import sys, os
-sys.path.append(os.path.realpath("ElectronicComponents"))
-sys.path.append(os.path.realpath("ElectronicModel"))
+sys.path.append(os.path.realpath(".."))
 
+print('\n'.join(sys.path))
 import time ## Import 'time' library. Allows us to use 'sleep'
 import queue
-from ElectronicComponents import *
-from ElectronicModel import Chase
+from ElectronicComponents import InitGPIO, SN74HC595, StopButton
+from ElectronicModel.Chase import Chase
 
 # port for stop button
 STOP_BUTTON = 21
