@@ -132,8 +132,175 @@ function switch_click() {
   setTimeout(fctGetSwitchValue, 400, this.id);
 }
 
+function createWayTracking() {
+  var canvas = document.getElementById('wayTracking');
+  if (!canvas) return;
+
+  var context = canvas.getContext('2d');
+  var canvasW = canvas.width;
+  var canvasH = canvas.height;
+  var centerX = canvas.width / 2;
+  var centerY = canvas.height / 2;
+  var radius = 30;
+  
+  // context.beginPath();
+  // context.arc(canvas.width - 100, 80, 70, 1.5 * Math.PI, 0, false);
+  // context.lineWidth = 5;
+  // context.strokeStyle = '#003300'; // blue or black
+  // context.stroke();
+
+  context.lineWidth = 2;
+
+
+  // exterior rail hight
+  context.beginPath();
+  context.moveTo(80, 10);
+  context.lineTo(canvasW - 130, 10);
+  context.strokeStyle = 'black';
+  context.stroke();
+
+  // exterior right rail hight curve
+  context.beginPath();
+  //context.moveTo(canvasW - 200, canvasH - 250);
+  context.arcTo(canvasW - 60, 10, canvasW - 60, 210, 70);
+  context.strokeStyle = 'blue';
+  context.stroke();
+
+  // exterior right rail down curve
+  context.beginPath();
+  context.moveTo(canvasW - 60, canvasH - 100);
+  context.arcTo(canvasW - 60, canvasH - 10, canvasW - 130, canvasH - 10, 70);
+  context.strokeStyle = 'black';
+  context.stroke();
+
+  // interior left rail hight curve
+  context.beginPath();
+  context.arc(100, 20, 10, 1.5 * Math.PI, 0, false);
+  context.arc(120, 20, 10, Math.PI, 0.5 * Math.PI, true);
+  context.strokeStyle = 'yellow';
+  context.stroke();
+
+  // interior rail hight
+  context.beginPath();
+  context.moveTo(120, 30);
+  context.lineTo(canvasW - 180, 30);
+  context.strokeStyle = 'black';
+  context.stroke();
+
+  // interior right rail down curve
+  context.beginPath();
+  context.arc(canvasW - 180, 20, 10, 0.5 * Math.PI, 0, true);
+  context.arc(canvasW - 160, 20, 10, Math.PI, 1.5 * Math.PI, false);
+  context.strokeStyle = 'yellow';
+  context.stroke();
+
+  // park left rail hight curve
+  context.beginPath();
+  context.arc(250, 45, 15, 0.5 * Math.PI, 0, true);
+  context.arc(280, 45, 15, Math.PI, 1.5 * Math.PI, false);
+  context.strokeStyle = 'purple';
+  context.stroke();
+
+  // rail park left hight
+  context.beginPath();
+  context.moveTo(80, 60);
+  context.lineTo(250, 60);
+  context.strokeStyle = 'black';
+  context.stroke();
+
+  // park left rail hight curve
+  context.beginPath();
+  context.arc(220, 70, 10, 0.5 * Math.PI, 0, true);
+  context.arc(240, 70, 10, Math.PI, 1.5 * Math.PI, false);
+  context.strokeStyle = 'purple';
+  context.stroke();
+
+  // rail park left down
+  context.beginPath();
+  context.moveTo(80, 80);
+  context.lineTo(220, 80);
+  context.strokeStyle = 'black';
+  context.stroke();
+
+  // rail park right selector
+  context.beginPath();
+  context.moveTo(260, 60);
+  context.lineTo(300, 60);
+  context.strokeStyle = 'pink';
+  context.stroke();
+
+  // rail park right
+  context.beginPath();
+  context.moveTo(300, 60);
+  context.lineTo(500, 60);
+  context.strokeStyle = 'black';
+  context.stroke();
+
+  // interior left rail down curve
+  context.beginPath();
+  context.arc(110, canvasH - 45, 15, 0.5 * Math.PI, 0, true);
+  context.arc(140, canvasH - 45, 15, Math.PI, 1.5 * Math.PI, false);
+  context.strokeStyle = 'red';
+  context.stroke();
+
+  // interior rail down
+  context.beginPath();
+  context.moveTo(140, canvasH - 60);
+  context.lineTo(canvasW - 190, canvasH - 60);
+  context.strokeStyle = 'black';
+  context.stroke();
+
+  // interior right rail down curve
+  context.beginPath();
+  context.arc(canvasW - 190, canvasH - 45, 15, 1.5 * Math.PI, 0, false);
+  context.arc(canvasW - 160, canvasH - 45, 15, Math.PI, 0.5 * Math.PI, true);
+  context.strokeStyle = 'red';
+  context.stroke();
+
+  // medium left rail down curve
+  context.beginPath();
+  context.arc(85, canvasH - 105, 75, 0.5 * Math.PI, Math.PI);
+  context.strokeStyle = 'green';
+  context.stroke();
+
+  // medium rail down
+  context.beginPath();
+  context.moveTo(80, canvasH - 30);
+  context.lineTo(canvasW - 130, canvasH - 30);
+  context.strokeStyle = 'black';
+  context.stroke();
+
+  // medium right rail down curve
+  context.beginPath();
+  context.arc(canvasW - 135, canvasH - 105, 75, 0, 0.5 * Math.PI);
+  context.strokeStyle = 'green';
+  context.stroke();
+
+  // exterior rail down
+  context.beginPath();
+  context.moveTo(80, canvas.height - 10);
+  context.lineTo(canvasW - 130, canvasH - 10);
+  context.strokeStyle = 'black';
+  context.stroke();
+
+  // exterior left rail hight curve
+  context.beginPath();
+  //context.moveTo(10, 80);
+  context.arc(80, 80, 70, Math.PI, 1.5 * Math.PI);
+  context.strokeStyle = 'blue';
+  context.stroke();
+
+  // exterior left rail down curve
+  context.beginPath();
+  context.moveTo(10, canvasH - 100);
+  context.arcTo(10, canvasH - 10, canvasW - 130, canvasH - 10, 70);
+  context.strokeStyle = 'black';
+  context.stroke();
+}
+
 // ----- Main Init -----
 function initApplication() {
+  createWayTracking();
   createSwitchBlockCommand();
   createSwitchElements();
   console.log("Application initializing done");

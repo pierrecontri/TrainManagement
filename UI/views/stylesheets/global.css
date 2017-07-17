@@ -12,8 +12,8 @@
 @import "content/patienter.css";
 
 html, body {
-  height: 100%;
-  /*overflow: auto;*/
+  /* height: 100%; */
+  /* overflow: auto; */
   border: 0px none;
   margin: 0px;
   padding: 0px;
