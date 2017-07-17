@@ -45,20 +45,6 @@
     <input type="button" value="Initialize" onclick="javascript:initSwitchs();" />
   </div>
 
-  <div class="paragrapheText">
-
-  </div>
-
-  <canvas id="wayTracking" width="650" height="200" style="border:1px red solid;"></canvas>
-
-  <div id="switchsContainer_1" class="switchsContainer">
-    <div>Main Track</div>
-  </div>
-
-  <div id="switchsContainer_2" class="switchsContainer">
-    <div>Spur Track</div>
-  </div>
-
   <div id="demo_part">
     <input type="button" value="Start Demo" onclick="javascript:start_demo();" />
     <input type="button" value="Stop Demo" onclick="javascript:stop_demo();" />
@@ -66,7 +52,31 @@
     </div>
   </div>
 
-  <div id="wsError">
+  <div class="paragrapheText">
+    <br />
+  </div>
+
+  <div id="graphicalSection">
+    <canvas id="wayTracking" width="580" height="185" style="border:1px red solid;" />
+  </div>
+
+  <div id="dashboardCommand">
+
+    <div id="switchsContainer_1" class="switchsContainer">
+      <div>Main Track</div>
+    </div>
+
+    <div id="switchsContainer_2" class="switchsContainer">
+      <div>Spur Track</div>
+    </div>
+
+  </div>
+
+  <div id="dashboardInformations">
+
+    <div id="wsError">
+    </div>
+
   </div>
 
       </div> <!-- end div page -->

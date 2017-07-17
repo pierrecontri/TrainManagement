@@ -9,18 +9,29 @@ created: 22/06/2017
 
 .switch {
   float: left;
+  display: ineline-block;
   padding: 5px;
   border: 2px solid black;
 }
 
 .switchComponent {
   float: left;
+  display: ineline-block;
+  position: relative;
   margin: 0px;  
+  width: 100%;
 }
 
 .switchComponent > TBODY > TR > TD {
   border: 1px black dashed;
   margin: 0px;
+}
+
+.divSwitchComponent {
+  float: left;
+  display: inline-block;
+  position: inherit;
+  width: 60px;
 }
 
 td.wayclick {
@@ -45,10 +56,18 @@ td.wayerror {
 .switchsContainer {
 
   float: left;
+  display: ineline-block;
   position: relative;
 
   margin: 10px;
   padding: 0px 15px 15px 15px;
   border: 10px brown solid;
 
+}
+
+#dashboardCommand {
+  position: relative;
+  float: none;
+  display: inline-block;
+  text-align: center;
 }
