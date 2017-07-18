@@ -36,10 +36,15 @@ class DummyElec(object):
 class Controler(TrainManagementControler):
 
   def __init__(self):
+    self._number_of_switchs_blocks = 3
     TrainManagementControler.__init__(self)
     dummy_elec = DummyElec()
     for t_cmd_switch in self._command_switchs_list:
       t_cmd_switch.component_interface = dummy_elec
+
+  @property
+  def number_of_switchs_blocks(self):
+    return self._number_of_switchs_blocks
 
   def get_status(self):
     return { 'Status': 'System OK' }

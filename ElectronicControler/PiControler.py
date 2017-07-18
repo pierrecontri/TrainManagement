@@ -38,11 +38,16 @@ PiControler the real controler to manage Raspberry Pi
   """
 
   def __init__(self):
+    self._number_of_switchs_blocks = 3
     TrainManagementControler.__init__(self)
     InitGPIO.init_electronic()
     self._shift_register = SN74HC595( inputs_ports = {'ser':5,'oe':6,'rclk':13,'srclk':19,'srclr':26}, outputs_len = 8 * len( self._command_switchs_list ) )
     self._shift_register.allow_output(True)
     for t_cmd_switch in self._command_switchs_list: t_cmd_switch.component_interface = self._shift_register
+
+  @property
+  def number_of_switchs_blocks(self):
+    return self._number_of_switchs_blocks
 
   def get_status(self):
     return { 'Status': 'System OK' }

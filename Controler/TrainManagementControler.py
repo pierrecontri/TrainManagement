@@ -33,8 +33,8 @@ Main Abstract Class for Train Management Controler
   def __init__(self):
     self._switchs_list = dict()
     self._command_switchs_list = list()
-    self._command_switchs_list.append( EightIO( component_interface = None, bit_not_on = False, digits_rangs = 0 ) )
-    self._command_switchs_list.append( EightIO( component_interface = None, bit_not_on = False, digits_rangs = 1 ) )
+    for i in range(0, self.number_of_switchs_blocks):
+      self._command_switchs_list.append( EightIO( component_interface = None, bit_not_on = False, digits_rangs = i ) )
 
   def contains_function(self, function_name):
     return function_name in dir(self) and type(self.__getattribute__(function_name)).__name__ == 'method'
@@ -79,15 +79,15 @@ Main Abstract Class for Train Management Controler
 
     return switch_params
 
-  def get_switch(self, switch_name):
-    if not switch_name in self._switchs_list.keys(): self._switchs_list[switch_name] = SwitchCommand(switch_name, "_".join(switch_name.split("_")[0:-2]))
+  def get_switch(self, switch_name, is_press = True):
+    if not switch_name in self._switchs_list.keys(): self._switchs_list[switch_name] = SwitchCommand(switch_name, "_".join(switch_name.split("_")[0:-2]), is_press)
     return self._switchs_list[switch_name]
 
   def get_switch_value(self, params):
     """
     Return the switch value
     """
-    params["switchValue"] = self.get_switch(params["switchName"]).state
+    params["switchValue"] = self.get_switch(params["switchName"], not(params["isPersistent"] or False)).state
     params["result"] = "OK"
     self.get_switch_value_handle ( "get_switch_value : sw name '%(switchName)s', sw value '%(switchValue)s', result '%(result)s'" % params )
 
@@ -99,16 +99,15 @@ Main Abstract Class for Train Management Controler
     Send order to the electronic component
     """
 
-    switch_name, switch_value = (params["switchName"], params["switchValue"])
+    switch_name, switch_value, switch_persist = (params["switchName"], params["switchValue"], params["isPersistent"] or False)
     print( "set_switch_value : sw name '%s', sw value '%s'" % (switch_name, switch_value) )
 
-    tmp_switch = self.get_switch(params["switchName"])
+    tmp_switch = self.get_switch(params["switchName"], not(switch_persist))
     sw_id = int(tmp_switch.name.split("_").pop())
     block_switch_number = int(sw_id / 8)
     tmp_switch_value = sw_id % 8
 
     val_to_send = 1 << tmp_switch_value
-    #print("val_to_send %s" % val_to_send)
     
     val_ret = self._command_switchs_list[block_switch_number].write_output( val_to_send )
     
@@ -117,7 +116,8 @@ Main Abstract Class for Train Management Controler
     if tmp_switch.is_press:
       time.sleep(0.2)
       val_ret = self._command_switchs_list[block_switch_number].write_output( " " )
-      self.set_switch_value_handle ("after press: %s" % bin(val_ret) )
+
+    self.set_switch_value_handle ("after press: %s" % bin(val_ret) )
 
     params["result"] = "OK"
 
@@ -141,6 +141,10 @@ Main Abstract Class for Train Management Controler
 
   @abc.abstractmethod
   def set_switch_value_handle(self, params):
+    pass
+
+  @abc.abstractproperty
+  def number_of_switchs_blocks(self):
     pass
 
   def get_light_info(self):

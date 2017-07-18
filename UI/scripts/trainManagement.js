@@ -108,17 +108,35 @@ function initSwitchs() {
   console.log("initialize switchs buttons");
   var lstSwitchsButton = document.getElementsByClassName("switchButton");
   for (i = 0, nbSwitchs = lstSwitchsButton.length; i < nbSwitchs; i++) {
-    setTimeout(fctGetSwitchValue, 500 * (i + 1), lstSwitchsButton[i].id);
+
+    var is_persist = isPermanentSwitch(lstSwitchsButton[i].id);
+
+    setTimeout(fctGetSwitchValue, 500 * (i + 1), lstSwitchsButton[i].id, is_persist);
   }
   setTimeout(drawWayTracking, 9000);
 }
 
-function fctGetSwitchValue(swId) {
-  send_command('get_switch_value', { 'switchName': swId }, returnSwitch);
+function fctGetSwitchValue(swId, is_persist = false) {
+  send_command('get_switch_value', { 'switchName': swId, 'isPersistent': is_persist }, returnSwitch);
 }
 
-function fctSetSwitchValue(swId) {
-  send_command('switch_value', { 'switchName': swId, 'switchValue': '1'}, null);
+function fctSetSwitchValue(swId, is_persist = false) {
+  send_command('switch_value', { 'switchName': swId, 'switchValue': '1', 'isPersistent': is_persist}, null);
+}
+
+function isPermanentSwitch(switchId) {
+  // split id in two parts : id base & switch number
+  var carSeparator = "_";
+  var is_persist = false;
+  var idArr = switchId.split(carSeparator);
+
+  var switchBlockIdCalc = "switchsContainer_" + (parseInt(idArr[1]) + 1).toString();
+  var switchContainer = document.getElementById(switchBlockIdCalc);
+  if (switchContainer) {
+    is_persist = switchContainer.className.split(' ').indexOf("permanentSwitch") > -1;
+  }
+
+  return is_persist;
 }
 
 function switch_click() {
@@ -133,11 +151,14 @@ function switch_click() {
   var switchNumberBinomial = ( (switchNumber & 0xFE) == switchNumber ) ? switchNumber + 1 : switchNumber & 0xFE ;
   var idBinomialSwitch = idBase + "_" + switchNumberBinomial.toString();
 
+  // get information: is permanent switch
+  var is_persist = isPermanentSwitch(this.id);
+
   // set information to press switch button
-  fctSetSwitchValue(this.id);
+  fctSetSwitchValue(this.id, is_persist);
   // get information about binomial switch
-  setTimeout(fctGetSwitchValue, 150, idBinomialSwitch);
-  setTimeout(fctGetSwitchValue, 350, this.id);
+  setTimeout(fctGetSwitchValue, 150, idBinomialSwitch, is_persist);
+  setTimeout(fctGetSwitchValue, 350, this.id, is_persist);
 
   // colorize the way in function of switchs
   setTimeout(drawWayTracking, 500);
@@ -194,6 +215,12 @@ function drawWayTracking() {
   context.strokeStyle = (switchWayCache["Way_5"] == 1) ? 'black' : 'grey';
   context.stroke();
 
+  context.beginPath();
+  context.moveTo(145, 30);
+  context.lineTo(255, 30);
+  context.strokeStyle = (switchWayCache["Way_23"] == 1) ? 'red' : (switchWayCache["Way_5"] == 1) ? 'black' : 'grey';
+  context.stroke();
+
   // interior right rail down curve
   context.beginPath();
   context.arc(canvasW - 185, 20, 10, 0.50 * Math.PI, 0.20 * Math.PI, true);
@@ -205,7 +232,7 @@ function drawWayTracking() {
   context.beginPath();
   context.arc(250, 45, 15, 0.50 * Math.PI, 0.20 * Math.PI, true);
   context.lineTo(279, 35);
-  context.strokeStyle = (switchWayCache["Way_13"] == 1) ? 'black' : 'grey';
+  context.strokeStyle = (switchWayCache["Way_11"] == 1) ? 'black' : 'grey';
   context.stroke();
   context.beginPath();
   context.arc(290, 45, 15, 1.20 * Math.PI, 1.50 * Math.PI, false);
@@ -216,7 +243,13 @@ function drawWayTracking() {
   context.beginPath();
   context.moveTo(80, 60);
   context.lineTo(240, 60);
-  context.strokeStyle = (switchWayCache["Way_10"] == 1) ? 'black' : 'grey';
+  context.strokeStyle = 'black';
+  context.stroke();
+
+  context.beginPath();
+  context.moveTo(80, 60);
+  context.lineTo(200, 60);
+  context.strokeStyle = (switchWayCache["Way_17"] == 1) ? 'red' : 'black';
   context.stroke();
 
   context.beginPath();
@@ -227,30 +260,42 @@ function drawWayTracking() {
 
   // park left rail hight curve
   context.beginPath();
-  context.arc(210, 70, 10, 0.50 * Math.PI, 0.20 * Math.PI, true);
-  context.arc(240, 70, 10, 1.20 * Math.PI, 1.50 * Math.PI, false);
-  context.strokeStyle = (switchWayCache["Way_11"] == 1) ? 'black' : 'grey';
+  context.arc(220, 70, 10, 1.50 * Math.PI, 1.80 * Math.PI, false);
+  context.arc(270, 20, 60, 0.70 * Math.PI, 0.50 * Math.PI, true);
+  context.strokeStyle = (switchWayCache["Way_13"] == 1) ? 'black' : 'grey';
   context.stroke();
 
-  // rail park left down
+  // rail park right down
   context.beginPath();
-  context.moveTo(80, 80);
-  context.lineTo(210, 80);
-  context.strokeStyle = (switchWayCache["Way_11"] == 1) ? 'black' : 'grey';
+  context.moveTo(270, 80);
+  context.lineTo(canvasW - 120, 80);
+  context.strokeStyle = (switchWayCache["Way_13"] == 1) ? 'black' : 'grey';
+  context.stroke();
+
+  context.beginPath();
+  context.moveTo(290, 80);
+  context.lineTo(canvasW - 120, 80);
+  context.strokeStyle = (switchWayCache["Way_21"] == 1) ? 'red' : (switchWayCache["Way_13"] == 1) ? 'black' : 'grey';
   context.stroke();
 
   // rail park right selector
   context.beginPath();
   context.moveTo(260, 60);
   context.lineTo(300, 60);
-  context.strokeStyle = (switchWayCache["Way_12"] == 1) ? 'black' : 'grey';
+  context.strokeStyle = (switchWayCache["Way_10"] == 1) ? 'black' : 'grey';
   context.stroke();
 
   // rail park right
   context.beginPath();
   context.moveTo(300, 60);
   context.lineTo(canvasW - 120, 60);
-  context.strokeStyle = (switchWayCache["Way_12"] == 1) ? 'black' : 'grey';
+  context.strokeStyle = (switchWayCache["Way_10"] == 1) ? 'black' : 'grey';
+  context.stroke();
+
+  context.beginPath();
+  context.moveTo(290, 60);
+  context.lineTo(canvasW - 120, 60);
+  context.strokeStyle = (switchWayCache["Way_19"] == 1) ? 'red' : (switchWayCache["Way_10"] == 1) ? 'black' : 'grey';
   context.stroke();
 
   // interior left rail down curve
@@ -331,6 +376,8 @@ function drawWayTracking() {
   context.arcTo(canvasW - 60, canvasH - 10, canvasW - 130, canvasH - 10, 70);
   context.strokeStyle = (switchWayCache["Way_0"] == 1) ? 'black' : 'grey';
   context.stroke();
+
+  //context.clear();
 }
 
 // ----- Main Init -----
