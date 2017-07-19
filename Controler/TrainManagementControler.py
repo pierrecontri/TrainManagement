@@ -48,7 +48,7 @@ Main Abstract Class for Train Management Controler
   def do(self, what, params = {}):
 
     if not self.contains_function(what):
-      return {'error': "The \"%s\" function does not exists!" % what}
+      return {'result': 'NOK', 'errorMessage': "The \"%s\" function does not exists!" % what}
 
     fct_do = self.__getattribute__(what)
     args_specs = inspect.getargspec(fct_do)
@@ -108,7 +108,12 @@ Main Abstract Class for Train Management Controler
     tmp_switch_value = sw_id % 8
 
     val_to_send = 1 << tmp_switch_value
-    
+
+    if block_switch_number > len(self._command_switchs_list) - 1:
+      params["result"] = "NOK"
+      params["errorMessage"] = "no more switch block instanciate into controler"
+      raise Exception("Error: %s" % params["errorMessage"])
+
     val_ret = self._command_switchs_list[block_switch_number].write_output( val_to_send )
     
     self.set_switch_value_handle ("on press:    %s" % bin(val_ret) )

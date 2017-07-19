@@ -242,7 +242,7 @@ function drawWayTracking() {
   // rail park left hight
   context.beginPath();
   context.moveTo(80, 60);
-  context.lineTo(240, 60);
+  context.lineTo(220, 60);
   context.strokeStyle = 'black';
   context.stroke();
 
@@ -253,9 +253,9 @@ function drawWayTracking() {
   context.stroke();
 
   context.beginPath();
-  context.moveTo(240, 60);
+  context.moveTo(220, 60);
   context.lineTo(250, 60);
-  context.strokeStyle = 'black';
+  context.strokeStyle = (switchWayCache["Way_12"] == 1) ? 'black' : 'grey';;
   context.stroke();
 
   // park left rail hight curve
@@ -385,5 +385,5 @@ function initApplication() {
   drawWayTracking();
   createSwitchBlockCommand();
   createSwitchElements();
-  console.log("Application initializing done");
+  console.log("initializing done");
 }
