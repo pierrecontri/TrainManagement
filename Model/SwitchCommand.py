@@ -36,3 +36,16 @@ class SwitchCommand(object):
   @property
   def group(self):
     return self._group
+
+  @group.setter
+  def group(self, value):
+    self._group = value
+
+  def switch_to_json(switch_object):
+    return { 'switchName': switch_object.name, 'switchValue': switch_object.state, 'switchGroup': switch_object.group, 'isPersistent': not(switch_object._is_press) }
+
+  def switch_from_json(json_object):
+    sw = SwitchCommand(name = json_object["switchName"], is_press = not(json_object["isPersistent"]) if "isPersistent" in json_object.keys() else True)
+    sw.group = json_object["switchGroup"] if "switchGroup" in json_object.keys() else "_".join(sw.name.split("_")[0:-2])
+    sw.state = int(json_object["switchValue"]) if "switchValue" in json_object.keys() else SwitchCommand.OFF
+    return sw

@@ -61,33 +61,50 @@ Main Abstract Class for Train Management Controler
 
   def switch_value(self, switch_params = {}):
 
-    tmp_sw_name = switch_params["switchName"]
-    print("switchName: %s" % tmp_sw_name)
+    sw_object = SwitchCommand.switch_from_json(switch_params)
+    print("switchName: %s" % sw_object.name)
 
     switch_params["result"] = "NOK"
 
-    if not tmp_sw_name in self._switchs_list.keys(): self._switchs_list[tmp_sw_name] = SwitchCommand(tmp_sw_name, "_".join(tmp_sw_name.split("_")[0:-2]))
+    if not sw_object.name in self._switchs_list.keys(): self.bind_switch(switch_params)
     else:
+
       # get all connectors in the same group and put it to OFF
-      tmp_switch_list = [tmp_switch for tmp_switch in self._switchs_list.values() if tmp_switch.group == self._switchs_list[tmp_sw_name].group and not tmp_switch.name == tmp_sw_name]
-      for t_switch in tmp_switch_list: t_switch.state = SwitchCommand.OFF
-      # self._switchs_list[tmp_sw_name].switch_value()
-      self._switchs_list[tmp_sw_name].state = SwitchCommand.ON
+      tmp_switch_list = [tmp_switch for tmp_switch in self._switchs_list.values() if tmp_switch.group == self._switchs_list[sw_object.name].group and not tmp_switch.name == sw_object.name]
+      for t_switch in tmp_switch_list:
+        t_switch.state = SwitchCommand.OFF
+        if not(t_switch.is_press):
+          self.set_switch_value( {'switchName': t_switch.name, 'switchValue': t_switch.state, 'isPersistent': not(t_switch.is_press)} )
+
+      # set to ON the switch value
+      self._switchs_list[sw_object.name].state = SwitchCommand.ON
+
       # call the electronic part
       self.set_switch_value(switch_params)
       switch_params["result"] = "OK"
 
     return switch_params
 
+  def bind_switch(self, switch_params):
+    switch_object = SwitchCommand.switch_from_json(switch_params)
+    #instanciate the switch command object
+    self._switchs_list[switch_object.name] = switch_object
+
+    switch_obj_return = SwitchCommand.switch_to_json(switch_object)
+    switch_obj_return["result"] = "OK"
+
+    return switch_obj_return
+
   def get_switch(self, switch_name, is_press = True):
-    if not switch_name in self._switchs_list.keys(): self._switchs_list[switch_name] = SwitchCommand(switch_name, "_".join(switch_name.split("_")[0:-2]), is_press)
+    if not switch_name in self._switchs_list.keys(): self.bind_switch( { 'switchName': switch_name, 'switchValue': '0', 'isPersistent': not(is_press) } )
+
     return self._switchs_list[switch_name]
 
   def get_switch_value(self, params):
     """
     Return the switch value
     """
-    params["switchValue"] = self.get_switch(params["switchName"], not(params["isPersistent"] or False)).state
+    params["switchValue"] = self.get_switch(params["switchName"], not(params["isPersistent"] if "isPersistent" in params.keys() else False)).state
     params["result"] = "OK"
     self.get_switch_value_handle ( "get_switch_value : sw name '%(switchName)s', sw value '%(switchValue)s', result '%(result)s'" % params )
 
@@ -99,7 +116,7 @@ Main Abstract Class for Train Management Controler
     Send order to the electronic component
     """
 
-    switch_name, switch_value, switch_persist = (params["switchName"], params["switchValue"], params["isPersistent"] or False)
+    switch_name, switch_value, switch_persist = (params["switchName"], params["switchValue"], params["isPersistent"] if "isPersistent" in params.keys() else False)
     print( "set_switch_value : sw name '%s', sw value '%s'" % (switch_name, switch_value) )
 
     tmp_switch = self.get_switch(params["switchName"], not(switch_persist))
@@ -107,7 +124,7 @@ Main Abstract Class for Train Management Controler
     block_switch_number = int(sw_id / 8)
     tmp_switch_value = sw_id % 8
 
-    val_to_send = 1 << tmp_switch_value
+    val_to_send = self._switchs_list[switch_name].state << tmp_switch_value
 
     if block_switch_number > len(self._command_switchs_list) - 1:
       params["result"] = "NOK"

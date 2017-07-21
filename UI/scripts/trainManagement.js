@@ -111,9 +111,13 @@ function initSwitchs() {
 
     var is_persist = isPermanentSwitch(lstSwitchsButton[i].id);
 
-    setTimeout(fctGetSwitchValue, 500 * (i + 1), lstSwitchsButton[i].id, is_persist);
+    setTimeout(fctBindSwitchValue, 500 * (i + 1), lstSwitchsButton[i].id, is_persist);
   }
   setTimeout(drawWayTracking, 9000);
+}
+
+function fctBindSwitchValue(swId, is_persist = false) {
+  send_command('bind_switch', { 'switchName': swId, 'isPersistent': is_persist }, returnSwitch);
 }
 
 function fctGetSwitchValue(swId, is_persist = false) {
