@@ -99,40 +99,14 @@ PiControler the real controler to manage Raspberry Pi
 
     return {'stop_demo': 'done'}
 
-  # def get_switch_value(self, params):
-    # params["switchValue"] = self.get_switch(params["switchName"]).state
-    # params["result"] = "OK"
-
-    # return params
-
-  # def set_switch_value(self, params):
-    # """
-    # Set the switch to other value
-    # Send order to the electronic component
-    # """
-
-    # tmp_switch = self.get_switch(params["switchName"])
-    # sw_id = int(tmp_switch.name.split("_").pop())
-    # block_switch_number = int(sw_id / 8)
-    # tmp_switch_value = sw_id % 8
-
-    # self._command_switchs_list[block_switch_number].write_output( chr( 97 + tmp_switch_value )
-
-    # if tmp_switch.is_press:
-      # time.sleep(0.2)
-      # self._command_switchs_list[block_switch_number].write_output( " " )
-
-    # params["result"] = "OK"
-
-    # return params
-
   def get_switch_value_handle(self, value):
     pass
 
   def set_switch_value_handle(self, value):
-    ledout_values = [83,82,58,69,64,16,0,4]
-    bus.write_i2c_block_data(DEVICE_ADDRESS, DEVICE_REG_LEDOUT0, ledout_values)
-    pass
+    print(value)
+    arr_val = [(value >> 24) & 0xff, (value >> 16) & 0xff, (value >> 8) & 0xff,(value >> 0) & 0xff]
+    bus.write_i2c_block_data(0x04, arr_val[0], arr_val[1:])
+    return
 
 
 # units tests
@@ -140,6 +114,7 @@ if __name__ == "__main__":
     print("PiControler")
     ctrl = Controler()
     ctrl.do("get_help")
+    ctrl.set_switch_value_handle(52478561)
     from time import sleep
     ctrl.start_demo()
     sleep(10)
