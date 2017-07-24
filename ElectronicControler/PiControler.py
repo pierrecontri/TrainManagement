@@ -103,9 +103,14 @@ PiControler the real controler to manage Raspberry Pi
     pass
 
   def set_switch_value_handle(self, value):
-    print(value)
     arr_val = [(value >> 24) & 0xff, (value >> 16) & 0xff, (value >> 8) & 0xff,(value >> 0) & 0xff]
-    bus.write_i2c_block_data(0x04, arr_val[0], arr_val[1:])
+    # append the command array for i2c ("SR:>" or "lcdl1:>")
+    sendShiftRegister = [ord(i) for i in 'SR:>']
+    sendShiftRegister.extend(arr_val)
+    bus.write_i2c_block_data(DEVICE_ADDRESS, sendShiftRegister[0], sendShiftRegister[1:])
+    sendLcd = [ord(i) for i in 'lcdl2:>']
+    sendLcd.extend(arr_val)
+    bus.write_i2c_block_data(DEVICE_ADDRESS, sendLcd[0], sendLcd[1:])
     return
 
 
