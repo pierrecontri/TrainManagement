@@ -17,6 +17,7 @@ if __name__ == "__main__":
     # -----------------------------------------------------------------------------
 
 import threading
+import smbus
 from Controler.TrainManagementControler import TrainManagementControler
 
 from ElectronicComponents import *
@@ -27,6 +28,12 @@ import time
 
 # thread queues list
 thread_queues_demo = []
+
+bus = smbus.SMBus(1)    # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
+
+DEVICE_ADDRESS = 0x04
+DEVICE_REG_MODE1 = 0x00
+DEVICE_REG_LEDOUT0 = 0x1d
 
 def broadcast_thread_event(data, queue_obj):
     for q in queue_obj:
@@ -119,12 +126,12 @@ PiControler the real controler to manage Raspberry Pi
 
     # return params
 
-  def get_switch_value_handle(self, param):
-    #print(param)
+  def get_switch_value_handle(self, value):
     pass
 
-  def set_switch_value_handle(self, param):
-    #print(param)
+  def set_switch_value_handle(self, value):
+    ledout_values = [83,82,58,69,64,16,0,4]
+    bus.write_i2c_block_data(DEVICE_ADDRESS, DEVICE_REG_LEDOUT0, ledout_values)
     pass
 
 

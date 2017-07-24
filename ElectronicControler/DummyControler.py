@@ -91,11 +91,11 @@ class Controler(TrainManagementControler):
 
     # return params
 
-  def get_switch_value_handle(self, param):
-    print(param)
+  def get_switch_value_handle(self, value):
+    print(value)
 
-  def set_switch_value_handle(self, param):
-    print(param)
+  def set_switch_value_handle(self, value):
+    print(value)
 
 # units tests
 if __name__ == "__main__":
