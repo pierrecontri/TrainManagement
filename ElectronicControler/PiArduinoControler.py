@@ -28,8 +28,6 @@ import time
 # thread queues list
 thread_queues_demo = []
 
-bus = smbus.SMBus(1)
-
 DEVICE_ADDRESS = 0x04
 
 def broadcast_thread_event(data, queue_obj):
@@ -42,12 +40,11 @@ PiControler the real controler to manage Raspberry Pi
   """
 
   def __init__(self):
-    self._number_of_switchs_blocks = 3
+    self._number_of_switchs_blocks = 4
     TrainManagementControler.__init__(self)
     InitGPIO.init_electronic()
-    #self._shift_register = SN74HC595( inputs_ports = {'ser':5,'oe':6,'rclk':13,'srclk':19,'srclr':26}, outputs_len = 8 * len( self._command_switchs_list ) )
-    #self._shift_register.allow_output(True)
-    #for t_cmd_switch in self._command_switchs_list: t_cmd_switch.component_interface = self._shift_register
+    self.slave_addr = DEVICE_ADDRESS
+    self.bus = smbus.SMBus(1)
 
   @property
   def number_of_switchs_blocks(self):
@@ -109,11 +106,11 @@ PiControler the real controler to manage Raspberry Pi
     sendShiftRegister = [ord(i) for i in 'SR:>']
     sendShiftRegister.extend(arr_val)
     print(sendShiftRegister)
-    bus.write_i2c_block_data(DEVICE_ADDRESS, sendShiftRegister[0], sendShiftRegister[1:])
+    self.bus.write_i2c_block_data(self.slave_addr, sendShiftRegister[0], sendShiftRegister[1:])
     sendLcd = [ord(i) for i in 'lcdl2:>']
     sendLcd.extend(arr_val)
     print(sendLcd)
-    bus.write_i2c_block_data(DEVICE_ADDRESS, sendLcd[0], sendLcd[1:])
+    self.bus.write_i2c_block_data(self.slave_addr, sendLcd[0], sendLcd[1:])
     return
 
 
