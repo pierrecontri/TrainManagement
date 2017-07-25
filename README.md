@@ -14,3 +14,5 @@ you can append an Arduino if you want to split in many layers the control part.
 
 The UI will interact by web services (protocol http or pipe -prefered-) in a first time under WebBrowser.
 A second UI will create in GTK+ for multi-plateform. A third maybe for mobiles (but not sure cause doublons with Web Browser).
+
+In Raspberry, install the bollte and smbus python libraries.
