@@ -163,6 +163,10 @@ Main Abstract Class for Train Management Controler
     pass
 
   @abc.abstractmethod
+  def send_message(self, message):
+    pass
+
+  @abc.abstractmethod
   def get_switch_value_handle(self, params):
     pass
 

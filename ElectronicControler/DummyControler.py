@@ -57,39 +57,9 @@ class Controler(TrainManagementControler):
   def stop_demo(self):
     return {'stop_demo': 'done'}
 
-  # def get_switch_value(self, params):
-    # """
-    # Return the switch value
-    # """
-    # params["switchValue"] = self.get_switch(params["switchName"]).state
-    # params["result"] = "OK"
-    # print( "get_switch_value : sw name '%(switchName)s', sw value '%(switchValue)s', result '%(result)s'" % params )
-
-    # return params
-  
-  # def set_switch_value(self, params):
-    # """
-    # Set the switch to other value
-    # Send order to the electronic component
-    # """
-
-    # switch_name, switch_value = (params["switchName"], params["switchValue"])
-    # print( "set_switch_value : sw name '%s', sw value '%s'" % (switch_name, switch_value) )
-
-    # tmp_switch = self.get_switch(params["switchName"])
-    # sw_id = int(tmp_switch.name.split("_").pop())
-    # block_switch_number = int(sw_id / 8)
-    # tmp_switch_value = sw_id % 8
-
-    # print("on press:    %s" % bin(self._command_switchs_list[block_switch_number].write_output( chr( 97 + tmp_switch_value ) )) )
-
-    # if tmp_switch.is_press:
-      # time.sleep(0.2)
-      # print("after press: %s" % bin(self._command_switchs_list[block_switch_number].write_output( " " )) )
-
-    # params["result"] = "OK"
-
-    # return params
+  def send_message(self, message):
+    print("MSG: %s" % message)
+    return
 
   def get_switch_value_handle(self, value):
     print(value)

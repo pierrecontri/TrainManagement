@@ -37,7 +37,7 @@ PiControler the real controler to manage Raspberry Pi
   """
 
   def __init__(self):
-    self._number_of_switchs_blocks = 3
+    self._number_of_switchs_blocks = 4
     TrainManagementControler.__init__(self)
     InitGPIO.init_electronic()
     self._shift_register = SN74HC595( inputs_ports = {'ser':5,'oe':6,'rclk':13,'srclk':19,'srclr':26}, outputs_len = 8 * len( self._command_switchs_list ) )
@@ -90,6 +90,9 @@ PiControler the real controler to manage Raspberry Pi
     self.t_time.join()
 
     return {'stop_demo': 'done'}
+
+  def send_message(self, message):
+    pass
 
   def get_switch_value_handle(self, value):
     pass
