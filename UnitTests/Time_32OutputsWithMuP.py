@@ -30,7 +30,7 @@ def time_32outputs( master_thread_queue = None ):
     seven_digits_3 = SevenDigits( component_interface = sixteen_outputs, led_not_on = True, use_car_matrix = True, digits_rangs = 1 )
     seven_digits_4 = SevenDigits( component_interface = sixteen_outputs, led_not_on = True, use_car_matrix = True, digits_rangs = 0 )
 
-    print("Time ON")
+    print("Time  ON")
 
     sixteen_outputs.allow_output(True)
     blinking_point = False
@@ -61,7 +61,7 @@ def time_32outputs( master_thread_queue = None ):
     # clean the GPIO
     InitGPIO.clean()
 
-    print("Time Off")
+    print("Time  OFF")
 
 
 if __name__ == '__main__':

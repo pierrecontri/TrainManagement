@@ -73,8 +73,9 @@ Main Abstract Class for Train Management Controler
       tmp_switch_list = [tmp_switch for tmp_switch in self._switchs_list.values() if tmp_switch.group == self._switchs_list[sw_object.name].group and not tmp_switch.name == sw_object.name]
       for t_switch in tmp_switch_list:
         t_switch.state = SwitchCommand.OFF
-        if not(t_switch.is_press):
-          self.set_switch_value( {'switchName': t_switch.name, 'switchValue': t_switch.state, 'isPersistent': not(t_switch.is_press)} )
+      #  if not(t_switch.is_press):
+      #    self.set_switch_value( {'switchName': t_switch.name, 'switchValue': t_switch.state, 'isPersistent': not(t_switch.is_press)} )
+      #    time.sleep(0.3)
 
       # set to ON the switch value
       self._switchs_list[sw_object.name].state = SwitchCommand.ON
@@ -132,6 +133,8 @@ Main Abstract Class for Train Management Controler
       raise Exception("Error: %s" % params["errorMessage"])
 
     val_ret = self._command_switchs_list[block_switch_number].write_output( val_to_send )
+
+    print("--> Value to send: %s" % val_ret)
     
     print("on press:    ")
     self.set_switch_value_handle ( val_ret )

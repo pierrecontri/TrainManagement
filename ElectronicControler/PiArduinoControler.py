@@ -17,6 +17,7 @@ if __name__ == "__main__":
     # -----------------------------------------------------------------------------
 
 import threading
+import smbus
 from Controler.TrainManagementControler import TrainManagementControler
 
 from ElectronicComponents import *
@@ -26,6 +27,10 @@ import time
 
 # thread queues list
 thread_queues_demo = []
+
+bus = smbus.SMBus(1)
+
+DEVICE_ADDRESS = 0x04
 
 def broadcast_thread_event(data, queue_obj):
     for q in queue_obj:
@@ -40,9 +45,9 @@ PiControler the real controler to manage Raspberry Pi
     self._number_of_switchs_blocks = 3
     TrainManagementControler.__init__(self)
     InitGPIO.init_electronic()
-    self._shift_register = SN74HC595( inputs_ports = {'ser':5,'oe':6,'rclk':13,'srclk':19,'srclr':26}, outputs_len = 8 * len( self._command_switchs_list ) )
-    self._shift_register.allow_output(True)
-    for t_cmd_switch in self._command_switchs_list: t_cmd_switch.component_interface = self._shift_register
+    #self._shift_register = SN74HC595( inputs_ports = {'ser':5,'oe':6,'rclk':13,'srclk':19,'srclr':26}, outputs_len = 8 * len( self._command_switchs_list ) )
+    #self._shift_register.allow_output(True)
+    #for t_cmd_switch in self._command_switchs_list: t_cmd_switch.component_interface = self._shift_register
 
   @property
   def number_of_switchs_blocks(self):
@@ -95,10 +100,20 @@ PiControler the real controler to manage Raspberry Pi
     pass
 
   def set_switch_value_handle(self, value):
+    #arr_val = [(value >> 24) & 0xff, (value >> 16) & 0xff, (value >> 8) & 0xff, (value >> 0) & 0xff]
     arr_val = [(value >> (8 * i)) & 0xff for i in range(0,4) ]
     print("=============")
     print("value: %s" % value)
     print(arr_val)
+    # append the command array for i2c ("SR:>" or "lcdl1:>")
+    sendShiftRegister = [ord(i) for i in 'SR:>']
+    sendShiftRegister.extend(arr_val)
+    print(sendShiftRegister)
+    bus.write_i2c_block_data(DEVICE_ADDRESS, sendShiftRegister[0], sendShiftRegister[1:])
+    sendLcd = [ord(i) for i in 'lcdl2:>']
+    sendLcd.extend(arr_val)
+    print(sendLcd)
+    bus.write_i2c_block_data(DEVICE_ADDRESS, sendLcd[0], sendLcd[1:])
     return
 
 
@@ -114,4 +129,4 @@ if __name__ == "__main__":
     ctrl.stop_demo()
 
 # using
-# python -m ElectronicControler.PiControler
+# python -m ElectronicControler.PiArduinoControler

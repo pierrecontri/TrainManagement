@@ -21,9 +21,6 @@ def chase_demo( master_thread_queue = None ):
         t_queue = queue.Queue()
         master_thread_queue.append(t_queue)
 
-    #init electronic components
-    InitGPIO.init_electronic()
-
     stop_button = StopButton(STOP_BUTTON)
     eight_outputs = SN74HC595( {'ser':5,'oe':6,'rclk':13,'srclk':19,'srclr':26} )
     chase = Chase()
@@ -43,14 +40,18 @@ def chase_demo( master_thread_queue = None ):
 
     eight_outputs.write_output( 128 )
 
-    # clean the GPIO
-    InitGPIO.clean()
     print("Chase OFF")
 
 
 if __name__ == '__main__':
     try:
+        #init electronic components
+        InitGPIO.init_electronic()
         chase_demo()
+        # clean the GPIO
+        InitGPIO.clean()
     except KeyboardInterrupt:
         InitGPIO.clean()
+    except:
+        pass
     
