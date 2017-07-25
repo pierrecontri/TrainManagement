@@ -94,9 +94,11 @@ PiControler the real controler to manage Raspberry Pi
     return {'stop_demo': 'done'}
 
   def send_message(self, message):
-    data_msg = [ord(i) for i in 'lcdl2:>']
-    data_msg.extend([ord(j) for j in message])
-    self.bus.write_i2c_block_data(self.slave, data_msg[0], data_msg[1:])
+    data_msg = [ord(i) for i in "lcdl2:>"]
+    data_msg.extend([ord(j) for j in str(message)])
+    self.bus = smbus.SMBus(1)
+    self.bus.write_i2c_block_data(self.slave_addr, data_msg[0], data_msg[1:])
+    self.bus.close()
     return
 
   def get_switch_value_handle(self, value):
@@ -125,8 +127,10 @@ if __name__ == "__main__":
     print("PiControler")
     ctrl = Controler()
     ctrl.do("get_help")
-    ctrl.set_switch_value_handle(52478561)
-    ctrl.send_message("essai concluant")
+    ctrl.send_message("lcdl1:>essai concluant")
+    ctrl.send_message("lcdl2:>très concluant")
+    #ctrl.set_switch_value_handle(52478561)
+    ctrl.send_message("lcd  ready to start real life")
     from time import sleep
     ctrl.start_demo()
     sleep(10)
