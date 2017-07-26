@@ -23,7 +23,8 @@ import abc
 from Model import SwitchCommand
 from ElectronicModel import EightIO
 
-import time
+import threading
+from time import sleep
 
 class TrainManagementControler(metaclass=abc.ABCMeta):
   """
@@ -140,7 +141,7 @@ Main Abstract Class for Train Management Controler
     self.set_switch_value_handle ( val_ret )
 
     if tmp_switch.is_press:
-      time.sleep(0.2)
+      sleep(0.2)
       val_ret = self._command_switchs_list[block_switch_number].write_output( " " )
 
       print("after press: ")
@@ -149,6 +150,13 @@ Main Abstract Class for Train Management Controler
     params["result"] = "OK"
 
     return params
+
+  def async_send_message(self, async_message):
+    t_msg = threading.Thread( target=self.send_message, args=(async_message,) )
+    t_msg.daemon = False
+    t_msg.start()
+    sleep(0.8)
+    return
 
   @abc.abstractmethod
   def start_demo(self):

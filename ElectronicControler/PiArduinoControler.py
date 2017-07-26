@@ -23,12 +23,14 @@ from Controler.TrainManagementControler import TrainManagementControler
 from ElectronicComponents import *
 
 import queue
-import time
+from time import sleep
 
 # thread queues list
 thread_queues_demo = []
 
 DEVICE_ADDRESS = 0x04
+BUS_NUMBER = 1
+WAIT_TIME_WRITE_BUS = 0.2
 
 def broadcast_thread_event(data, queue_obj):
     for q in queue_obj:
@@ -39,12 +41,14 @@ class Controler(TrainManagementControler):
 PiControler the real controler to manage Raspberry Pi
   """
 
+  _lock = threading.Lock()
+
   def __init__(self):
-    self._number_of_switchs_blocks = 4
+    self._number_of_switchs_blocks = 3
     TrainManagementControler.__init__(self)
     InitGPIO.init_electronic()
     self.slave_addr = DEVICE_ADDRESS
-    self.bus = smbus.SMBus(1)
+    self.bus = smbus.SMBus(BUS_NUMBER)
 
   @property
   def number_of_switchs_blocks(self):
@@ -94,11 +98,20 @@ PiControler the real controler to manage Raspberry Pi
     return {'stop_demo': 'done'}
 
   def send_message(self, message):
-    data_msg = [ord(i) for i in "lcdl2:>"]
-    data_msg.extend([ord(j) for j in str(message)])
-    self.bus = smbus.SMBus(1)
-    self.bus.write_i2c_block_data(self.slave_addr, data_msg[0], data_msg[1:])
-    self.bus.close()
+    
+    if "\n" in message:
+        message = ''.join([tmp_msg.ljust(16, ' ') for tmp_msg in message.split('\n')])
+    else:
+      message = message.ljust(32, ' ')
+
+    data_msg_l1 = [ord(i) for i in "lcdl1:>"] + [ord(j) for j in message[0:16]]
+    data_msg_l2 = [ord(i) for i in "lcdl2:>"] + [ord(j) for j in message[16:32]]
+
+    for data_msg in (data_msg_l1, data_msg_l2):
+      with Controler._lock:
+        self.bus.write_i2c_block_data(self.slave_addr, data_msg[0], data_msg[1:])
+        sleep(WAIT_TIME_WRITE_BUS)
+
     return
 
   def get_switch_value_handle(self, value):
@@ -106,7 +119,7 @@ PiControler the real controler to manage Raspberry Pi
 
   def set_switch_value_handle(self, value):
     #arr_val = [(value >> 24) & 0xff, (value >> 16) & 0xff, (value >> 8) & 0xff, (value >> 0) & 0xff]
-    arr_val = [(value >> (8 * i)) & 0xff for i in range(0,4) ]
+    arr_val = [(value >> (8 * i)) & 0xff for i in range(0,self.number_of_switchs_blocks) ]
     print("=============")
     print("value: %s" % value)
     print(arr_val)
@@ -114,11 +127,19 @@ PiControler the real controler to manage Raspberry Pi
     sendShiftRegister = [ord(i) for i in 'SR:>']
     sendShiftRegister.extend(arr_val)
     print(sendShiftRegister)
-    self.bus.write_i2c_block_data(self.slave_addr, sendShiftRegister[0], sendShiftRegister[1:])
+
+    with Controler._lock:
+      self.bus.write_i2c_block_data(self.slave_addr, sendShiftRegister[0], sendShiftRegister[1:])
+      sleep(WAIT_TIME_WRITE_BUS)
+      
     sendLcd = [ord(i) for i in 'lcdl2:>']
     sendLcd.extend(arr_val)
     print(sendLcd)
-    self.bus.write_i2c_block_data(self.slave_addr, sendLcd[0], sendLcd[1:])
+    
+    with Controler._lock:
+      self.bus.write_i2c_block_data(self.slave_addr, sendLcd[0], sendLcd[1:])
+      sleep(WAIT_TIME_WRITE_BUS)
+
     return
 
 
@@ -127,11 +148,11 @@ if __name__ == "__main__":
     print("PiControler")
     ctrl = Controler()
     ctrl.do("get_help")
-    ctrl.send_message("lcdl1:>essai concluant")
-    ctrl.send_message("lcdl2:>très concluant")
-    #ctrl.set_switch_value_handle(52478561)
-    ctrl.send_message("lcd  ready to start real life")
-    from time import sleep
+    #ctrl.async_send_message("Pont-a-Mousson".ljust(16, ' ') + "5mm arret".ljust(16, ' '))
+    ctrl.async_send_message("Pont-a-Mousson\n5mm arret")
+    sleep(10)
+    ctrl.set_switch_value_handle(52478561)
+    ctrl.async_send_message("lcd  ready to start real life")
     ctrl.start_demo()
     sleep(10)
     ctrl.stop_demo()
