@@ -384,9 +384,28 @@ function drawWayTracking() {
   //context.clear();
 }
 
+function createWithConfiguration() {
+  if(!document.configuration) return;
+
+  var divDashboardCommand = document.getElementById('dashboardCommand');
+  if (!divDashboardCommand) return;
+
+  for (objectConfig in document.configuration) {
+    var divObj = document.createElement('div');
+    divObj.id = objectConfig;
+    divObj.className = document.configuration[objectConfig].type;
+    var divTitle = document.createElement('div');
+    divTitle.innerHTML = document.configuration[objectConfig].title;
+    divObj.appendChild(divTitle);
+    divDashboardCommand.appendChild(divObj);
+  }
+
+}
+
 // ----- Main Init -----
 function initApplication() {
   drawWayTracking();
+  createWithConfiguration();
   createSwitchBlockCommand();
   createSwitchElements();
   console.log("initializing done");
