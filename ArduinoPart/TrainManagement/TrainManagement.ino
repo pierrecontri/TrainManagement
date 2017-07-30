@@ -95,6 +95,28 @@ void writeShiftRegister(byte data[]) {
 }
 
 ////////////////////////////
+// Data treatment
+void dataTreatment(String dataStr) {
+  if(dataStr.substring(0,3) == "SR:" && sizeof(dataStr) >= 8) {
+    // sending to Shift Register
+    byte dataToSend[4];
+    Serial.print("Shift Register:");
+    for(int j = 0; j < 4; j++) {
+      dataToSend[j] = dataStr[j + 4];
+      Serial.print(" " + String(dataToSend[j]));
+    }
+    Serial.println();
+    writeShiftRegister(dataToSend);
+  }
+  else if (dataStr.substring(0,4) == "lcd:") {
+    Serial.println("lcd print: " + dataStr);
+    // sending to lcd
+    lcdPrint(dataStr.substring(4));
+  }
+}
+
+
+////////////////////////////
 // Wire function part
 // callback for received data
 void wireReceiveData(int byteCount){
@@ -103,27 +125,12 @@ void wireReceiveData(int byteCount){
   arrayData[byteCount] = 0;
   int i = 0;
   while(Wire.available() && byteCount--) {
-    int receiveChar = Wire.read();
-    arrayData[i++] = receiveChar;
+    arrayData[i++] = (byte)Wire.read();
   }
 
   if(sizeof(arrayData) < 3) return;
-
   String strData = String((char*)arrayData);
-  
-  if(strData.substring(0,3) == "SR:" && sizeof(arrayData) >= 8) {
-    // sending to Shift Register
-    byte dataToSend[4];
-    for(int j = 0; j < 4; j++) {
-      dataToSend[j] = arrayData[j + 4];
-    }
-    writeShiftRegister(dataToSend);
-  }
-  else if (strData.substring(0,3) == "lcd") {
-    // sending to lcd
-    lcdPrint(strData);
-  }
-
+  dataTreatment(strData);
 }
 
 // callback for sending data
@@ -166,7 +173,6 @@ void lcdPrint(String inputString) {
       printLine(1, inputString.substring(16,(sizeOfCommand < 32) ? sizeOfCommand : 32));
     }
   }
-  Serial.println(inputString + " done\r\n");
 }
 
 /////////////////////////
@@ -184,7 +190,7 @@ void serialEvent(){
     }
   }
 
-  lcdPrint(inputString);
+  dataTreatment(inputString);
 
   // clear the string:
   inputString = "";
