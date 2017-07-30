@@ -99,7 +99,7 @@ PiControler the real controler to manage Raspberry Pi
     pass
 
   def set_switch_value_handle(self, value):
-    arr_val = [(value >> (8 * i)) & 0xff for i in range(0, self.number_of_switchs_blocks) ]
+    arr_val = [ (value >> (8 * i)) & 0xff for i in range(0, self.number_of_switchs_blocks) ]
     print("=============")
     print("value: %s" % value)
     print(arr_val)

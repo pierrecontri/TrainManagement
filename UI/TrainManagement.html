@@ -40,34 +40,34 @@
       <!-- Page content -->
       <div class="page" id="idPage">
   <p>On this dashboard, you can control switchs, lights, railways sections of your train</p>
+  <br/>
+
+  <div id="demo_part">
+    <input type="button" value="Start Demo" onclick="javascript:start_demo();" />
+    <input type="button" value="Stop Demo" onclick="javascript:stop_demo();" />
+    <div id="test_demo_result"></div>
+  </div>
+
+  <div class="paragrapheText">
+    <br/>
+  </div>
 
   <div id="connection">
     <input id="server_name" type="text" value="localhost" />
     <input type="button" value="Initialize" onclick="javascript:initSwitchs();" />
   </div>
 
-  <div id="demo_part">
-    <input type="button" value="Start Demo" onclick="javascript:start_demo();" />
-    <input type="button" value="Stop Demo" onclick="javascript:stop_demo();" />
-    <div id="test_demo_result">
-    </div>
-  </div>
-
-  <div class="paragrapheText">
-    <br />
-  </div>
+  <br/>
 
   <div id="graphicalSection">
-    <canvas id="wayTracking" width="580" height="185" style="border:1px red solid;" />
+    <canvas id="wayTracking" width="580" height="185" />
   </div>
 
   <div id="dashboardCommand" />
 
   <div id="dashboardInformations">
-
     <div id="wsError">
     </div>
-
   </div>
 
       </div> <!-- end div page -->
