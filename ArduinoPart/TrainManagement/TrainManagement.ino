@@ -109,8 +109,9 @@ void dataTreatment(String dataStr) {
 
   if (dataStr.substring(0, lengthStartFrame) == "SR:>" && dataStrLen > (lengthStartFrame + 1)) {
     //int nbSR = dataStrLen - (lengthStartFrame + 1 /* due to \n */);
-    int nbSR = (dataStr.substring(4,5)).toInt();
-    String strValue = dataStr.substring(6, dataStrLen - 1);
+    int indexSep = dataStr.indexOf(';');
+    int nbSR = (dataStr.substring(4,indexSep)).toInt();
+    String strValue = dataStr.substring(indexSep + 1, dataStrLen - 1);
     long value = strValue.toInt();
     // sending to Shift Register
     byte dataToSend[nbSR];
