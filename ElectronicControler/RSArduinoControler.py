@@ -18,8 +18,16 @@ import threading
 import serial
 from Controler.TrainManagementControler import TrainManagementControler
 from time import sleep
+import queue
+
+# thread queues list
+thread_queues_demo = []
 
 WAIT_TIME_WRITE_BUS = 0.2
+
+def broadcast_thread_event(data, queue_obj):
+    for q in queue_obj:
+        q.put(data)
 
 class Controler(TrainManagementControler):
   """
@@ -51,11 +59,31 @@ PiControler the real controler to manage Raspberry Pi
   def get_status(self):
     return { 'Status': 'System OK' }
 
+  def tty_demo(self):
+
+    for j in range (0,3):
+      for i in range(0, 256):
+        self.set_switch_value_handle( i << (8*j) )
+        sleep(WAIT_TIME_WRITE_BUS)
+
+    self.set_switch_value_handle(0)
+
   def start_demo(self):
+
+    thread_queues_demo.clear()
+    self.t_chase = threading.Thread( target=self.tty_demo,) #args=(thread_queues_demo,) )
+
+    self.t_chase.daemon = True
+
+    self.t_chase.start()
 
     return {'start_demo': 'done'}
 
   def stop_demo(self):
+
+    broadcast_thread_event("stop", thread_queues_demo)
+
+    self.t_chase.join()
 
     return {'stop_demo': 'done'}
 
@@ -80,28 +108,28 @@ PiControler the real controler to manage Raspberry Pi
     pass
 
   def set_switch_value_handle(self, value):
-    arr_val = [ (value >> (8 * i)) & 0xff for i in range(0,self.number_of_switchs_blocks) ]
     print("=============")
-    print("value: %s" % value)
-    print(arr_val)
+    arr_infos = [ str(value >> (y * 8) & 0xff) for y in range(0, self.number_of_switchs_blocks) ]
+    print(arr_infos)
+    info_to_send = "%s;%s" % ( str(self.number_of_switchs_blocks), str(value) )
+    print("Info to send: %s" % info_to_send)
     # append the command array for RS232 ("SR:>" or "lcdl1:>")
-    #sendShiftRegister = ('SR:>' + "".join([chr(i) for i in arr_val]) + '\n').encode('latin1')
-    # send 'SR:>3,1987126688\n'
-    sendShiftRegister = ('SR:>' + str(self.number_of_switchs_blocks) + ',' + str(value) + '\n').encode('latin1')
+    # send 'SR:>3;1987126688\n'
+    send_shift_register = ('SR:>' + info_to_send + '\n').encode('latin1')
 
     with Controler._lock:
       # send the character to the device
-      print(sendShiftRegister)
-      self.serial.write(sendShiftRegister)
+      print(send_shift_register)
+      self.serial.write(send_shift_register)
       self.serial.flushOutput()
       sleep(WAIT_TIME_WRITE_BUS)
 
-    sendLcd = ('lcdl2:>' + "".join([chr(i) for i in arr_val]) +'\n').encode('latin1')
+    send_lcd = ('lcdl2:>' + " ".join(arr_infos) +'\n').encode('latin1')
     
     with Controler._lock:
       # send the character to the device
-      print(sendLcd)
-      self.serial.write(sendLcd)
+      print(send_lcd)
+      self.serial.write(send_lcd)
       self.serial.flushOutput()
       sleep(WAIT_TIME_WRITE_BUS)
 
@@ -117,28 +145,10 @@ if __name__ == "__main__":
     ctrl = Controler()
     ctrl.do("get_help")
     ctrl.async_send_message("Pont-a-Mousson\n5mm arret")
-
-    ctrl.set_switch_value_handle(52478561)
-    #print(ctrl.get_serial_info())
-    sleep(3)
-    ctrl.set_switch_value_handle(20)
-    sleep(3)
-    ctrl.set_switch_value_handle(167)
-    sleep(3)
-
-    ctrl.set_switch_value_handle(0)
-    sleep(3)
-
-    for j in range (0,3):
-      for i in range(0, 20):
-        ctrl.set_switch_value_handle( i << (8*j) )
-        sleep(0.2)
-
-    ctrl.set_switch_value_handle(0)
     sleep(3)
     ctrl.async_send_message("lcd  ready to start real life")
     ctrl.start_demo()
-    sleep(3)
+    sleep(WAIT_TIME_WRITE_BUS)
     ctrl.stop_demo()
 
 # using
