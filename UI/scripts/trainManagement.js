@@ -7,11 +7,11 @@
 */
 
 function start_demo() {
-  send_command('start_demo', { }, return_test_demo);
+  send_command('demo', 'start', {'tty':'test'}, return_test_demo);
 }
 
 function stop_demo() {
-  send_command('stop_demo', { }, return_test_demo);
+  send_command('demo', 'stop', { }, return_test_demo);
 }
 
 function return_test_demo(jsonResponse) {
@@ -56,7 +56,7 @@ function createSwitchElements() {
     // <div id="switch_1" class="switch">
     //   <table class="switchComponent">
     //     <tbody>
-    //       <tr><td id="way1" onclick="javascript:send_command('set_switch_value', { 'switchName': this.id, 'switchValue': 'on'}, returnSwitch);">Way 1</td></tr>
+    //       <tr><td id="way1" onclick="javascript:send_command('train_control', 'set_switch_value', { 'switchName': this.id, 'switchValue': 'on'}, returnSwitch);">Way 1</td></tr>
     //       <tr><td id="way2">Way 2</td></tr>
     //     </tbody>
     //   </table>
@@ -117,15 +117,15 @@ function initSwitchs() {
 }
 
 function fctBindSwitchValue(swId, is_persist = false) {
-  send_command('bind_switch', { 'switchName': swId, 'isPersistent': is_persist }, returnSwitch);
+  send_command('train_control', 'bind_switch', { 'switchName': swId, 'isPersistent': is_persist }, returnSwitch);
 }
 
 function fctGetSwitchValue(swId, is_persist = false) {
-  send_command('get_switch_value', { 'switchName': swId, 'isPersistent': is_persist }, returnSwitch);
+  send_command('train_control', 'get_switch_value', { 'switchName': swId, 'isPersistent': is_persist }, returnSwitch);
 }
 
 function fctSetSwitchValue(swId, is_persist = false) {
-  send_command('switch_value', { 'switchName': swId, 'switchValue': '1', 'isPersistent': is_persist}, null);
+  send_command('train_control', 'switch_value', { 'switchName': swId, 'switchValue': '1', 'isPersistent': is_persist}, null);
 }
 
 function isPermanentSwitch(switchId) {
@@ -161,11 +161,11 @@ function switch_click() {
   // set information to press switch button
   fctSetSwitchValue(this.id, is_persist);
   // get information about binomial switch
-  setTimeout(fctGetSwitchValue, 150, idBinomialSwitch, is_persist);
-  setTimeout(fctGetSwitchValue, 350, this.id, is_persist);
+  setTimeout(fctGetSwitchValue, 400, this.id, is_persist);
+  setTimeout(fctGetSwitchValue, 800, idBinomialSwitch, is_persist);
 
   // colorize the way in function of switchs
-  setTimeout(drawWayTracking, 500);
+  setTimeout(drawWayTracking, 950);
 }
 
 function drawWayTracking() {

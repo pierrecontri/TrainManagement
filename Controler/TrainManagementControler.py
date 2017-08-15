@@ -135,16 +135,14 @@ Main Abstract Class for Train Management Controler
 
     val_ret = self._command_switchs_list[block_switch_number].write_output( val_to_send )
 
-    print("--> Value to send: %s" % val_ret)
-    
-    print("on press:    ")
+    print("on press:    %s" % val_ret)
     self.set_switch_value_handle ( val_ret )
 
     if tmp_switch.is_press:
       sleep(0.08)
       val_ret = self._command_switchs_list[block_switch_number].write_output( " " )
 
-      print("after press: ")
+      print("after press: %s" % val_ret)
       self.set_switch_value_handle ( val_ret )
 
     params["result"] = "OK"

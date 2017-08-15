@@ -110,9 +110,8 @@ PiControler the real controler to manage Raspberry Pi
   def set_switch_value_handle(self, value):
     print("=============")
     arr_infos = [ str(value >> (y * 8) & 0xff) for y in range(0, self.number_of_switchs_blocks) ]
-    print(arr_infos)
     info_to_send = "%s;%s" % ( str(self.number_of_switchs_blocks), str(value) )
-    print("Info to send: %s" % info_to_send)
+
     # append the command array for RS232 ("SR:>" or "lcdl1:>")
     # send 'SR:>3;1987126688\n'
     send_shift_register = ('SR:>' + info_to_send + '\n').encode('latin1')
@@ -141,15 +140,35 @@ PiControler the real controler to manage Raspberry Pi
 
 # units tests
 if __name__ == "__main__":
-    print("PiControler")
-    ctrl = Controler()
-    ctrl.do("get_help")
-    ctrl.async_send_message("Pont-a-Mousson\n5mm arret")
-    sleep(3)
-    ctrl.async_send_message("lcd  ready to start real life")
-    ctrl.start_demo()
-    sleep(WAIT_TIME_WRITE_BUS)
-    ctrl.stop_demo()
+  print("PiControler")
+  ctrl = Controler()
+  ctrl.do("get_help")
+  ctrl.async_send_message("Pont-a-Mousson\n5mm arret")
+  sleep(3)
+  ctrl.async_send_message("lcd  ready to start real life")
+  #ctrl.start_demo()
+  #sleep(WAIT_TIME_WRITE_BUS)
+  #ctrl.stop_demo()
+
+  print("s1: %s" % ctrl.get_switch("sw1_0").state )
+  ctrl.switch_value( {"switchName":"sw1_0", "switchValue":1} )
+  print("s1: %s" % ctrl.get_switch("sw1_0").state )
+  print("s2: %s\n" % ctrl.get_switch("sw1_1").state )
+  
+  print("s2: %s" % ctrl.get_switch("sw1_1").state )
+  ctrl.switch_value( {"switchName":"sw1_1", "switchValue":1} )
+  print("s1: %s" % ctrl.get_switch("sw1_0").state )
+  print("s2: %s\n" % ctrl.get_switch("sw1_1").state )
+  
+  print("s3: %s" % ctrl.get_switch("sw2_2").state )
+  ctrl.switch_value( {"switchName":"sw2_2", "switchValue":1} )
+  print("s3: %s" % ctrl.get_switch("sw2_2").state )
+  print("s4: %s\n" % ctrl.get_switch("sw2_3").state )
+  
+  print("s4: %s" % ctrl.get_switch("sw2_3").state )
+  ctrl.switch_value( {"switchName":"sw2_3", "switchValue":1} )
+  print("s3: %s" % ctrl.get_switch("sw2_2").state )
+  print("s4: %s\n" % ctrl.get_switch("sw2_3").state )
 
 # using
 # python -m ElectronicControler.RSArduinoControler

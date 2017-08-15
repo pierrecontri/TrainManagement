@@ -1,118 +1,128 @@
 #!/usr/bin/python3
 
-# ---------------- Add Path  --------------------------------------------------
-import sys
-from sys import path as sys_pth
-import os.path as pth
+# ex in web browser : http://localhost:8088/TrainManagement.py?control=get_help&functionName=Switch&functionValue=Off
 
-local_directory = pth.dirname(pth.abspath(__file__))
-import_list = [local_directory
-                    , pth.join(local_directory,"Model")
-                    , pth.join(local_directory,"Controler")
-                    , pth.join(local_directory,"ElectronicComponents")
-                    , pth.join(local_directory,"ElectronicModel")
-]
+import sys, os
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
-for to_import in import_list:
-  abs_dir = pth.dirname(pth.abspath(to_import))
-  if not abs_dir in sys_pth: sys_pth.append(abs_dir)
-# -----------------------------------------------------------------------------
 
-from bottle import route, get, post, request, run, response
-import json
-from io import TextIOWrapper
+# -- WebService part
+import web, requests, json
 
 _allow_origin = '*'
 _allow_methods = 'PUT, GET, POST, DELETE, OPTIONS'
 _allow_headers = 'Authorization, Origin, Accept, Content-Type, Content-Length, X-Requested-With, X-CSRF-Token'
 
-dynamic_controler_name = sys.argv[1] if len(sys.argv) > 1 else "ElectronicControler.DummyControler"
+render_xml = lambda message: '<message>%s</message>'%message
+render_json = lambda obj: json.dumps(obj, default='"')
+render_html = lambda message: '<html><body>%s</body></html>'%message
+render_txt = lambda message: message
 
-dynamic_controler = __import__(dynamic_controler_name, fromlist=["*"])
+# define routes for application
+urls = (
+    '/', 'home_control',
+    '/home/(.*)', 'home_control',
+    '/train_control/(.*)', 'train_control',
+    '/demo/(.*)', 'demo'
+)
+app = web.application(urls, globals())
 
-# Create the real controler
-controler = dynamic_controler.Controler()
+def get_post_json_params():
+    """Return the json object from post params"""
+    post_params = web.data().decode('utf-8')
+    json_params = json.loads(post_params)
 
-print("Controler name loaded: %s" % dynamic_controler.__name__)
-print("Controler class name: %s" % type(controler))
+    return json_params
 
 def json_app_rqt():
-    # about request
-    request.accept = 'application/json, text/plain; charset=utf-8'
+    """Define the request format for web user"""
+    web.request.accept = 'application/json, text/plain; charset=utf-8'
 
 def json_app_resp():
-    # about response
-    response.headers['Access-Control-Allow-Origin'] = _allow_origin
-    response.headers['Access-Control-Allow-Methods'] = _allow_methods
-    response.headers['Content-Type'] = 'application/json; charset=utf-8'
+    """Define the response format fot web user"""
+    web.header('Access-Control-Allow-Origin', _allow_origin)
+    web.header('Access-Control-Allow-Methods', _allow_methods)
+    web.header('Content-Type', 'application/json; charset=utf-8')
 
-def json_app():
-    json_app_rqt()
-    json_app_resp()
+# -- End WebService part
 
-def get_json_request(rqt):
-    with TextIOWrapper(rqt.body, encoding = "UTF-8") as json_wrap:
-        json_text = ''.join(json_wrap.readlines())
-        json_data = json.loads(json_text)
-        return json_data
+
+# -- Using ElectronicControler
+
+# Create the real controler
+# With specifications in args
+dynamic_controler_name = sys.argv[1] if len(sys.argv) > 1 else "ElectronicControler.DummyControler"
+dynamic_controler = __import__(dynamic_controler_name, fromlist=["*"])
+controler = dynamic_controler.Controler()
+# print the controler type
+print("Controler name loaded: %s" % dynamic_controler.__name__)
+print("Controler class name: %s" % type(controler))
+# -- End Using ElectronicControler
+
+#-- Class Controlers (linked to the routes)
+class home_control:
+
+    def GET(self, name = None):
+        if not name: 
+            name = 'world'
+        return {'message': 'Hello, %s!' % name}
+
+    def POST(self, name = None):
+        if not name: 
+            name = 'world'
+        return {'message': 'Hello, %s!' % name}
+
+class demo:
+
+    def GET(self, name):
+
+        return {'message': 'OK', 'action': name}
+
+    def POST(self, action_str):
+        params = get_post_json_params()
+        print(params)
+        obj_response = controler.start_demo() if action_str == "start" else controler.strop_demo()
+        json_response = render_json( obj_response )
+
+        json_app_resp()
+        return json_response
+
+class train_control:
+
+    def GET(self, str_params):
+        dict_params = { k:v for k, v in [param.split("=") for param in str_params.split("&")] }
+        return dict_params
+
+    def POST(self, action):
+        json_params = get_post_json_params()
+        print(json_params)
+
+        obj_response = controler.do( action, json_params )
+        json_response = render_json( obj_response )
+
+        json_app_resp()
+        return json_response
+
+# End Class Controler
 
 
 if __name__ == "__main__":
+    try:
+        web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", 8088))
+    except KeyboardInterrupt:
+        pass
 
-    json_app_rqt()
-
-    @get("/")
-    def ui():
-        main_page = local_directory + "/UI/TrainManagement.html"
-        response.content_type = 'text/html'
-        html_page = "Page under construction ..."
-        # try:
-        with open(main_page, 'r') as fic:
-            html_page = ''.join(fic.readlines())
-        # finally:
-        return html_page
-
-    @get("/test/:control/:value")
-    def test(control, value):
-        respObj = {'message': 'test ok with control %s and value %s' % (control, value) }
-        return (respObj)
-
-    @get("/train_control/:control/:params")
-    def train_control(control, params={}):
-        return controler.do( control, params )
-
-    @post("/train_control/:control")
-    def do_train_control(control):
-        json_app_resp()
-
-        data = get_json_request(request)
-        print(data)
-
-        return controler.do( control, data )
-
-    @get("/start_demo")
-    def start_demo():
-        return controler.start_demo()
-
-    @get("/stop_demo")
-    def start_demo():
-        return controler.stop_demo()
-    run(host='0.0.0.0', port=8088)
+    print("Server stoped\nBye")
 
 
-# if not controler.contains_function(control_name):
-  # print("Status: 404 Not Found")
-  # print("")
-  # exit()
-
-# ## Start this Web Service like and pass the ElectronicControler
-# python .\TrainManagementWebServer3.py ElectronicControler.DummyControler
+# ## Start this Web Service like
+# python .\TrainManagementWebServer.py
+# Or
+# python .\TrainManagementWebServer.py ElectronicControler.DummyControler
 
 # ## Call this WebService in Powershell like
 # $acceptHeader = new-object 'collections.generic.dictionary[string,string]'
 # $acceptHeader.Add("Accept","application/json")
 # $acceptHeader = @{ "Accept" = "application/json" }
 # curl -Headers $acceptHeader "http://otter:8088/trainControl/test=34&tty=toto"
-
-# curl -Headers @{ "Accept" = "application/json" } "http://otter:8088/test/ct1/val1"
-# curl -Headers @{ "Accept" = "application/json" } "http://otter:8088/train_control/get_status/val1"
+# curl -Headers @{ "Accept" = "application/json" } "http://otter:8088/trainControl/test=34&tty=toto"

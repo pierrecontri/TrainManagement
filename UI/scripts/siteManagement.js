@@ -33,6 +33,7 @@ function getJsonCategory(category) {
 
   var urlPage = objAbsUrl.value;
   xmlhttp = new XMLHttpRequest();
+  xmlhttp.timeout = 1200; // time in milliseconds
 
   xmlhttp.onreadystatechange = function() {
 
@@ -72,9 +73,10 @@ function getJsonCategory(category) {
   xmlhttp.send();
 }
 
-function send_command(cmdName, jsonObj, returnHandler) {
+function send_command(cmdControler, cmdName, jsonObj, returnHandler) {
 
   xmlhttp = new XMLHttpRequest();
+  xmlhttp.timeout = 1200; // time in milliseconds
 
   xmlhttp.onreadystatechange = function() {
 
@@ -96,7 +98,7 @@ function send_command(cmdName, jsonObj, returnHandler) {
 
   var divServerName = document.getElementById('server_name');
   var tmpServerName = (divServerName) ? divServerName.value : "localhost";
-  var urlControl = "http://" + tmpServerName + ":8088/train_control/" + cmdName;
+  var urlControl = "http://" + tmpServerName + ":8088/" + cmdControler + "/" + cmdName;
   var str_json_post = JSON.stringify(jsonObj);
 
   xmlhttp.open("POST", urlControl, true);

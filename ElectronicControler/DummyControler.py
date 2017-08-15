@@ -18,7 +18,8 @@ if __name__ == "__main__":
 from Model import SwitchCommand
 from Controler.TrainManagementControler import TrainManagementControler
 from ElectronicModel import EightIO
-import random, time
+import random
+from time import sleep
 
 class DummyElec(object):
 
@@ -65,6 +66,8 @@ class Controler(TrainManagementControler):
     print(value)
 
   def set_switch_value_handle(self, value):
+    print("slow down")
+    sleep(2)
     print(value)
 
 # units tests
@@ -82,7 +85,6 @@ if __name__ == "__main__":
   ctrl.register_switch_value(SwitchCommand(name = "sw3_0", group = "sw3", is_press = False))
 
   ctrl.do("get_help")
-  from time import sleep
   print("Start Demo: %s" % ctrl.start_demo())
   # sleep(2)
   print("Stop Demo: %s" % ctrl.stop_demo())
@@ -106,7 +108,6 @@ if __name__ == "__main__":
   ctrl.switch_value( {"switchName":"sw2_3", "switchValue":1} )
   print("s3: %s" % ctrl.get_switch("sw2_2").state )
   print("s4: %s\n" % ctrl.get_switch("sw2_3").state )
-
 
 
 # using
