@@ -203,33 +203,44 @@ if __name__ == '__main__':
   # I'm so stupid guy, I can make test even if it is abstract !
 
   class TestControler(TrainManagementControler):
-      def start_demo(self):
-        return { "Start demo": "OK" }
 
-      def stop_demo(self):
-        return { "Stop demo": "OK" }
+    def __init__(self):
+      self._number_of_switchs_blocks = 3
+      TrainManagementControler.__init__(self)
 
-      def get_status(self):
-        return { 'get_status': 'OK' }
-    
-      def get_switch_value(self, params):
-        return { 'get_switch_value': 'OK' }
-    
-      def set_switch_value(self, params):
-        return { 'set_switch_value': 'OK' }
-    
-      def get_light_info(self):
-        return { 'get_light_info': 'OK' }
-    
-      def set_light(self):
-        return { 'set_light': 'OK' }
-    
-      def get_direction_info(self):
-        return { 'get_direction_info': 'OK' }
-    
-      def set_direction(self):
-        return { 'set_direction': 'OK' }
+    @property
+    def number_of_switchs_blocks(self):
+      return self._number_of_switchs_blocks
 
+    def start_demo(self):
+      return { "Start demo": "OK" }
+
+    def stop_demo(self):
+      return { "Stop demo": "OK" }
+
+    def get_status(self):
+      return { 'get_status': 'OK' }
+    
+    def get_switch_value_handle(self, params):
+      return { 'get_switch_value': 'OK' }
+    
+    def set_switch_value_handle(self, params):
+      return { 'set_switch_value': 'OK' }
+    
+    def get_light_info(self):
+      return { 'get_light_info': 'OK' }
+    
+    def set_light(self):
+      return { 'set_light': 'OK' }
+    
+    def get_direction_info(self):
+      return { 'get_direction_info': 'OK' }
+    
+    def set_direction(self):
+      return { 'set_direction': 'OK' }
+
+    def send_message(self, msg):
+      print("Message sent: %s" % msg)
 
   test_controler = TestControler()
   test_controler.register_switch_value(SwitchCommand("sw1_0", "grp1"))

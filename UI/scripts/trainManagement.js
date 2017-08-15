@@ -7,7 +7,7 @@
 */
 
 function start_demo() {
-  send_command('demo', 'start', {'tty':'test'}, return_test_demo);
+  send_command('demo', 'start', { }, return_test_demo);
 }
 
 function stop_demo() {

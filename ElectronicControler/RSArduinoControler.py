@@ -29,6 +29,40 @@ def broadcast_thread_event(data, queue_obj):
     for q in queue_obj:
         q.put(data)
 
+class RSElec(object):
+
+  def __init__(self):
+    self.ser_com = serial.Serial(
+                 port='COM10', #'/dev/ttyACM0',
+                 baudrate=115200,
+                 parity=serial.PARITY_NONE,
+                 stopbits=serial.STOPBITS_ONE,
+                 bytesize=serial.EIGHTBITS
+               )
+    if not self.ser_com.is_open: self.ser_com.open()
+
+    self.value = 0
+
+  def __del__(self):
+    if self.ser_com.is_open: self.ser_com.close()
+    del self.ser_com
+
+  def write_output(self, value):
+    self.value = value
+    print("RSElec write_output: %s" % value)
+
+  def write_msg(self,str_msg):
+    self.ser_com.write(str_msg)
+    self.ser_com.flushOutput()
+    sleep(WAIT_TIME_WRITE_BUS)
+    return
+
+  @property
+  def hold_value(self) -> int:
+    return self.value
+
+rs_elec = RSElec()
+
 class Controler(TrainManagementControler):
   """
 PiControler the real controler to manage Raspberry Pi
@@ -39,18 +73,6 @@ PiControler the real controler to manage Raspberry Pi
   def __init__(self):
     self._number_of_switchs_blocks = 3
     TrainManagementControler.__init__(self)
-    self.serial = serial.Serial(
-                 port='COM10', #'/dev/ttyACM0',
-                 baudrate=115200,
-                 parity=serial.PARITY_NONE,
-                 stopbits=serial.STOPBITS_ONE,
-                 bytesize=serial.EIGHTBITS
-               )
-    if not self.serial.is_open: self.serial.open()
-
-  def __del__(self):
-    if self.serial.is_open: self.serial.close()
-    del self.serial
 
   @property
   def number_of_switchs_blocks(self):
@@ -64,12 +86,11 @@ PiControler the real controler to manage Raspberry Pi
     for j in range (0,3):
       for i in range(0, 256):
         self.set_switch_value_handle( i << (8*j) )
-        sleep(WAIT_TIME_WRITE_BUS)
 
     self.set_switch_value_handle(0)
 
   def start_demo(self):
-
+    print("start demo")
     thread_queues_demo.clear()
     self.t_chase = threading.Thread( target=self.tty_demo,) #args=(thread_queues_demo,) )
 
@@ -99,13 +120,13 @@ PiControler the real controler to manage Raspberry Pi
 
     for data_msg in (data_msg_l1, data_msg_l2):
       with Controler._lock:
-        self.serial.write((data_msg + '\n').encode('latin1'))
-        sleep(WAIT_TIME_WRITE_BUS)
+        rs_elec.write_msg((data_msg + '\n').encode('latin1'))
 
     return
 
   def get_switch_value_handle(self, value):
-    pass
+    print("ToDo get_switch_value_handle + %s" % value)
+    return
 
   def set_switch_value_handle(self, value):
     print("=============")
@@ -119,23 +140,19 @@ PiControler the real controler to manage Raspberry Pi
     with Controler._lock:
       # send the character to the device
       print(send_shift_register)
-      self.serial.write(send_shift_register)
-      self.serial.flushOutput()
-      sleep(WAIT_TIME_WRITE_BUS)
+      rs_elec.write_msg(send_shift_register)
 
     send_lcd = ('lcdl2:>' + " ".join(arr_infos) +'\n').encode('latin1')
     
     with Controler._lock:
       # send the character to the device
       print(send_lcd)
-      self.serial.write(send_lcd)
-      self.serial.flushOutput()
-      sleep(WAIT_TIME_WRITE_BUS)
+      rs_elec.write_msg(send_lcd)
 
     return
 
   def get_serial_info(self):
-    return self.serial.readall()
+    pass
 
 
 # units tests
@@ -146,9 +163,9 @@ if __name__ == "__main__":
   ctrl.async_send_message("Pont-a-Mousson\n5mm arret")
   sleep(3)
   ctrl.async_send_message("lcd  ready to start real life")
-  #ctrl.start_demo()
-  #sleep(WAIT_TIME_WRITE_BUS)
-  #ctrl.stop_demo()
+  # ctrl.start_demo()
+  # sleep(WAIT_TIME_WRITE_BUS)
+  # ctrl.stop_demo()
 
   print("s1: %s" % ctrl.get_switch("sw1_0").state )
   ctrl.switch_value( {"switchName":"sw1_0", "switchValue":1} )

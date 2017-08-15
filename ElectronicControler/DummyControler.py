@@ -15,9 +15,7 @@ if __name__ == "__main__":
     if not abs_dir in sys_pth: sys_pth.append(abs_dir)
   # -----------------------------------------------------------------------------
 
-from Model import SwitchCommand
 from Controler.TrainManagementControler import TrainManagementControler
-from ElectronicModel import EightIO
 import random
 from time import sleep
 
@@ -72,9 +70,11 @@ class Controler(TrainManagementControler):
 
 # units tests
 if __name__ == "__main__":
+
+  from Model import SwitchCommand
+
   print("DummyControler")
   ctrl = Controler()
-
   print( dir(ctrl) )
 
   ctrl.register_switch_value(SwitchCommand("sw1_0", "sw1"))

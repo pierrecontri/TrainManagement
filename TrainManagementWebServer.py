@@ -30,6 +30,7 @@ app = web.application(urls, globals())
 def get_post_json_params():
     """Return the json object from post params"""
     post_params = web.data().decode('utf-8')
+    print(post_params)
     json_params = json.loads(post_params)
 
     return json_params
@@ -62,46 +63,51 @@ print("Controler class name: %s" % type(controler))
 #-- Class Controlers (linked to the routes)
 class home_control:
 
-    def GET(self, name = None):
-        if not name: 
+    def GET(self, name = ""):
+        json_app_resp()
+        if not name == "":
             name = 'world'
-        return {'message': 'Hello, %s!' % name}
+        return render_json( {'message': 'Hello, %s!' % name} )
 
-    def POST(self, name = None):
-        if not name: 
+    def POST(self, name = ""):
+        json_app_resp()
+        params = get_post_json_params()
+
+        if not name == "":
             name = 'world'
-        return {'message': 'Hello, %s!' % name}
+        return render_json( {'message': 'Hello, %s!' % name} )
 
 class demo:
 
     def GET(self, name):
+        json_app_resp()
 
         return {'message': 'OK', 'action': name}
 
     def POST(self, action_str):
-        params = get_post_json_params()
-        print(params)
-        obj_response = controler.start_demo() if action_str == "start" else controler.strop_demo()
-        json_response = render_json( obj_response )
-
         json_app_resp()
-        return json_response
+        params = get_post_json_params()
+        obj_response = controler.start_demo() if action_str == "start" else controler.stop_demo()
+
+        return render_json( obj_response )
 
 class train_control:
 
     def GET(self, str_params):
+        json_app_resp()
+
         dict_params = { k:v for k, v in [param.split("=") for param in str_params.split("&")] }
         return dict_params
 
     def POST(self, action):
+        json_app_resp()
+        print(action)
         json_params = get_post_json_params()
         print(json_params)
 
         obj_response = controler.do( action, json_params )
-        json_response = render_json( obj_response )
 
-        json_app_resp()
-        return json_response
+        return render_json( obj_response )
 
 # End Class Controler
 

@@ -15,15 +15,15 @@ you can append an Arduino if you want to split in many layers the control part.
 The UI will interact by web services (protocol http or pipe -prefered-) in a first time under WebBrowser.
 A second UI will create in GTK+ for multi-plateform. A third maybe for mobiles (but not sure cause doublons with Web Browser).
 
-In Raspberry, install the bottle and smbus python libraries like:
+In Raspberry, install the requests and smbus python libraries like:
 (as su -u root)
 apt-get install pip3
-pip3 install bottle
+pip3 install requests
 pip3 install smbus
 
 If you want to skip the RaspBerry part and use directly your Linux with the I2C and Arduino, install:
 (as su -u root)
 apt-get install pip3
-pip3 install bottle
+pip3 install requests
 pip3 install smbus2 (new link to replace the smbus-cffi package)
 pip3 install pysmbus
