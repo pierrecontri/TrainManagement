@@ -104,6 +104,14 @@ function createSwitchElements() {
   }
 }
 
+function emergencyStop() {
+  send_command('train_control', 'emergency_stop', { }, returnEmergencyStop);
+}
+
+function returnEmergencyStop() {
+
+}
+
 function initSwitchs() {
   console.log("initialize switchs buttons");
   var lstSwitchsButton = document.getElementsByClassName("switchButton");

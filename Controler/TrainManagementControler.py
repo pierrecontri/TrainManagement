@@ -34,6 +34,7 @@ Main Abstract Class for Train Management Controler
   def __init__(self):
     self._switchs_list = dict()
     self._command_switchs_list = list()
+    self._switchs_value = 0
     for i in range(0, self.number_of_switchs_blocks):
       self._command_switchs_list.append( EightIO( component_interface = None, bit_not_on = False, digits_rangs = i ) )
 
@@ -56,7 +57,7 @@ Main Abstract Class for Train Management Controler
 
     return fct_do(params) if len(args_specs.args) > 1 else fct_do()
 
-  def register_switch_value(self, switch_obj):
+  def register_switch_value(self, switch_obj : SwitchCommand):
     self._switchs_list[switch_obj.name] = switch_obj
     return
 
@@ -74,9 +75,9 @@ Main Abstract Class for Train Management Controler
       tmp_switch_list = [tmp_switch for tmp_switch in self._switchs_list.values() if tmp_switch.group == self._switchs_list[sw_object.name].group and not tmp_switch.name == sw_object.name]
       for t_switch in tmp_switch_list:
         t_switch.state = SwitchCommand.OFF
-      #  if not(t_switch.is_press):
-      #    self.set_switch_value( {'switchName': t_switch.name, 'switchValue': t_switch.state, 'isPersistent': not(t_switch.is_press)} )
-      #    time.sleep(0.3)
+        if not(t_switch.is_press):
+          self.set_switch_value( {'switchName': t_switch.name, 'switchValue': t_switch.state, 'isPersistent': not(t_switch.is_press)} )
+          # time.sleep(0.3)
 
       # set to ON the switch value
       self._switchs_list[sw_object.name].state = SwitchCommand.ON
@@ -135,19 +136,34 @@ Main Abstract Class for Train Management Controler
 
     val_ret = self._command_switchs_list[block_switch_number].write_output( val_to_send )
 
-    print("on press:    %s" % val_ret)
-    self.set_switch_value_handle ( val_ret )
+    switch_mask = pow(0xff, self.number_of_switchs_blocks) ^ pow(2, sw_id) # (1 << tmp_switch_value)
+    self._switchs_value = (self._switchs_value & switch_mask ) | val_ret
+
+    print("on press:    %s" % self._switchs_value)
+    self.set_switch_value_handle ( self._switchs_value )
 
     if tmp_switch.is_press:
       sleep(0.08)
-      val_ret = self._command_switchs_list[block_switch_number].write_output( " " )
+      val_ret = self._command_switchs_list[block_switch_number].write_output( SwitchCommand.OFF )
 
-      print("after press: %s" % val_ret)
-      self.set_switch_value_handle ( val_ret )
+      switch_mask = pow(0xff, self.number_of_switchs_blocks) ^ pow(2, sw_id) # (1 << tmp_switch_value)
+      self._switchs_value = (self._switchs_value & switch_mask ) | val_ret
+
+      print("after press: %s" % self._switchs_value)
+      self.set_switch_value_handle ( self._switchs_value )
 
     params["result"] = "OK"
 
     return params
+
+  def emergency_stop(self):
+    for cs in self._command_switchs_list:
+      cs.write_output( SwitchCommand.OFF )
+
+    self._switchs_value = 0
+    self.set_switch_value_handle ( self._switchs_value )
+
+    return {'emergency_stop': 'done'}
 
   def async_send_message(self, async_message):
     t_msg = threading.Thread( target=self.send_message, args=(async_message,) )
@@ -245,6 +261,8 @@ if __name__ == '__main__':
   test_controler = TestControler()
   test_controler.register_switch_value(SwitchCommand("sw1_0", "grp1"))
   test_controler.register_switch_value(SwitchCommand("sw1_1", "grp1"))
+  test_controler.register_switch_value(SwitchCommand("sw2_2", "grp2", False))
+  test_controler.register_switch_value(SwitchCommand("sw2_3", "grp2", False))
 
   print( test_controler.get_help()['help'] )
 

@@ -82,7 +82,7 @@ class demo:
     def GET(self, name):
         json_app_resp()
 
-        return {'message': 'OK', 'action': name}
+        return render_json( {'message': 'OK', 'action': name} )
 
     def POST(self, action_str):
         json_app_resp()
@@ -97,7 +97,7 @@ class train_control:
         json_app_resp()
 
         dict_params = { k:v for k, v in [param.split("=") for param in str_params.split("&")] }
-        return dict_params
+        return render_json( dict_params )
 
     def POST(self, action):
         json_app_resp()

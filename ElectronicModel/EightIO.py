@@ -38,6 +38,10 @@ class EightIO(object):
         self.value = 0
         self.shifts = 8 * digits_rangs
 
+    @property
+    def hold_value(self) -> int:
+        return self.value
+
     def write_output(self, val) -> int:
 
         value_type = type(val)

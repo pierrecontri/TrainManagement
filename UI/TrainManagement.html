@@ -53,8 +53,9 @@
   </div>
 
   <div id="connection">
-    <input id="server_name" type="text" value="localhost" />
-    <input type="button" value="Initialize" onclick="javascript:initSwitchs();" />
+    <input type="text" id="server_name" value="localhost" />
+    <input type="button" id="initializebutton" value="Initialize" onclick="javascript:initSwitchs();" />
+    <input type="button" id="resetbutton" value="Stop" onclick="javascript:emergencyStop();" />
   </div>
 
   <br/>
@@ -76,7 +77,7 @@
     <form id="formSite" action="http://localhost:8088/train_control/get_status" method="post">
       <!-- divManageForm -->
       <div id="divManageForm">
-        <input id="submitbutton" name="submitbutton" value="Refresh" type="submit">
+        <input id="submitbutton" name="submitbutton" value="Refresh" type="submit" />
       </div>
       <!-- end divManageForm -->
     </form>

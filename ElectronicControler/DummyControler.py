@@ -65,7 +65,7 @@ class Controler(TrainManagementControler):
 
   def set_switch_value_handle(self, value):
     print("slow down")
-    sleep(2)
+    sleep(0.2)
     print(value)
 
 # units tests
@@ -77,38 +77,59 @@ if __name__ == "__main__":
   ctrl = Controler()
   print( dir(ctrl) )
 
-  ctrl.register_switch_value(SwitchCommand("sw1_0", "sw1"))
-  ctrl.register_switch_value(SwitchCommand("sw1_1", "sw1"))
-  ctrl.register_switch_value(SwitchCommand("sw2_2", "sw2"))
-  ctrl.register_switch_value(SwitchCommand("sw2_3", "sw2"))
+  ctrl.register_switch_value(SwitchCommand("sw0_0", "grp0"))
+  ctrl.register_switch_value(SwitchCommand("sw0_1", "grp0"))
+  ctrl.register_switch_value(SwitchCommand("sw1_2", "grp0"))
+  ctrl.register_switch_value(SwitchCommand("sw1_3", "grp0"))
+  ctrl.register_switch_value(SwitchCommand("sw2_4", "grp0"))
+  ctrl.register_switch_value(SwitchCommand("sw2_5", "grp0"))
+  ctrl.register_switch_value(SwitchCommand("sw3_6", "grp0"))
+  ctrl.register_switch_value(SwitchCommand("sw3_7", "grp0"))
 
-  ctrl.register_switch_value(SwitchCommand(name = "sw3_0", group = "sw3", is_press = False))
+  ctrl.register_switch_value(SwitchCommand(name = "sw4_0", group = "grp1", is_press = False))
+  ctrl.register_switch_value(SwitchCommand(name = "sw4_1", group = "grp1", is_press = False))
+  ctrl.register_switch_value(SwitchCommand(name = "sw5_2", group = "grp2", is_press = False))
+  ctrl.register_switch_value(SwitchCommand(name = "sw5_3", group = "grp2", is_press = False))
 
   ctrl.do("get_help")
   print("Start Demo: %s" % ctrl.start_demo())
   # sleep(2)
   print("Stop Demo: %s" % ctrl.stop_demo())
 
-  print("s1: %s" % ctrl.get_switch("sw1_0").state )
-  ctrl.switch_value( {"switchName":"sw1_0", "switchValue":1} )
-  print("s1: %s" % ctrl.get_switch("sw1_0").state )
-  print("s2: %s\n" % ctrl.get_switch("sw1_1").state )
+  print("s1: %s" % ctrl.get_switch("sw0_0").state )
+  ctrl.switch_value( {"switchName":"sw0_0", "switchValue":1} )
+  print("s1: %s" % ctrl.get_switch("sw0_0").state )
+  print("s2: %s\n" % ctrl.get_switch("sw0_1").state )
   
-  print("s2: %s" % ctrl.get_switch("sw1_1").state )
-  ctrl.switch_value( {"switchName":"sw1_1", "switchValue":1} )
-  print("s1: %s" % ctrl.get_switch("sw1_0").state )
-  print("s2: %s\n" % ctrl.get_switch("sw1_1").state )
+  print("s2: %s" % ctrl.get_switch("sw0_1").state )
+  ctrl.switch_value( {"switchName":"sw0_1", "switchValue":1} )
+  print("s1: %s" % ctrl.get_switch("sw0_0").state )
+  print("s2: %s\n" % ctrl.get_switch("sw0_1").state )
   
-  print("s3: %s" % ctrl.get_switch("sw2_2").state )
-  ctrl.switch_value( {"switchName":"sw2_2", "switchValue":1} )
-  print("s3: %s" % ctrl.get_switch("sw2_2").state )
-  print("s4: %s\n" % ctrl.get_switch("sw2_3").state )
+  print("s3: %s" % ctrl.get_switch("sw1_2").state )
+  ctrl.switch_value( {"switchName":"sw1_2", "switchValue":1} )
+  print("s3: %s" % ctrl.get_switch("sw1_2").state )
+  print("s4: %s\n" % ctrl.get_switch("sw1_3").state )
   
-  print("s4: %s" % ctrl.get_switch("sw2_3").state )
-  ctrl.switch_value( {"switchName":"sw2_3", "switchValue":1} )
-  print("s3: %s" % ctrl.get_switch("sw2_2").state )
-  print("s4: %s\n" % ctrl.get_switch("sw2_3").state )
+  print("s4: %s" % ctrl.get_switch("sw1_3").state )
+  ctrl.switch_value( {"switchName":"sw1_3", "switchValue":1} )
+  print("s3: %s" % ctrl.get_switch("sw1_2").state )
+  print("s4: %s\n" % ctrl.get_switch("sw1_3").state )
 
+  # -- persistant switch
+  print("s0: %s" % ctrl.get_switch("sw4_0").state )
+  ctrl.switch_value( {"switchName":"sw4_0", "switchValue":1} )
+  print("s0: %s" % ctrl.get_switch("sw4_0").state )
+  print("s1: %s\n" % ctrl.get_switch("sw4_1").state )
+  print("s2: %s" % ctrl.get_switch("sw5_2").state )
+  print("s3: %s\n" % ctrl.get_switch("sw5_3").state )
+  
+  print("s3: %s" % ctrl.get_switch("sw5_3").state )
+  ctrl.switch_value( {"switchName":"sw5_3", "switchValue":1} )
+  print("s0: %s" % ctrl.get_switch("sw4_0").state )
+  print("s1: %s\n" % ctrl.get_switch("sw4_1").state )
+  print("s2: %s" % ctrl.get_switch("sw5_2").state )
+  print("s3: %s\n" % ctrl.get_switch("sw5_3").state )
 
 # using
 # python -m ElectronicControler.DummyControler

@@ -6,7 +6,7 @@ class SwitchCommand(object):
   ON  = 1
   OFF = 0
 
-  def __init__(self, name, group = "", is_press= True):
+  def __init__(self, name, group = "", is_press = True):
     self._name = name
     self._value = SwitchCommand.OFF
     self._group = group
