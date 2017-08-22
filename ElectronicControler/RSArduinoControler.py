@@ -23,7 +23,7 @@ import queue
 # thread queues list
 thread_queues_demo = []
 
-WAIT_TIME_WRITE_BUS = 0.2
+WAIT_TIME_WRITE_BUS = 0.1
 
 def broadcast_thread_event(data, queue_obj):
     for q in queue_obj:
@@ -81,31 +81,25 @@ PiControler the real controler to manage Raspberry Pi
   def get_status(self):
     return { 'Status': 'System OK' }
 
-  def tty_demo(self):
-
-    for j in range (0,3):
-      for i in range(0, 256):
-        self.set_switch_value_handle( i << (8*j) )
-
-    self.set_switch_value_handle(0)
 
   def start_demo(self):
+
+    def tty_demo(t_queues_demo):
+      for j in range (3):
+        for i in range(256):
+          self.set_switch_value_handle( i << (8*j) )
+      self.set_switch_value_handle(0)
+
     print("start demo")
     thread_queues_demo.clear()
-    self.t_chase = threading.Thread( target=self.tty_demo,) #args=(thread_queues_demo,) )
-
+    self.t_chase = threading.Thread( target=tty_demo, args=(thread_queues_demo,) )
     self.t_chase.daemon = True
-
     self.t_chase.start()
-
     return {'start_demo': 'done'}
 
   def stop_demo(self):
-
     broadcast_thread_event("stop", thread_queues_demo)
-
     self.t_chase.join()
-
     return {'stop_demo': 'done'}
 
   def send_message(self, message):

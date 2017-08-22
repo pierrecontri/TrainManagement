@@ -125,32 +125,34 @@ Main Abstract Class for Train Management Controler
     tmp_switch = self.get_switch(params["switchName"], not(switch_persist))
     sw_id = int(tmp_switch.name.split("_").pop())
     block_switch_number = int(sw_id / 8)
-    tmp_switch_value = sw_id % 8
 
-    val_to_send = self._switchs_list[switch_name].state << tmp_switch_value
 
-    if block_switch_number > len(self._command_switchs_list) - 1:
+    def write_output(switch_number, value):
+      val_ret = self._command_switchs_list[block_switch_number].write_output( value )
+  
+      switch_mask_blocks = pow(2, 8 * self.number_of_switchs_blocks) - 1
+      switch_mask = switch_mask_blocks ^ pow(2, switch_number)
+      self._switchs_value = (self._switchs_value & switch_mask ) | val_ret
+      self.set_switch_value_handle ( self._switchs_value )
+  
+      return
+
+    #tmp_switch.switch_value()
+    val_to_send = tmp_switch.state << (sw_id % 8)
+
+    if sw_id >= (len(self._command_switchs_list) * 8):
       params["result"] = "NOK"
       params["errorMessage"] = "no more switch block instanciate into controler"
       raise Exception("Error: %s" % params["errorMessage"])
 
-    val_ret = self._command_switchs_list[block_switch_number].write_output( val_to_send )
-
-    switch_mask = pow(0xff, self.number_of_switchs_blocks) ^ pow(2, sw_id) # (1 << tmp_switch_value)
-    self._switchs_value = (self._switchs_value & switch_mask ) | val_ret
-
+    write_output( sw_id, val_to_send )
     print("on press:    %s" % self._switchs_value)
-    self.set_switch_value_handle ( self._switchs_value )
 
     if tmp_switch.is_press:
       sleep(0.08)
-      val_ret = self._command_switchs_list[block_switch_number].write_output( SwitchCommand.OFF )
 
-      switch_mask = pow(0xff, self.number_of_switchs_blocks) ^ pow(2, sw_id) # (1 << tmp_switch_value)
-      self._switchs_value = (self._switchs_value & switch_mask ) | val_ret
-
+      write_output( sw_id, SwitchCommand.OFF )
       print("after press: %s" % self._switchs_value)
-      self.set_switch_value_handle ( self._switchs_value )
 
     params["result"] = "OK"
 
