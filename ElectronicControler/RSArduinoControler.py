@@ -1,6 +1,7 @@
+import sys
+
 if __name__ == "__main__":
     # ---------------- Add Path  --------------------------------------------------
-    import sys
     from sys import path as sys_pth
     import os.path as pth
     
@@ -25,22 +26,27 @@ thread_queues_demo = []
 
 WAIT_TIME_WRITE_BUS = 0.1
 
+arg_com = "".join([tmp_arg.split(':').pop() for tmp_arg in sys.argv if tmp_arg.upper().startswith("COMPORT:")])
+if arg_com == "":
+  raise Exception("No COM port defined !")
+
 def broadcast_thread_event(data, queue_obj):
     for q in queue_obj:
         q.put(data)
 
 class RSElec(object):
 
-  def __init__(self):
+  def __init__(self, com_port):
+
     self.ser_com = serial.Serial(
-                 port='COM10', #'/dev/ttyACM0',
+                 port=com_port,
                  baudrate=115200,
                  parity=serial.PARITY_NONE,
                  stopbits=serial.STOPBITS_ONE,
                  bytesize=serial.EIGHTBITS
                )
     if not self.ser_com.is_open: self.ser_com.open()
-
+    print("Connection to Arduino on RS232 port %s" %(com_port))
     self.value = 0
 
   def __del__(self):
@@ -61,7 +67,8 @@ class RSElec(object):
   def hold_value(self) -> int:
     return self.value
 
-rs_elec = RSElec()
+
+rs_elec = RSElec(arg_com)
 
 class Controler(TrainManagementControler):
   """
@@ -182,4 +189,4 @@ if __name__ == "__main__":
   print("s4: %s\n" % ctrl.get_switch("sw2_3").state )
 
 # using
-# python -m ElectronicControler.RSArduinoControler
+# python -m ElectronicControler.RSArduinoControler COMPORT:COM10 or COMPORT:/dev/ttyACM0

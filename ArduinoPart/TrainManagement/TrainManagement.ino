@@ -10,7 +10,7 @@
    LCD Part
 
    The circuit:
-   LCD RS pin to digital pin 13
+   LCD RS pin to digital pin 7
    LCD Enable pin to digital pin 12
    LCD D4 pin to digital pin 11
    LCD D5 pin to digital pin 10
@@ -29,7 +29,7 @@
 #include <Wire.h>
 
 // initialize the library with the numbers of the interface pins
-LiquidCrystal lcd(13, 12, 11, 10, 9, 8);
+LiquidCrystal lcd(7, 12, 11, 10, 9, 8);
 
 String inputString = "";
 boolean stringComplete = false;
@@ -40,15 +40,18 @@ int state = 0;
 
 // UNO Pin to ShiftRegister
 //Pin connected to ST_CP of 74HC595 (rclk)
-int latchPin = 4;
+const int latchPin = 4;
 //Pin connected to SH_CP of 74HC595
-int clockPin = 3;
+const int clockPin = 3;
 //Pin connected to DS of 74HC595
-int dataPin = 6;
+const int dataPin = 6;
 //Pin connected to OE of 74HC595
-int oePin = 5;
+const int oePin = 5;
 //Pin connected to SRCLR of 74HC595
-int srclrPin = 2;
+const int srclrPin = 2;
+
+// Pin for emergency stop
+const int emergencyStopPin = 13;
 
 void setup() {
   Serial.begin(115200);
@@ -61,6 +64,9 @@ void setup() {
   pinMode(clockPin, OUTPUT);
   pinMode(oePin, OUTPUT);
   pinMode(srclrPin, OUTPUT);
+
+  // for debug, use the integrated led mainboard (pin 13)
+  //pinMode(emergencyStopPin, INPUT);
 
   // initialize i2c as slave
   Wire.begin(SLAVE_ADDRESS);
@@ -78,11 +84,13 @@ void setup() {
 
   Serial.println("Train Management program initialized");
   // init SR
-  byte initSR[] = {0,0,0,0};
+  byte initSR[] = {0, 0, 0, 0};
   writeShiftRegister(initSR, sizeof(initSR));
 }
 
 void loop() {
+  //while (!digitalRead(emergencyStopPin))
+  //  Serial.println("Emergency Stop");
   delay(100);
 }
 
@@ -110,7 +118,7 @@ void dataTreatment(String dataStr) {
   if (dataStr.substring(0, lengthStartFrame) == "SR:>" && dataStrLen > (lengthStartFrame + 1)) {
     //int nbSR = dataStrLen - (lengthStartFrame + 1 /* due to \n */);
     int indexSep = dataStr.indexOf(';');
-    int nbSR = (dataStr.substring(4,indexSep)).toInt();
+    int nbSR = (dataStr.substring(4, indexSep)).toInt();
     String strValue = dataStr.substring(indexSep + 1, dataStrLen - 1);
     long value = strValue.toInt();
     // sending to Shift Register
@@ -137,7 +145,7 @@ void dataTreatment(String dataStr) {
 
 
 ////////////////////////////
-// Wire function part
+// Wire function part I2C
 // callback for received data
 void wireReceiveData(int byteCount) {
   Serial.println("number of receiving bytes: " + String(byteCount));
@@ -157,7 +165,6 @@ void wireReceiveData(int byteCount) {
 void wireSendData() {
   Wire.write(number);
 }
-
 
 ///////////////////////////
 // Serial (lcd) part
@@ -198,9 +205,12 @@ void lcdPrint(String inputString) {
 /////////////////////////
 // Serial Communication
 void serialEvent() {
-  
+
+  // for debug mini pro
+  //digitalWrite(13, HIGH);
+
   while (Serial.available()) {
-    
+
     // get the new byte:
     char inChar = (char)Serial.read();
     // add it to the inputString:
@@ -212,7 +222,10 @@ void serialEvent() {
     }
   }
   dataTreatment(inputString);
-
+  
+  // for debug mini pro
+  //digitalWrite(13, LOW);
+  
   // clear the string:
   inputString = "";
   stringComplete = false;

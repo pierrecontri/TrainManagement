@@ -35,15 +35,27 @@ function returnSwitch(jsonResponse) {
 function createSwitchBlockCommand() {
   console.log("createSwitchBlockCommand");
 
-  var lstSwitchs = document.getElementsByClassName("switchsContainer");
+  // create bi states switch, and one state switch
+  var lstStates = {
+       'bistableSwitch' : 'twoWaysSwitch', // switchsContainer
+       'monostableSwitch' : 'oneWaySwitch' // switchsContainer
+  }
 
-  for (i = 0, nbSwitchsContainer = lstSwitchs.length; i < nbSwitchsContainer; i++) {
+  var incSwitchBlocks = 0;
 
-    var switchCmd  = document.createElement('div');
-    switchCmd.className = "switch";
-    switchCmd.id = "SwitchBlock_" + i.toString();
+  for(var tmpState in lstStates) {
 
-    lstSwitchs[i].appendChild(switchCmd);
+    var lstSwitchs = document.getElementsByClassName(tmpState);
+  
+    for (i = 0, nbSwitchsContainer = lstSwitchs.length; i < nbSwitchsContainer; i++) {
+  
+      var switchCmd  = document.createElement('div');
+      switchCmd.className = lstStates[tmpState];
+      switchCmd.id = "SwitchBlock_" + (incSwitchBlocks++).toString();
+  
+      lstSwitchs[i].appendChild(switchCmd);
+    }
+
   }
 
 }
@@ -66,17 +78,17 @@ function createSwitchElements() {
   var wayIdNb = 0;
 
   // get all div switch class
-  var lstSwitchs = document.getElementsByClassName("switch");
+  var lstSwitchs = document.getElementsByClassName("twoWaysSwitch");
 
   // create a table with 4 switchs railway foreach switch commands
-  for (i = 0, nbSwitchs = lstSwitchs.length; i < nbSwitchs; i++) {
+  for (var i = 0, nbSwitchs = lstSwitchs.length; i < nbSwitchs; i++) {
 
     var switchId = lstSwitchs[i].id;
     var idScNb = switchId.split('_').pop();
 
     // by default, 4 switchs in 1 command block
-    for (k = 0; k < 4; k++) {
-      divSwitch = document.createElement('div');
+    for (var k = 0; k < 4; k++) {
+      var divSwitch = document.createElement('div');
       divSwitch.className = "divSwitchComponent";
       tableSwitch = document.createElement('table');
       tableSwitch.id = "sc_" + k.toString();
@@ -85,10 +97,10 @@ function createSwitchElements() {
       tableSwitch.appendChild(tbodySwitch);
   
       // create a td for each way
-      for(j = 1; j < 3; j++) {
-        trElem = document.createElement('tr');
+      for(var j = 1; j < 3; j++) {
+        var trElem = document.createElement('tr');
         tbodySwitch.appendChild(trElem);
-        tdElem = document.createElement('td');
+        var tdElem = document.createElement('td');
         var idWay = wayIdNb++;
         tdElem.id = switchId + "_Switch_" + k.toString() + "_Way_" + idWay.toString();
         tdElem.className = "switchButton";
@@ -102,6 +114,51 @@ function createSwitchElements() {
       lstSwitchs[i].appendChild(divSwitch);
     }
   }
+
+
+
+  // get all div switch class
+  var lstMonoSwitchs = document.getElementsByClassName("oneWaySwitch");
+
+  // create a table with 4 switchs railway foreach switch commands
+  for (var l = 0, nbMonoSwitchs = lstMonoSwitchs.length; l < nbMonoSwitchs; l++) {
+console.log("create mono switch block " + l);
+
+    var switchId = lstMonoSwitchs[l].id;
+    var idScNb = switchId.split('_').pop();
+
+    // by default, 4 switchs in 1 command block
+    for (var m = 0; m < 4; m++) {
+      var divSwitch = document.createElement('div');
+      divSwitch.className = "divMonoSwitchComponent";
+      var tableSwitch = document.createElement('table');
+      tableSwitch.id = "sc_" + m.toString();
+      tableSwitch.className = "monoSwitchComponent";
+      var tbodySwitch = document.createElement('tbody');
+      tableSwitch.appendChild(tbodySwitch);
+  
+      // create a td for each way
+      //for(var n = 1; n < 3; n++) {
+console.log("create mono switch g" + m + "_n" + m);
+        var trElem = document.createElement('tr');
+        tbodySwitch.appendChild(trElem);
+        var tdElem = document.createElement('td');
+        var idWay = wayIdNb++;
+        tdElem.id = switchId + "_Switch_" + k.toString() + "_Way_" + idWay.toString();
+        tdElem.className = "switchButton";
+        tdElem.onclick = switch_click;
+        tdElem.innerHTML = "Way&nbsp;" + (idWay + 1).toString();
+        trElem.appendChild(tdElem);
+      //}
+    }
+
+      // append the new child element
+      divSwitch.appendChild(tableSwitch);
+      lstMonoSwitchs[l].appendChild(divSwitch);
+
+
+  }
+
 }
 
 function emergencyStop() {

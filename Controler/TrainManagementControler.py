@@ -149,7 +149,7 @@ Main Abstract Class for Train Management Controler
     print("on press:    %s" % self._switchs_value)
 
     if tmp_switch.is_press:
-      sleep(0.08)
+      sleep(0.15)
 
       write_output( sw_id, SwitchCommand.OFF )
       print("after press: %s" % self._switchs_value)

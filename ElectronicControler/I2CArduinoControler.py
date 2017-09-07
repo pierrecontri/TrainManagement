@@ -130,7 +130,7 @@ PiControler the real controler to manage Raspberry Pi
     with Controler._lock:
       self.bus.write_i2c_block_data(self.slave_addr, sendShiftRegister[0], sendShiftRegister[1:])
       sleep(WAIT_TIME_WRITE_BUS)
-      
+
     sendLcd = [ord(i) for i in 'lcdl2:>']
     sendLcd.extend(arr_val)
     print(sendLcd)
@@ -147,7 +147,6 @@ if __name__ == "__main__":
     print("PiControler")
     ctrl = Controler()
     ctrl.do("get_help")
-    #ctrl.async_send_message("Pont-a-Mousson".ljust(16, ' ') + "5mm arret".ljust(16, ' '))
     ctrl.async_send_message("Pont-a-Mousson\n5mm arret")
     sleep(10)
     ctrl.set_switch_value_handle(52478561)
@@ -157,4 +156,4 @@ if __name__ == "__main__":
     ctrl.stop_demo()
 
 # using
-# python -m ElectronicControler.PiArduinoControler
+# python -m ElectronicControler.I2CArduinoControler
