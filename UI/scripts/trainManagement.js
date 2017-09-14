@@ -144,17 +144,17 @@ console.log("create mono switch g" + m + "_n" + m);
         tbodySwitch.appendChild(trElem);
         var tdElem = document.createElement('td');
         var idWay = wayIdNb++;
-        tdElem.id = switchId + "_Switch_" + k.toString() + "_Way_" + idWay.toString();
-        tdElem.className = "switchButton";
+        tdElem.id = switchId + "_Switch_" + m.toString() + "_Way_" + idWay.toString();
+        tdElem.className = "switchButton oneWaySwitch wayoff";
         tdElem.onclick = switch_click;
         tdElem.innerHTML = "Way&nbsp;" + (idWay + 1).toString();
         trElem.appendChild(tdElem);
       //}
-    }
 
       // append the new child element
       divSwitch.appendChild(tableSwitch);
       lstMonoSwitchs[l].appendChild(divSwitch);
+    }
 
 
   }

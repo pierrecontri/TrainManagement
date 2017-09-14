@@ -206,9 +206,6 @@ void lcdPrint(String inputString) {
 // Serial Communication
 void serialEvent() {
 
-  // for debug mini pro
-  //digitalWrite(13, HIGH);
-
   while (Serial.available()) {
 
     // get the new byte:
@@ -222,10 +219,7 @@ void serialEvent() {
     }
   }
   dataTreatment(inputString);
-  
-  // for debug mini pro
-  //digitalWrite(13, LOW);
-  
+
   // clear the string:
   inputString = "";
   stringComplete = false;

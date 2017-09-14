@@ -39,6 +39,14 @@ td.wayclick {
   color: inherit;
 }
 
+td.oneWaySwitch.wayon {
+  background: linear-gradient(to left,red, green);
+}
+
+td.oneWaySwitch.wayoff {
+  background: linear-gradient(to left, green, red);
+}
+
 td.wayoff {
   background-color: blue;
   color: inherit;
