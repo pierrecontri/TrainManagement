@@ -218,10 +218,12 @@ void serialEvent() {
       stringComplete = true;
     }
   }
-  dataTreatment(inputString);
+  if(stringComplete)
+    dataTreatment(inputString);
 
   // clear the string:
   inputString = "";
   stringComplete = false;
+
   Serial.flush();
 }
