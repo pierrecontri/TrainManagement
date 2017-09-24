@@ -20,6 +20,7 @@ import serial
 from Controler.TrainManagementControler import TrainManagementControler
 from time import sleep
 import queue
+import struct
 
 # thread queues list
 thread_queues_demo = []
@@ -29,6 +30,77 @@ WAIT_TIME_WRITE_BUS = 0.1
 arg_com = "".join([tmp_arg.split(':').pop() for tmp_arg in sys.argv if tmp_arg.upper().startswith("COMPORT:")])
 if arg_com == "":
   raise Exception("No COM port defined !")
+
+class DataType(object):
+  t_none = 0x0
+  t_byte = 0x1
+  t_string = 0x2
+  t_int = 0x3
+  t_float = 0x4
+  t_long = 0x5
+  t_complex = 0x6
+
+class WeftExchange(object):
+  """
+WeftExchange class used to package a struct of bytes
+
+- data_type :
+    0x0 -> None
+    0x1 -> byte
+    0x2 -> string
+    0x3 -> int
+    0x4 -> float
+    0x5 -> long
+    0x6 -> complex
+
+- address device
+    0x0 -> None
+    0x1 -> lcd
+    0x2 -> shift register
+    0xff ->broadcast
+
+  """
+
+  data_size   = 0x0
+  device_addr = 0x0
+  data_type   = 0x0
+  reserved1   = 0x0
+  reserved2   = 0x0
+  data        = None
+
+  def init(self, daddr, dtype, dat):
+    self.device_addr, self.data_type, self.data = (daddr, dtype, dat)
+
+  def get_bytes(self) -> bytes:
+    """ Return an byte array of the complet weft """
+
+    data_content = b''
+    if self.data_type == DataType.t_byte:
+      data_content = self.data.get_bytes(1, 'little')
+    elif self.data_type == DataType.t_string:
+      data_content = self.data.encode('latin1')
+    elif self.data_type == DataType.t_int:
+      data_content = self.data.get_bytes(2, 'little')
+    elif self.data_type == DataType.t_float:
+      data_content = self.data.get_bytes(4, 'little')
+    elif self.data_type == DataType.t_long:
+      data_content = self.data.get_bytes(4, 'little')
+    elif self.data_type == DataType.t_complex:
+      data_content = self.data.real.get_bytes(4, 'little') + self.data.imag.get_bytes(4, 'little')
+
+    self.data_size = len(self.data_content) + 4 # --> header addr, type, 2x reserved
+
+    data_header = struct.pack("bbbbb", self.data_size, self.device_addr, self.data_type, self.reserved1, self.reserved2)
+
+    return data_header + data_content
+    # return (
+             # (self.data_size).to_bytes(1, 'little'),
+             # (self.device_addr).to_bytes(1, 'little'),
+             # (self.data_type).to_bytes(1, 'little'),
+             # (self.reserved1).to_bytes(1, 'little'),
+             # (self.reserved2).to_bytes(1, 'little'),
+             # (self.data)
+           # )
 
 def broadcast_thread_event(data, queue_obj):
     for q in queue_obj:
@@ -53,6 +125,15 @@ class RSElec(object):
     if self.ser_com.is_open: self.ser_com.close()
     del self.ser_com
 
+  def write_bytes(self, data):
+    if (type(data) is bytes):
+      return self.ser_com.write(data)
+
+    self.ser_com.flushOutput()
+    sleep(WAIT_TIME_WRITE_BUS)
+
+    return None
+
   def write_output(self, value):
     self.value = value
     print("RSElec write_output: %s" % value)
@@ -64,7 +145,7 @@ class RSElec(object):
     return
 
   @property
-  def hold_value(self) -> int:
+  def hold_value(self):
     return self.value
 
 
@@ -141,13 +222,15 @@ PiControler the real controler to manage Raspberry Pi
     with Controler._lock:
       # send the character to the device
       print(send_shift_register)
-      rs_elec.write_msg(send_shift_register)
+      rs_elec.write_bytes( (WeftExchange(0x1, DataType.t_complex, value).get_bytes() ) )
+      #rs_elec.write_msg(send_shift_register)
 
     send_lcd = ('lcdl2:>' + " ".join(arr_infos) +'\n').encode('latin1')
     
     with Controler._lock:
       # send the character to the device
       print(send_lcd)
+      #rs_elect.write_bytes( (WeftExchange(0x2, DataType.t_string, 'lcdl2:>' + " ".join(arr_infos) +'\n')).get_bytes() )
       rs_elec.write_msg(send_lcd)
 
     return

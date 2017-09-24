@@ -34,30 +34,30 @@ created: 22/06/2017
   width: 60px;
 }
 
-td.wayclick {
+.wayclick {
   background-color: gray;
   color: inherit;
 }
 
-td.oneWaySwitch.wayon {
+.oneWay.wayon {
   background: linear-gradient(to left,red, green);
 }
 
-td.oneWaySwitch.wayoff {
+.oneWay.wayoff {
   background: linear-gradient(to left, green, red);
 }
 
-td.wayoff {
+.twoWays.wayoff {
   background-color: blue;
   color: inherit;
 }
 
-td.wayon {
+.twoWays.wayon {
   background-color: green;
   color: white;
 }
 
-td.wayerror {
+.wayerror {
   background-color: red;
 }
 

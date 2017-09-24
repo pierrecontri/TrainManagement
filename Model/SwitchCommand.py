@@ -12,18 +12,18 @@ class SwitchCommand(object):
     self._group = group
     self._is_press = is_press
 
-  def switch_value(self):
+  def switch_value(self) -> int:
     if self._value == SwitchCommand.ERR: self_.value = SwitchCommand.OFF
-    else: self._value = int(not(self._value))
+    else: self._value = not(self._value)
     return self.state
 
   @property
-  def state(self):
+  def state(self) -> int:
     return self._value
 
   @state.setter
   def state(self, val):
-    self._value = val
+    self._value = int(val)
 
   @property
   def is_press(self):

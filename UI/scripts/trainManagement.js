@@ -24,9 +24,12 @@ function return_test_demo(jsonResponse) {
 function returnSwitch(jsonResponse) {
   if (jsonResponse != null && jsonResponse.result != null && jsonResponse.switchName != null && jsonResponse.switchValue != null) {
     var sw = document.getElementById(jsonResponse.switchName);
-    if(sw != null)
-    sw.className = (jsonResponse.result != "OK") ? "wayerror"
-                   : ((jsonResponse.switchValue == 1) ? "wayon" : "wayoff");
+    if(sw != null) {
+      var classWayResponse = (jsonResponse.result != "OK") ? "wayerror"
+                             : ((jsonResponse.switchValue == 1) ? "wayon" : "wayoff");
+      var re = /(wayerror)|(wayon)|(wayoff)|(wayclick)/i;
+      sw.className = sw.className.replace(re, "") + " " + classWayResponse;
+    }
     var tmpSwitchName = "Way_" + jsonResponse.switchName.split('_').pop();
     switchWayCache[tmpSwitchName] = jsonResponse.switchValue;
   }
@@ -103,7 +106,7 @@ function createSwitchElements() {
         var tdElem = document.createElement('td');
         var idWay = wayIdNb++;
         tdElem.id = switchId + "_Switch_" + k.toString() + "_Way_" + idWay.toString();
-        tdElem.className = "switchButton";
+        tdElem.className = "switchButton twoWays";
         tdElem.onclick = switch_click;
         tdElem.innerHTML = "Way&nbsp;" + (idWay + 1).toString();
         trElem.appendChild(tdElem);
@@ -122,7 +125,6 @@ function createSwitchElements() {
 
   // create a table with 4 switchs railway foreach switch commands
   for (var l = 0, nbMonoSwitchs = lstMonoSwitchs.length; l < nbMonoSwitchs; l++) {
-console.log("create mono switch block " + l);
 
     var switchId = lstMonoSwitchs[l].id;
     var idScNb = switchId.split('_').pop();
@@ -139,13 +141,12 @@ console.log("create mono switch block " + l);
   
       // create a td for each way
       //for(var n = 1; n < 3; n++) {
-console.log("create mono switch g" + m + "_n" + m);
         var trElem = document.createElement('tr');
         tbodySwitch.appendChild(trElem);
         var tdElem = document.createElement('td');
         var idWay = wayIdNb++;
         tdElem.id = switchId + "_Switch_" + m.toString() + "_Way_" + idWay.toString();
-        tdElem.className = "switchButton oneWaySwitch wayoff";
+        tdElem.className = "switchButton oneWay";
         tdElem.onclick = switch_click;
         tdElem.innerHTML = "Way&nbsp;" + (idWay + 1).toString();
         trElem.appendChild(tdElem);
@@ -190,26 +191,29 @@ function fctGetSwitchValue(swId, is_persist = false) {
 }
 
 function fctSetSwitchValue(swId, is_persist = false) {
-  send_command('train_control', 'switch_value', { 'switchName': swId, 'switchValue': '1', 'isPersistent': is_persist}, null);
+  send_command('train_control', 'switch_value', { 'switchName': swId, 'isPersistent': is_persist}, null);
 }
 
 function isPermanentSwitch(switchId) {
   // split id in two parts : id base & switch number
   var carSeparator = "_";
-  var is_persist = false;
   var idArr = switchId.split(carSeparator);
 
   var switchBlockIdCalc = "switchsContainer_" + (parseInt(idArr[1]) + 1).toString();
   var switchContainer = document.getElementById(switchBlockIdCalc);
-  if (switchContainer) {
-    is_persist = switchContainer.className.split(' ').indexOf("permanentSwitch") > -1;
-  }
 
-  return is_persist;
+  return (switchContainer) ? switchContainer.className.split(' ').indexOf("permanentSwitch") > -1 : false;
+}
+
+function isBistableSwitch(switchId) {
+  var sw = document.getElementById(switchId);
+  return (sw) ? sw.className.split(' ').indexOf("twoWays") > -1 : false;
 }
 
 function switch_click() {
-  this.className = "wayclick";
+
+  var re = /(wayerror)|(wayon)|(wayoff)|(wayclick)/i;
+  this.className = (this.className.replace(re, "") + " wayclick").replace("  ", " ");
   // split id in two parts : id base & switch number
   var carSeparator = "_";
   var idArr = this.id.split(carSeparator);
@@ -224,10 +228,15 @@ function switch_click() {
   var is_persist = isPermanentSwitch(this.id);
 
   // set information to press switch button
+  sw_value = switchWayCache["Way_" + switchNumber];
+  console.log(sw_value);
   fctSetSwitchValue(this.id, is_persist);
-  // get information about binomial switch
   setTimeout(fctGetSwitchValue, 400, this.id, is_persist);
-  setTimeout(fctGetSwitchValue, 800, idBinomialSwitch, is_persist);
+
+  // get information about binomial switch
+  if(isBistableSwitch(this.id)) {
+    setTimeout(fctGetSwitchValue, 800, idBinomialSwitch, is_persist);
+  }
 
   // colorize the way in function of switchs
   setTimeout(drawWayTracking, 950);
@@ -287,7 +296,7 @@ function drawWayTracking() {
   context.beginPath();
   context.moveTo(145, 30);
   context.lineTo(255, 30);
-  context.strokeStyle = (switchWayCache["Way_23"] == 1) ? 'red' : (switchWayCache["Way_5"] == 1) ? 'black' : 'grey';
+  context.strokeStyle = (switchWayCache["Way_19"] == 1) ? 'red' : (switchWayCache["Way_5"] == 1) ? 'black' : 'grey';
   context.stroke();
 
   // interior right rail down curve
@@ -318,7 +327,7 @@ function drawWayTracking() {
   context.beginPath();
   context.moveTo(80, 60);
   context.lineTo(200, 60);
-  context.strokeStyle = (switchWayCache["Way_17"] == 1) ? 'red' : 'black';
+  context.strokeStyle = (switchWayCache["Way_16"] == 1) ? 'red' : 'black';
   context.stroke();
 
   context.beginPath();
@@ -344,7 +353,7 @@ function drawWayTracking() {
   context.beginPath();
   context.moveTo(290, 80);
   context.lineTo(canvasW - 120, 80);
-  context.strokeStyle = (switchWayCache["Way_21"] == 1) ? 'red' : (switchWayCache["Way_13"] == 1) ? 'black' : 'grey';
+  context.strokeStyle = (switchWayCache["Way_18"] == 1) ? 'red' : (switchWayCache["Way_13"] == 1) ? 'black' : 'grey';
   context.stroke();
 
   // rail park right selector
@@ -364,7 +373,7 @@ function drawWayTracking() {
   context.beginPath();
   context.moveTo(290, 60);
   context.lineTo(canvasW - 120, 60);
-  context.strokeStyle = (switchWayCache["Way_19"] == 1) ? 'red' : (switchWayCache["Way_10"] == 1) ? 'black' : 'grey';
+  context.strokeStyle = (switchWayCache["Way_17"] == 1) ? 'red' : (switchWayCache["Way_10"] == 1) ? 'black' : 'grey';
   context.stroke();
 
   // interior left rail down curve

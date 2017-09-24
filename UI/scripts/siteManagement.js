@@ -91,7 +91,7 @@ function send_command(cmdControler, cmdName, jsonObj, returnHandler) {
       if (xmlhttp.readyState === 4) {
         var wsError = document.getElementById('wsError');
         if (wsError)
-          wsError.innerHTML = '<h3>Error ' + xmlhttp.status + ' on getting page "' + category.value + '"</h3>';
+          wsError.innerHTML = '<h3>Error ' + xmlhttp.status + ' on cmd name "' + cmdName + '"</h3>';
       }
     }
   };
