@@ -7,7 +7,8 @@ created: 22/06/2017
 
 */
 
-.twoWaysSwitch {
+.twoWaysSwitch,
+.oneWaySwitch {
   float: left;
   display: ineline-block;
   padding: 5px;
@@ -34,17 +35,26 @@ created: 22/06/2017
   width: 60px;
 }
 
-.wayclick {
+.twoWays.wayclick {
   background-color: gray;
   color: inherit;
 }
 
+.oneWay {
+  height: 40px;
+}
+
+.oneWay.wayclick {
+  background: linear-gradient(to bottom, red, green);
+  color: inherit;
+}
+
 .oneWay.wayon {
-  background: linear-gradient(to left,red, green);
+  background: linear-gradient(to bottom, black, green);
 }
 
 .oneWay.wayoff {
-  background: linear-gradient(to left, green, red);
+  background: linear-gradient(to bottom, red, black);
 }
 
 .twoWays.wayoff {

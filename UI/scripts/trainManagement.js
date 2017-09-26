@@ -130,19 +130,21 @@ function createSwitchElements() {
     var idScNb = switchId.split('_').pop();
 
     // by default, 4 switchs in 1 command block
-    for (var m = 0; m < 4; m++) {
       var divSwitch = document.createElement('div');
       divSwitch.className = "divMonoSwitchComponent";
       var tableSwitch = document.createElement('table');
-      tableSwitch.id = "sc_" + m.toString();
-      tableSwitch.className = "monoSwitchComponent";
+      tableSwitch.id = "sc_" + l.toString();
+      tableSwitch.className = "monoSwitchComponent switchComponent";
       var tbodySwitch = document.createElement('tbody');
       tableSwitch.appendChild(tbodySwitch);
-  
+
       // create a td for each way
       //for(var n = 1; n < 3; n++) {
         var trElem = document.createElement('tr');
         tbodySwitch.appendChild(trElem);
+
+    for (var m = 0; m < 4; m++) {
+  
         var tdElem = document.createElement('td');
         var idWay = wayIdNb++;
         tdElem.id = switchId + "_Switch_" + m.toString() + "_Way_" + idWay.toString();
@@ -151,12 +153,12 @@ function createSwitchElements() {
         tdElem.innerHTML = "Way&nbsp;" + (idWay + 1).toString();
         trElem.appendChild(tdElem);
       //}
+  }
 
       // append the new child element
       divSwitch.appendChild(tableSwitch);
       lstMonoSwitchs[l].appendChild(divSwitch);
-    }
-
+  
 
   }
 
@@ -288,7 +290,7 @@ function drawWayTracking() {
 
   // interior rail hight
   context.beginPath();
-  context.moveTo(125, 30);
+  context.moveTo(124, 30);
   context.lineTo(canvasW - 185, 30);
   context.strokeStyle = (switchWayCache["Way_5"] == 1) ? 'black' : 'grey';
   context.stroke();
@@ -296,7 +298,7 @@ function drawWayTracking() {
   context.beginPath();
   context.moveTo(145, 30);
   context.lineTo(255, 30);
-  context.strokeStyle = (switchWayCache["Way_19"] == 1) ? 'red' : (switchWayCache["Way_5"] == 1) ? 'black' : 'grey';
+  context.strokeStyle = (switchWayCache["Way_19"] != 1) ? 'red' : (switchWayCache["Way_5"] == 1) ? 'black' : 'grey';
   context.stroke();
 
   // interior right rail down curve
@@ -327,7 +329,7 @@ function drawWayTracking() {
   context.beginPath();
   context.moveTo(80, 60);
   context.lineTo(200, 60);
-  context.strokeStyle = (switchWayCache["Way_16"] == 1) ? 'red' : 'black';
+  context.strokeStyle = (switchWayCache["Way_16"] != 1) ? 'red' : 'black';
   context.stroke();
 
   context.beginPath();
@@ -353,7 +355,7 @@ function drawWayTracking() {
   context.beginPath();
   context.moveTo(290, 80);
   context.lineTo(canvasW - 120, 80);
-  context.strokeStyle = (switchWayCache["Way_18"] == 1) ? 'red' : (switchWayCache["Way_13"] == 1) ? 'black' : 'grey';
+  context.strokeStyle = (switchWayCache["Way_18"] != 1) ? 'red' : (switchWayCache["Way_13"] == 1) ? 'black' : 'grey';
   context.stroke();
 
   // rail park right selector
@@ -373,7 +375,7 @@ function drawWayTracking() {
   context.beginPath();
   context.moveTo(290, 60);
   context.lineTo(canvasW - 120, 60);
-  context.strokeStyle = (switchWayCache["Way_17"] == 1) ? 'red' : (switchWayCache["Way_10"] == 1) ? 'black' : 'grey';
+  context.strokeStyle = (switchWayCache["Way_17"] != 1) ? 'red' : (switchWayCache["Way_10"] == 1) ? 'black' : 'grey';
   context.stroke();
 
   // interior left rail down curve
@@ -385,7 +387,7 @@ function drawWayTracking() {
 
   // interior rail down
   context.beginPath();
-  context.moveTo(150, canvasH - 60);
+  context.moveTo(149, canvasH - 60);
   context.lineTo(canvasW - 200, canvasH - 60);
   context.strokeStyle = (switchWayCache["Way_1"] == 1 && switchWayCache["Way_3"] == 1) ? 'black' : 'grey';
   context.stroke();
@@ -406,17 +408,17 @@ function drawWayTracking() {
   // medium rail down
   context.beginPath();
   context.moveTo(80, canvasH - 30);
-  context.lineTo(110, canvasH - 30);
+  context.lineTo(114, canvasH - 30);
   context.strokeStyle = (switchWayCache["Way_1"] == 1) ? 'black' : 'grey';
   context.stroke();
   context.beginPath();
-  context.moveTo(110, canvasH - 30);
-  context.lineTo(canvasW - 155, canvasH - 30);
+  context.moveTo(114, canvasH - 30);
+  context.lineTo(canvasW - 150, canvasH - 30);
   context.strokeStyle = (switchWayCache["Way_1"] == 1 && switchWayCache["Way_2"] == 1) ? 'black' : 'grey';
   context.stroke();
   context.beginPath();
   context.moveTo(canvasW - 165, canvasH - 30);
-  context.lineTo(canvasW - 135, canvasH - 30);
+  context.lineTo(canvasW - 134, canvasH - 30);
   context.strokeStyle = (switchWayCache["Way_1"] == 1) ? 'black' : 'grey';
   context.stroke();
 
