@@ -153,7 +153,7 @@ function createSwitchElements() {
         tdElem.innerHTML = "Way&nbsp;" + (idWay + 1).toString();
         trElem.appendChild(tdElem);
       //}
-  }
+    }
 
       // append the new child element
       divSwitch.appendChild(tableSwitch);

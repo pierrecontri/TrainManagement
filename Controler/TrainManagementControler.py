@@ -138,7 +138,7 @@ Main Abstract Class for Train Management Controler
     # internal function for bit calcultation
     def write_output(switch_number, value):
       val_ret = self._command_switchs_list[block_switch_number].write_output( value )
-  
+
       switch_mask_blocks = pow(2, 8 * self.number_of_switchs_blocks) - 1
       switch_mask = switch_mask_blocks ^ pow(2, switch_number)
       self._switchs_value = (self._switchs_value & switch_mask ) | val_ret
