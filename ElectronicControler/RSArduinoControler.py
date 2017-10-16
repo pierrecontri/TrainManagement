@@ -93,14 +93,7 @@ WeftExchange class used to package a struct of bytes
     data_header = struct.pack("bbbbb", self.data_size, self.device_addr, self.data_type, self.reserved1, self.reserved2)
 
     return data_header + data_content
-    # return (
-             # (self.data_size).to_bytes(1, 'little'),
-             # (self.device_addr).to_bytes(1, 'little'),
-             # (self.data_type).to_bytes(1, 'little'),
-             # (self.reserved1).to_bytes(1, 'little'),
-             # (self.reserved2).to_bytes(1, 'little'),
-             # (self.data)
-           # )
+
 
 def broadcast_thread_event(data, queue_obj):
     for q in queue_obj:
@@ -110,19 +103,26 @@ class RSElec(object):
 
   def __init__(self, com_port):
 
-    self.ser_com = serial.Serial(
+    try:
+      self.ser_com = serial.Serial(
                  port=com_port,
                  baudrate=115200,
                  parity=serial.PARITY_NONE,
                  stopbits=serial.STOPBITS_ONE,
                  bytesize=serial.EIGHTBITS
                )
+    except serial.serialutil.SerialException as ser_except:
+      print("Serial communication with Arduino not available on port %s" % (com_port))
+      self.ser_com = None
+
+    if self.ser_com == None : exit()
+
     if not self.ser_com.is_open: self.ser_com.open()
     print("Connection to Arduino on RS232 port %s" %(com_port))
     self.value = 0
 
   def __del__(self):
-    if self.ser_com.is_open: self.ser_com.close()
+    if self.ser_com != None and self.ser_com.is_open: self.ser_com.close()
     del self.ser_com
 
   def write_bytes(self, data):
@@ -157,6 +157,7 @@ PiControler the real controler to manage Raspberry Pi
   """
 
   _lock = threading.Lock()
+  _protocol_version = 1.0
 
   def __init__(self):
     self._number_of_switchs_blocks = 3
@@ -222,21 +223,32 @@ PiControler the real controler to manage Raspberry Pi
     with Controler._lock:
       # send the character to the device
       print(send_shift_register)
-      rs_elec.write_bytes( (WeftExchange(0x1, DataType.t_complex, value).get_bytes() ) )
-      #rs_elec.write_msg(send_shift_register)
+
+      p_version = int(Controler.get_protocol_version())
+
+      if p_version == 1:
+        rs_elec.write_msg(send_shift_register)
+      elif p_version == 2:
+        rs_elec.write_bytes( (WeftExchange(0x1, DataType.t_complex, value).get_bytes() ) )
 
     send_lcd = ('lcdl2:>' + " ".join(arr_infos) +'\n').encode('latin1')
     
     with Controler._lock:
       # send the character to the device
       print(send_lcd)
-      #rs_elect.write_bytes( (WeftExchange(0x2, DataType.t_string, 'lcdl2:>' + " ".join(arr_infos) +'\n')).get_bytes() )
-      rs_elec.write_msg(send_lcd)
+      if p_version == 1:
+        rs_elec.write_msg(send_lcd)
+      elif p_version == 2:
+        rs_elect.write_bytes( (WeftExchange(0x2, DataType.t_string, 'lcdl2:>' + " ".join(arr_infos) +'\n')).get_bytes() )
 
     return
 
   def get_serial_info(self):
     pass
+
+  @classmethod
+  def get_protocol_version(cls):
+    return cls._protocol_version
 
 
 # units tests

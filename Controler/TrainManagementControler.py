@@ -82,7 +82,6 @@ Main Abstract Class for Train Management Controler
           self.set_switch_value( t_switch.switch_to_json() )
 
       # set to ON the switch value
-      #self._switchs_list[sw_object.name].state = SwitchCommand.ON
       self._switchs_list[sw_object.name].switch_value()
 
       # call the electronic part
