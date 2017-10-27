@@ -12,7 +12,7 @@ created: 22/06/2017
   float: left;
   display: ineline-block;
   padding: 5px;
-  border: 2px solid black;
+  /*border: 2px solid black;*/
 }
 
 .switchComponent {
@@ -21,6 +21,10 @@ created: 22/06/2017
   position: relative;
   margin: 0px;  
   width: 100%;
+}
+
+div.divSwitchComponent > TABLE {
+  border-collapse: collapse;
 }
 
 .switchComponent > TBODY > TR > TD {
@@ -72,15 +76,18 @@ created: 22/06/2017
 }
 
 .switchsContainer {
+  color: white;
+  background-color: burlywood;
 
   float: left;
   display: ineline-block;
   position: relative;
 
   margin: 10px;
-  padding: 0px 15px 15px 15px;
+  padding: 0px; /* 15px 15px 15px; */
   border: 10px brown solid;
 
+  border-radius: 15px;
 }
 
 #dashboardCommand {

@@ -88,7 +88,6 @@ DIV.TextContent, Div.MusicContent, DIV.DocumentsListContent {
   /* padding : 4px; */
   /* border-collapse: collapse; */
 }
-/** end Containers **/
 
 P, .paragrapheText, CODE {
   text-align: left;
@@ -163,7 +162,54 @@ code.script {
   display : none;
   visibility: hidden;
 }
-/** end Paragraphe **/
+
+#demo_part {
+  display : none;
+  visibility: hidden;
+}
+
+#module_configuration {
+  display: left;
+  text-align: left;
+  width: 300px;
+}
+
+section {
+  margin-top: 10px;
+}
+
+section>article {
+  border-left: 1px;
+  border-top: 1px;
+  border-right: 1px;
+  border-bottom: 1px;
+  border-radius: 0px 0px 20px 0px;
+  border-color: black;
+  border-style: solid;
+
+  padding: 5px;
+}
+
+section>h3 {
+  border-left: 1px;
+  border-top: 1px;
+  border-right: 1px;
+  border-bottom: 0px;
+  border-color: black;
+  border-style: solid;
+  border-radius: 20px 0px 0px 0px;
+
+  padding: 5px;
+  margin: 0px;
+
+  width: 200px;
+  background-color: #eee;
+}
+
+#graphicalSection [
+}
+
+/** end Containers **/
 
 /** Buttons **/
 .btnsubmit {

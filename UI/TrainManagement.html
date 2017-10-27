@@ -39,8 +39,23 @@
       </div>
       <!-- Page content -->
       <div class="page" id="idPage">
-  <p>On this dashboard, you can control switchs, lights, railways sections of your train</p>
-  <br/>
+
+  <section>
+
+    <h3>Presentation</h3>
+
+    <article>
+        <p>On this dashboard, you can control switchs, lights, railways sections of your train</p>
+        <p>How to do:
+          <ul>
+            <li>First, connect interface to the electronical controler (insert the name or ip address of the controler into Module Configuration)</li>
+            <li>Second, click on "Initialize" button</li>
+            <li>Last, play and have fun</li>
+          </ul>
+        </p>
+
+    </article>
+  </section>
 
   <div id="demo_part">
     <input type="button" value="Start Demo" onclick="javascript:start_demo();" />
@@ -49,27 +64,42 @@
   </div>
 
   <div class="paragrapheText">
-    <br/>
   </div>
 
-  <div id="connection">
-    <input type="text" id="server_name" value="localhost" />
-    <input type="button" id="initializebutton" value="Initialize" onclick="javascript:initSwitchs();" />
-    <input type="button" id="resetbutton" value="Stop" onclick="javascript:emergencyStop();" />
-  </div>
 
-  <br/>
 
-  <div id="graphicalSection">
-    <canvas id="wayTracking" width="580" height="185" />
-  </div>
+  <section id="module_configuration">
+    <h3>Module Configuration</h3>
 
-  <div id="dashboardCommand" />
+    <article>
+      Server name:&nbsp;<input type="text" id="server_name" value="localhost" />
+      <input type="button" id="initializebutton" value="Initialize" onclick="javascript:initSwitchs();" />
+      <input type="button" id="resetbutton" value="Emergency Stop" onclick="javascript:emergencyStop();" />
+    </article>
+  </section>
 
-  <div id="dashboardInformations">
-    <div id="wsError">
-    </div>
-  </div>
+  <section id="module_visualization">
+    <h3>Module Visualization</h3>
+    <article>
+      <div id="graphicalSection">
+        <canvas id="wayTracking" width="580" height="185" />
+      </div>
+    </article>
+  </section>
+
+  <section id="module_command">
+    <h3>Module Command</h3>
+
+    <article>
+      <div id="dashboardCommand" />
+    
+      <div id="dashboardInformations">
+        <div id="wsError">
+        </div>
+      </div>
+    </article>
+
+  </section>
 
       </div> <!-- end div page -->
     </div>

@@ -1,3 +1,8 @@
+"""
+It is an abstract module used like a library.
+It is used to communicate between the TrainManagement server and the automate.
+"""
+
 if __name__ == "__main__":
     # ---------------- Add Path  --------------------------------------------------
     import sys

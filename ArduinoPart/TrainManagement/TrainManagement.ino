@@ -28,6 +28,8 @@
 #include <LiquidCrystal.h>
 #include <Wire.h>
 
+#define PROTOCOL_VERSION 1.0
+
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(7, 12, 11, 10, 9, 8);
 

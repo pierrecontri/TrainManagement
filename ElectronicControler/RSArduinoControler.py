@@ -1,3 +1,13 @@
+"""
+RSArduinoControler is the librairy for sending informations to a Arduino by serial connecion
+Two protocols are supported:
+v1: message sending into a text msg (string)
+v2: message sending with specific type (float, complet, string) depends of the connected slave with Arduino
+
+using:
+python -m ElectronicControler.RSArduinoControler COMPORT:COM10 or COMPORT:/dev/ttyACM0
+"""
+
 import sys
 
 if __name__ == "__main__":
@@ -216,6 +226,8 @@ PiControler the real controler to manage Raspberry Pi
     arr_infos = [ str(value >> (y * 8) & 0xff) for y in range(0, self.number_of_switchs_blocks) ]
     info_to_send = "%s;%s" % ( str(self.number_of_switchs_blocks), str(value) )
 
+    p_version = int(Controler.get_protocol_version())
+
     # append the command array for RS232 ("SR:>" or "lcdl1:>")
     # send 'SR:>3;1987126688\n'
     send_shift_register = ('SR:>' + info_to_send + '\n').encode('latin1')
@@ -223,23 +235,20 @@ PiControler the real controler to manage Raspberry Pi
     with Controler._lock:
       # send the character to the device
       print(send_shift_register)
-
-      p_version = int(Controler.get_protocol_version())
-
       if p_version == 1:
         rs_elec.write_msg(send_shift_register)
       elif p_version == 2:
-        rs_elec.write_bytes( (WeftExchange(0x1, DataType.t_complex, value).get_bytes() ) )
+        rs_elec.write_bytes( (WeftExchange(0x1, DataType.t_complex, complex(self.number_of_switchs_blocks, value)).get_bytes() ) )
 
-    send_lcd = ('lcdl2:>' + " ".join(arr_infos) +'\n').encode('latin1')
+    send_lcd = 'lcdl2:>%s\n' % " ".join(arr_infos)
     
     with Controler._lock:
       # send the character to the device
       print(send_lcd)
       if p_version == 1:
-        rs_elec.write_msg(send_lcd)
+        rs_elec.write_msg(send_lcd.encode('latin1'))
       elif p_version == 2:
-        rs_elect.write_bytes( (WeftExchange(0x2, DataType.t_string, 'lcdl2:>' + " ".join(arr_infos) +'\n')).get_bytes() )
+        rs_elect.write_bytes( (WeftExchange(0x2, DataType.t_string, send_lcd)).get_bytes() )
 
     return
 
@@ -250,6 +259,7 @@ PiControler the real controler to manage Raspberry Pi
   def get_protocol_version(cls):
     return cls._protocol_version
 
+# -----------------------------------------------------------------------------
 
 # units tests
 if __name__ == "__main__":
