@@ -129,15 +129,17 @@ Main Abstract Class for Train Management Controler
     Send order to the electronic component
     """
 
-    switch_name, switch_value, switch_persist = (params["switchName"], params["switchValue"], params["isPersistent"] if "isPersistent" in params.keys() else False)
-    print( "set_switch_value : sw name '%s', sw value '%d'" % (switch_name, switch_value) )
+    switch_name, switch_persist = (params["switchName"], params["isPersistent"] if "isPersistent" in params.keys() else False)
+
+    switch_value = (self.get_switch(switch_name)).state
+    print(switch_value)
+
+    print( "set_switch_value : sw name '%s', sw value '%s'" % (switch_name, str(switch_value)) )
 
     sw_id = int(switch_name.split("_").pop())
     block_switch_number = int(sw_id / 8)
 
     params["result"] = "OK"
-
-    return params
 
     # internal function for bit calcultation
     def write_output(switch_number, value):
@@ -147,7 +149,6 @@ Main Abstract Class for Train Management Controler
       switch_mask = switch_mask_blocks ^ pow(2, switch_number)
       self._switchs_value = (self._switchs_value & switch_mask ) | val_ret
       self.set_switch_value_handle ( self._switchs_value )
-
 
     val_to_send = switch_value << (sw_id % 8)
 
@@ -159,7 +160,7 @@ Main Abstract Class for Train Management Controler
     write_output( sw_id, val_to_send )
     print("on press:    %d" % self._switchs_value)
 
-    if tmp_switch.is_press:
+    if not(switch_persist):
       sleep(0.15)
 
       write_output( sw_id, SwitchCommand.OFF )

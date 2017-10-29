@@ -68,7 +68,7 @@ void setup() {
   pinMode(srclrPin, OUTPUT);
 
   // for debug, use the integrated led mainboard (pin 13)
-  //pinMode(emergencyStopPin, INPUT);
+  // pinMode(emergencyStopPin, INPUT);
 
   // initialize i2c as slave
   Wire.begin(SLAVE_ADDRESS);
@@ -207,7 +207,9 @@ void lcdPrint(String inputString) {
 /////////////////////////
 // Serial Communication
 void serialEvent() {
-
+  // for debug
+  // digitalWrite(emergencyStopPin, HIGH);
+  
   while (Serial.available()) {
 
     // get the new byte:
@@ -228,4 +230,7 @@ void serialEvent() {
   stringComplete = false;
 
   Serial.flush();
+  
+  // for debug
+  // digitalWrite(emergencyStopPin, LOW);
 }

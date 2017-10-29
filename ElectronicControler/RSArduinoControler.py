@@ -222,9 +222,9 @@ PiControler the real controler to manage Raspberry Pi
     return
 
   def set_switch_value_handle(self, value):
-    print("=============")
+    print("============= set_switch_value_handle(%d) =============" % value)
     arr_infos = [ str(value >> (y * 8) & 0xff) for y in range(0, self.number_of_switchs_blocks) ]
-    info_to_send = "%s;%s" % ( str(self.number_of_switchs_blocks), str(value) )
+    info_to_send = "%d;%d" % ( self.number_of_switchs_blocks, value )
 
     p_version = int(Controler.get_protocol_version())
 
@@ -244,7 +244,7 @@ PiControler the real controler to manage Raspberry Pi
     
     with Controler._lock:
       # send the character to the device
-      print(send_lcd)
+      print(send_lcd.encode('latin1'))
       if p_version == 1:
         rs_elec.write_msg(send_lcd.encode('latin1'))
       elif p_version == 2:
