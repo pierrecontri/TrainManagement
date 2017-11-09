@@ -1,0 +1,98 @@
+/*
+
+switchs UI
+
+author: Pierre Contri
+created: 22/06/2017
+
+*/
+
+.twoWaysSwitch,
+.oneWaySwitch {
+  float: left;
+  display: ineline-block;
+  padding: 5px;
+  /*border: 2px solid black;*/
+}
+
+.switchComponent {
+  float: left;
+  display: ineline-block;
+  position: relative;
+  margin: 0px;  
+  width: 100%;
+}
+
+div.divSwitchComponent > TABLE {
+  border-collapse: collapse;
+}
+
+.switchComponent > TBODY > TR > TD {
+  border: 1px black dashed;
+  margin: 0px;
+}
+
+.divSwitchComponent {
+  float: left;
+  display: inline-block;
+  position: inherit;
+  width: 60px;
+}
+
+.twoWays.wayclick {
+  background-color: gray;
+  color: inherit;
+}
+
+.oneWay {
+  height: 40px;
+}
+
+.oneWay.wayclick {
+  background: linear-gradient(to bottom, red, green);
+  color: inherit;
+}
+
+.oneWay.wayon {
+  background: linear-gradient(to bottom, black, green);
+}
+
+.oneWay.wayoff {
+  background: linear-gradient(to bottom, red, black);
+}
+
+.twoWays.wayoff {
+  background-color: blue;
+  color: inherit;
+}
+
+.twoWays.wayon {
+  background-color: green;
+  color: white;
+}
+
+.wayerror {
+  background-color: red;
+}
+
+.switchsContainer {
+  color: white;
+  background-color: burlywood;
+
+  float: left;
+  display: ineline-block;
+  position: relative;
+
+  margin: 10px;
+  padding: 0px; /* 15px 15px 15px; */
+  border: 10px brown solid;
+
+  border-radius: 15px;
+}
+
+#dashboardCommand {
+  position: relative;
+  float: none;
+  display: inline-block;
+  text-align: center;
+}

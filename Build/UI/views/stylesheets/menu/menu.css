@@ -1,0 +1,75 @@
+/**********************/
+/* feuille de style   */
+/* menu.css           */
+/* Pierre Contri      */
+/* cree le 12/08/2011 */
+/* mdf  le 08/02/2015 */
+/**********************/
+
+#divTitlePage>DIV>A:link {
+  text-decoration: none;
+}
+
+
+#divMiniMenu {
+  display: none;
+  visibility: hidden;
+}
+
+ul.nav {
+  list-style: none;
+  margin:0px;
+  padding: 0px;
+}
+
+ul.nav>li {
+  margin:0px;
+  padding: 0px;
+}
+
+.nav.selected, .tab.selected {
+  /* opacity: 0.95; */
+}
+
+.nav.unselected, .tab.unselected {
+  /* opacity: 0.90; */
+}
+
+/* Menu management */
+div.nav>ul.nav {
+  z-index: 3;
+}
+
+div.nav>ul.nav>li.nav {
+  z-index: 4;
+}
+
+div.nav>ul.nav>li.nav>ul.nav {
+  display: none;
+  visibility: hidden;
+  z-index: 5;
+}
+
+div.nav>ul.nav>li.nav>ul.nav>li.nav {
+  z-index: 6;
+}
+
+div.nav>ul.nav>li.tab>ul.nav>li.tab>a {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+li.tab>a {
+  background-color: transparent;
+  /*height: 20px;*/
+}
+
+.titleCategory {
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
+  height: 100%;
+  width: 100%;
+  border: 0px none;
+  z-index: 1;
+}

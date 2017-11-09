@@ -1,0 +1,101 @@
+/**********************/
+/* feuille de style   */
+/* sitmus.css         */
+/* Pierre Contri      */
+/* cree le 11/11/2005 */
+/* mdf  le 15/02/2015 */
+/**********************/
+
+@import "global.css";
+@import "menu/top_menu.css";
+
+/** Body **/
+BODY {
+  color: #2a6496;
+}
+
+P {
+  color: #2a6496;
+}
+
+A {
+  color: #2a6496;
+}
+
+div.nav>ul.nav>li.tab {
+  text-align: center;
+  vertical-align: middle;
+}
+
+div.nav>ul.nav>li.tab>ul.nav {
+  border-color: transparent;
+}
+
+div.nav>ul.nav>li.tab:hover  {
+  cursor: pointer;
+}
+
+A.unselected {
+  color: #777;
+}
+
+A.unselected:hover {
+  color: white;
+  /*font-style : italic;*/
+}
+
+OL {
+  list-style-type: disc;
+}
+
+.MusicDocument {
+  background-color: rgb(240, 240, 240);
+}
+
+.tab.selected,
+.tab.unselected:hover,
+a.selected {
+  color: white;
+  /*background-color: #080808;*/
+  background-color: rgb(42, 100, 150);
+}
+
+.tab.unselected {
+  color: #808040;
+  background-color: #222;
+}
+
+#divMenu {
+  background-color: #222;
+}
+/** end menu **/
+
+/** Elements **/
+#idPage {
+  position: relative;
+
+  overflow: auto;
+
+  padding: 10px;
+  color: #2a6496;
+  background-color: white;
+}
+
+#divCorps {
+  padding-left: 15px;
+  padding-right: 15px;
+  display: initial;
+}
+
+#divTitlePage {
+  position: relative;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border-top: 1px solid #507896;
+  border-bottom: 1px solid #507896;
+  text-align: center;
+}
+
+div#contentObjects {
+  text-align: left;
+}
