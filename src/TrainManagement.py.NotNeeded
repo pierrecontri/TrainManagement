@@ -1,0 +1,61 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*
+
+import cgi
+import json
+
+# ---------------- Add Path  --------------------------------------------------
+from sys import path as sys_pth
+import os.path as pth
+
+local_directory = pth.dirname(pth.abspath(__file__))
+import_list = [local_directory
+                    , pth.join(local_directory, "Model")
+                    , pth.join(local_directory, "Controler")
+                    , pth.join(local_directory, "ElectronicComponents")
+                    , pth.join(local_directory, "ElectronicModel")
+                    , pth.join(local_directory, "TrainLibraries.zip")
+]
+
+for to_import in import_list:
+  abs_dir = pth.dirname(pth.abspath(to_import))
+  if not pth.exists(abs_dir): continue
+  if not abs_dir in sys_pth: sys_pth.append(abs_dir)
+# -----------------------------------------------------------------------------
+
+
+import Controler.TrainManagementControler as tmc
+
+form = cgi.FieldStorage()
+
+control_name = form.getvalue("control")
+param1 = form.getvalue("param1") or None
+param2 = form.getvalue("param2") or None
+
+controler = tmc.Controler()
+
+if not controler.contains_function(control_name):
+  print("Status: 404 Not Found")
+  print("")
+  exit()
+
+json_body = json.dumps(controler.do(control_name, (param1, param2)))
+
+# body = """
+# <html>
+# <body>
+# dumps: %s
+# </body>
+# </html>
+# """ % json_body
+# print(body)
+
+print("Status: 200 OK")
+print("Content-Type: application/json;charset=utf-8")
+print("Length: %d" % (len(json_body)))
+print("")
+print(json_body)
+
+# Unit Tests
+if __name__ == '__main__':
+  pass

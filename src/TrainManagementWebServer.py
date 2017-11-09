@@ -5,9 +5,28 @@
 import sys, os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
-
 # -- WebService part
 import web, requests, json
+
+# ---------------- Add Path  --------------------------------------------------
+from sys import path as sys_pth
+import os.path as pth
+
+local_directory = pth.dirname(pth.abspath(__file__))
+import_list = (
+    local_directory
+    , pth.realpath(pth.join(local_directory, "TrainLibraries.zip"))
+    , pth.realpath(pth.join(local_directory, "Model"))
+    , pth.realpath(pth.join(local_directory, "Controler"))
+    , pth.realpath(pth.join(local_directory, "ElectronicComponents"))
+    , pth.realpath(pth.join(local_directory, "ElectronicModel"))
+)
+
+for to_import in import_list:
+  if not pth.exists(to_import): continue
+  if not to_import in sys_pth: sys_pth.append(to_import)
+# -----------------------------------------------------------------------------
+
 
 _allow_origin = '*'
 _allow_methods = 'PUT, GET, POST, DELETE, OPTIONS'

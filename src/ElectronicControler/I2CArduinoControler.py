@@ -5,15 +5,17 @@ if __name__ == "__main__":
     import os.path as pth
     
     local_directory = pth.dirname(pth.abspath(__file__))
-    import_list = [local_directory
-                        , pth.join(local_directory,"../Controler")
-#                        , pth.join(local_directory,"../ElectronicComponents")
-#                        , pth.join(local_directory,"../ElectronicModel")
-    ]
-    
+    import_list = (
+            local_directory
+            , pth.realpath(pth.join(local_directory, "TrainManagement.zip"))
+            , pth.realpath(pth.join(local_directory,"../Controler"))
+            , pth.realpath(pth.join(local_directory,"../Model"))
+            , pth.realpath(pth.join(local_directory,"../ElectronicComponents"))
+    )
+  
     for to_import in import_list:
-      abs_dir = pth.dirname(pth.abspath(to_import))
-      if not abs_dir in sys_pth: sys_pth.append(abs_dir)
+        if not os.exists(to_import): continue
+        if not to_import in sys_pth: sys_pth.append(to_import)
     # -----------------------------------------------------------------------------
 
 import threading
@@ -63,15 +65,17 @@ PiControler the real controler to manage Raspberry Pi
     import os.path as pth
 
     local_directory = pth.dirname(pth.abspath(__file__))
-    import_list = [local_directory
-                        , pth.join(local_directory, "..","UnitTests")
-                        , pth.join(local_directory, "..","ElectronicComponents")
-                        , pth.join(local_directory, "..","ElectronicModel")
-    ]
+    import_list = (
+            #local_directory
+            pth.realpath(pth.join(local_directory, "..", "TrainLibraries.zip"))
+            , pth.realpath(pth.join(local_directory, "..", "UnitTests"))
+            , pth.realpath(pth.join(local_directory, "..", "ElectronicComponents"))
+            , pth.realpath(pth.join(local_directory, "..", "ElectronicModel"))
+    )
 
     for to_import in import_list:
-      abs_dir = pth.dirname(pth.abspath(to_import))
-      if not abs_dir in sys_pth: sys_pth.append(abs_dir)
+        if not pth.exists(to_import): continue
+        if not to_import in sys_pth: sys_pth.append(to_import)
 
     from UnitTests import Time_32OutputsWithMuP
     from UnitTests import ChaseWithMuP

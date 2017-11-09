@@ -3,22 +3,25 @@ It is an abstract module used like a library.
 It is used to communicate between the TrainManagement server and the automate.
 """
 
-if __name__ == "__main__":
-    # ---------------- Add Path  --------------------------------------------------
-    import sys
-    from sys import path as sys_pth
-    import os.path as pth
-    
-    local_directory = pth.dirname(pth.abspath(__file__))
-    import_list = [local_directory
-                        , pth.join(local_directory,"../Controler")
-    ]
-    
-    for to_import in import_list:
-      abs_dir = pth.dirname(pth.abspath(to_import))
-      if not abs_dir in sys_pth: sys_pth.append(abs_dir)
-    # -----------------------------------------------------------------------------
+# ---------------- Add Path  --------------------------------------------------
+import sys
+from sys import path as sys_pth
+import os.path as pth
 
+local_directory = pth.dirname(pth.abspath(__file__))
+import_list = (
+        pth.realpath(pth.join(local_directory, ".."))
+        # , pth.realpath(pth.join(local_directory, "..", "TrainLibraries.zip"))
+        , pth.realpath(pth.join(local_directory, "..", "Model"))
+        # , pth.realpath(pth.join(local_directory, "..", "ElectronicModel"))
+        # , pth.realpath(pth.join(local_directory, "..", "Electronic"))
+)
+
+for to_import in import_list:
+  abs_pth = pth.abspath(to_import)
+  if not pth.exists(abs_pth): continue
+  if not abs_pth in sys_pth: sys_pth.append(abs_pth)
+# -----------------------------------------------------------------------------
 
 # TrainManagementControler
 

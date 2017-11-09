@@ -1,21 +1,29 @@
-if __name__ == "__main__":
-  # ---------------- Add Path  --------------------------------------------------
-  import sys
-  from sys import path as sys_pth
-  import os.path as pth
-  
-  local_directory = pth.dirname(pth.abspath(__file__))
-  import_list = [local_directory
-            , pth.join(local_directory,"../Controler")
-            , pth.join(local_directory,"../Model")
-  ]
-  
-  for to_import in import_list:
-    abs_dir = pth.dirname(pth.abspath(to_import))
-    if not abs_dir in sys_pth: sys_pth.append(abs_dir)
-  # -----------------------------------------------------------------------------
+"""
+DummyControler: simulator of the electronic controler. Used for Unit Tests and GUI developpement
+"""
 
-from Controler.TrainManagementControler import TrainManagementControler
+# ---------------- Add Path  --------------------------------------------------
+import sys
+from sys import path as sys_pth
+import os.path as pth
+
+local_directory = pth.dirname(pth.abspath(__file__))
+
+import_list = (
+          #local_directory
+          pth.realpath(pth.join(local_directory, ".."))
+          , pth.realpath(pth.join(local_directory, "..", "TrainLibraries.zip"))
+          , pth.realpath(pth.join(local_directory, "..", "Controler"))
+          , pth.realpath(pth.join(local_directory, "..", "Model"))
+)
+
+for to_import in import_list:
+  if not pth.exists(to_import): continue
+  if not to_import in sys_pth: sys_pth.append(to_import)
+# -----------------------------------------------------------------------------
+
+
+from Controler import TrainManagementControler
 import random
 from time import sleep
 

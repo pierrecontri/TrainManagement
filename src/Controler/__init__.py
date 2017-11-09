@@ -1,5 +1,5 @@
 # __init__.py
 
-import TrainManagementControler
+from .TrainManagementControler import *
 
 __all__ = ["TrainManagementControler"]
