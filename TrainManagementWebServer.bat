@@ -1,4 +1,5 @@
 echo off
 REM python ".\src\TrainManagementWebServer.py" ElectronicControler.DummyControler
-python ".\src\TrainManagementWebServer.py" ElectronicControler.RSArduinoControler COMPORT:COM8
+REM python ".\src\TrainManagementWebServer.py" ElectronicControler.RSArduinoControler COMPORT:COM8
+python ".\Build\TrainManagementWebServer.pyc"
 pause

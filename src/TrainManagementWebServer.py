@@ -10,7 +10,9 @@ import web, requests, json
 
 # ---------------- Add Path  --------------------------------------------------
 from sys import path as sys_pth
+from sys import stdin
 import os.path as pth
+import re
 
 local_directory = pth.dirname(pth.abspath(__file__))
 import_list = (
@@ -71,7 +73,19 @@ def json_app_resp():
 
 # Create the real controler
 # With specifications in args
-dynamic_controler_name = sys.argv[1] if len(sys.argv) > 1 else "ElectronicControler.DummyControler"
+dynamic_controler_name = ""
+if len(sys.argv) > 1:
+    dynamic_controler_name = sys.argv[1]
+else:
+    # list the possible electronic controlers
+    lstControlers = os.listdir(pth.realpath(pth.join(local_directory, "ElectronicControler")))
+    for pos, elecCtrl in enumerate(lstControlers):
+        print("%d: %s" % (pos + 1, elecCtrl))
+    print('Please, choose your electronic controler:')
+    ctrl_choice = int(stdin.readline().strip())
+    ctrl_name = re.sub('\.py.?', "", lstControlers[(ctrl_choice - 1) if 0 < ctrl_choice <= len(lstControlers) else 0])
+    dynamic_controler_name = "ElectronicControler.%s" % ctrl_name
+
 dynamic_controler = __import__(dynamic_controler_name, fromlist=["*"])
 controler = dynamic_controler.Controler()
 # print the controler type

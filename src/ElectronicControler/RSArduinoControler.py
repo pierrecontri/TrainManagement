@@ -42,7 +42,9 @@ WAIT_TIME_WRITE_BUS = 0.1
 
 arg_com = "".join([tmp_arg.split(':').pop() for tmp_arg in sys.argv if tmp_arg.upper().startswith("COMPORT:")])
 if arg_com == "":
-  raise Exception("No COM port defined !")
+  print("Please, enter the com port name:")
+  arg_com = sys.stdin.readline().strip()
+  # raise Exception("No COM port defined !")
 
 class DataType(object):
   t_none = 0x0
