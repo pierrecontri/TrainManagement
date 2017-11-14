@@ -73,24 +73,36 @@ def json_app_resp():
 
 # Create the real controler
 # With specifications in args
-dynamic_controler_name = ""
-if len(sys.argv) > 1:
-    dynamic_controler_name = sys.argv[1]
-else:
-    # list the possible electronic controlers
-    lstControlers = os.listdir(pth.realpath(pth.join(local_directory, "ElectronicControler")))
-    for pos, elecCtrl in enumerate(lstControlers):
-        print("%d: %s" % (pos + 1, elecCtrl))
-    print('Please, choose your electronic controler:')
-    ctrl_choice = int(stdin.readline().strip())
-    ctrl_name = re.sub('\.py.?', "", lstControlers[(ctrl_choice - 1) if 0 < ctrl_choice <= len(lstControlers) else 0])
-    dynamic_controler_name = "ElectronicControler.%s" % ctrl_name
+def get_controler():
+    """ Method to select the controler and instanciate it (like a singleton) """
 
-dynamic_controler = __import__(dynamic_controler_name, fromlist=["*"])
-controler = dynamic_controler.Controler()
-# print the controler type
-print("Controler name loaded: %s" % dynamic_controler.__name__)
-print("Controler class name: %s" % type(controler))
+    get_controler.singletonCtrl = None
+
+    if get_controler.singletonCtrl is not None:
+        return get_controler.singletonCtrl
+
+    dynamic_controler_name = ""
+    if len(sys.argv) > 1:
+        dynamic_controler_name = sys.argv[1]
+    else:
+        # list the possible electronic controlers
+        lstControlers = [re.sub('\.py.?', "", tmpCtrlName) for tmpCtrlName in os.listdir(pth.realpath(pth.join(local_directory, "ElectronicControler"))) if (tmpCtrlName.rfind("Controler") >= 0)]
+        for pos, elecCtrl in enumerate(lstControlers):
+            print("%d: %s" % (pos + 1, elecCtrl))
+        print('Please, choose your electronic controler:')
+        ctrl_choice = int(stdin.readline().strip())
+        ctrl_name = lstControlers[(ctrl_choice - 1) if 0 < ctrl_choice <= len(lstControlers) else 0]
+        dynamic_controler_name = "ElectronicControler.%s" % ctrl_name
+        print("Controler selected: %s" % dynamic_controler_name)
+
+    dynamic_controler = __import__(dynamic_controler_name, fromlist=["*"])
+    controler = dynamic_controler.Controler()
+    # print the controler type
+    print("Controler name loaded: %s" % dynamic_controler.__name__)
+    print("Controler class name: %s" % type(controler))
+
+    get_controler.singletonCtrl = controler
+    return get_controler.singletonCtrl
 # -- End Using ElectronicControler
 
 #-- Class Controlers (linked to the routes)
@@ -120,11 +132,12 @@ class demo:
     def POST(self, action_str):
         json_app_resp()
         params = get_post_json_params()
-        obj_response = controler.start_demo() if action_str == "start" else controler.stop_demo()
+        obj_response = _controler.start_demo() if action_str == "start" else _controler.stop_demo()
 
         return render_json( obj_response )
 
 class train_control:
+    _controler = get_controler()
 
     def GET(self, str_params):
         json_app_resp()
@@ -138,7 +151,7 @@ class train_control:
         json_params = get_post_json_params()
         print(json_params)
 
-        obj_response = controler.do( action, json_params )
+        obj_response = _controler.do( action, json_params )
 
         return render_json( obj_response )
 
