@@ -39,6 +39,8 @@ render_json = lambda obj: json.dumps(obj, default='"')
 render_html = lambda message: '<html><body>%s</body></html>'%message
 render_txt = lambda message: message
 
+_controler = None
+
 # define routes for application
 urls = (
     '/', 'home_control',
@@ -76,11 +78,6 @@ def json_app_resp():
 def get_controler():
     """ Method to select the controler and instanciate it (like a singleton) """
 
-    get_controler.singletonCtrl = None
-
-    if get_controler.singletonCtrl is not None:
-        return get_controler.singletonCtrl
-
     dynamic_controler_name = ""
     if len(sys.argv) > 1:
         dynamic_controler_name = sys.argv[1]
@@ -101,8 +98,7 @@ def get_controler():
     print("Controler name loaded: %s" % dynamic_controler.__name__)
     print("Controler class name: %s" % type(controler))
 
-    get_controler.singletonCtrl = controler
-    return get_controler.singletonCtrl
+    return controler
 # -- End Using ElectronicControler
 
 #-- Class Controlers (linked to the routes)
@@ -137,7 +133,6 @@ class demo:
         return render_json( obj_response )
 
 class train_control:
-    _controler = get_controler()
 
     def GET(self, str_params):
         json_app_resp()
@@ -159,6 +154,8 @@ class train_control:
 
 
 if __name__ == "__main__":
+    _controler = get_controler()
+
     try:
         web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", 8088))
     except KeyboardInterrupt:
