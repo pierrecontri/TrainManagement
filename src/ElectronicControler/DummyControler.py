@@ -42,6 +42,8 @@ class DummyElec(object):
 
 class Controler(TrainManagementControler):
 
+  """ This is the dummy Controler to simulate the real electronic communication """
+
   def __init__(self):
     self._number_of_switchs_blocks = 4
     TrainManagementControler.__init__(self)

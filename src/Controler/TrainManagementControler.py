@@ -11,10 +11,7 @@ import os.path as pth
 local_directory = pth.dirname(pth.abspath(__file__))
 import_list = (
         pth.realpath(pth.join(local_directory, ".."))
-        # , pth.realpath(pth.join(local_directory, "..", "TrainLibraries.zip"))
         , pth.realpath(pth.join(local_directory, "..", "Model"))
-        # , pth.realpath(pth.join(local_directory, "..", "ElectronicModel"))
-        # , pth.realpath(pth.join(local_directory, "..", "Electronic"))
 )
 
 for to_import in import_list:
@@ -99,6 +96,7 @@ Main Abstract Class for Train Management Controler
     return switch_params
 
   def bind_switch(self, switch_params):
+
     switch_object = SwitchCommand.switch_from_json(switch_params)
     #instanciate the switch command object
     self._switchs_list[switch_object.name] = switch_object

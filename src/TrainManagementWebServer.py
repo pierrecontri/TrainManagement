@@ -2,17 +2,16 @@
 
 # ex in web browser : http://localhost:8088/TrainManagement.py?control=get_help&functionName=Switch&functionValue=Off
 
-import sys, os
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+import sys
+import os.path as pth
+import re
+
+sys.path.append(pth.dirname(pth.realpath(__file__)))
 
 # -- WebService part
 import web, requests, json
 
 # ---------------- Add Path  --------------------------------------------------
-from sys import path as sys_pth
-from sys import stdin
-import os.path as pth
-import re
 
 local_directory = pth.dirname(pth.abspath(__file__))
 import_list = (
@@ -26,152 +25,127 @@ import_list = (
 
 for to_import in import_list:
   if not pth.exists(to_import): continue
-  if not to_import in sys_pth: sys_pth.append(to_import)
+  if not to_import in sys.path: sys.path.append(to_import)
 # -----------------------------------------------------------------------------
 
+from Controler.FactoryControler import ControlerFactory
 
-_allow_origin = '*'
-_allow_methods = 'PUT, GET, POST, DELETE, OPTIONS'
-_allow_headers = 'Authorization, Origin, Accept, Content-Type, Content-Length, X-Requested-With, X-CSRF-Token'
+class WebHttpThread(object):
 
-render_xml = lambda message: '<message>%s</message>'%message
-render_json = lambda obj: json.dumps(obj, default='"')
-render_html = lambda message: '<html><body>%s</body></html>'%message
-render_txt = lambda message: message
+    _allow_origin = '*'
+    _allow_methods = 'PUT, GET, POST, DELETE, OPTIONS'
+    _allow_headers = 'Authorization, Origin, Accept, Content-Type, Content-Length, X-Requested-With, X-CSRF-Token'
+    
+    render_xml = lambda message: '<message>%s</message>'%message
+    render_json = lambda obj: json.dumps(obj, default='"')
+    render_html = lambda message: '<html><body>%s</body></html>'%message
+    render_txt = lambda message: message
 
-_controler = None
+    # ctrl = get_controler()
 
-# define routes for application
-urls = (
-    '/', 'home_control',
-    '/home/(.*)', 'home_control',
-    '/train_control/(.*)', 'train_control',
-    '/demo/(.*)', 'demo'
-)
-app = web.application(urls, globals())
+    # define routes for application
+    _urls = (
+        '/', 'home_controler',
+        '/home/(.*)', 'home_controler',
+        '/train_control/(.*)', 'TrainControler',
+        '/demo/(.*)', 'demo_controler'
+    )
 
-def get_post_json_params():
-    """Return the json object from post params"""
-    post_params = web.data().decode('utf-8')
-    print(post_params)
-    json_params = json.loads(post_params)
+    @classmethod
+    def get_post_json_params(cls):
+        """Return the json object from post params"""
+        post_params = web.data().decode('utf-8')    
+        return json.loads(post_params)
 
-    return json_params
+    @classmethod
+    def json_app_rqt(cls):
+        """Define the request format for web user"""
+        web.request.accept = 'application/json, text/plain; charset=utf-8'
 
-def json_app_rqt():
-    """Define the request format for web user"""
-    web.request.accept = 'application/json, text/plain; charset=utf-8'
+    @classmethod
+    def json_app_resp(cls):
+        """Define the response format fot web user"""
+        web.header('Access-Control-Allow-Origin', WebHttpThread._allow_origin)
+        web.header('Access-Control-Allow-Methods', WebHttpThread._allow_methods)
+        web.header('Content-Type', 'application/json; charset=utf-8')
+    @classmethod
 
-def json_app_resp():
-    """Define the response format fot web user"""
-    web.header('Access-Control-Allow-Origin', _allow_origin)
-    web.header('Access-Control-Allow-Methods', _allow_methods)
-    web.header('Content-Type', 'application/json; charset=utf-8')
+    def run_webhttp(cls):
+        try:
+            app = web.application(cls._urls, globals())
+            print("Web server for TrainManagement, listening on:", end =" ")
+            web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", 8088))
+        except KeyboardInterrupt:
+            print("Server stopped")
+            pass
 
-# -- End WebService part
-
-
-# -- Using ElectronicControler
-
-# Create the real controler
-# With specifications in args
-def get_controler():
-    """ Method to select the controler and instanciate it (like a singleton) """
-
-    dynamic_controler_name = ""
-    if len(sys.argv) > 1:
-        dynamic_controler_name = sys.argv[1]
-    else:
-        # list the possible electronic controlers
-        lstControlers = [re.sub('\.py.?', "", tmpCtrlName) for tmpCtrlName in os.listdir(pth.realpath(pth.join(local_directory, "ElectronicControler"))) if (tmpCtrlName.rfind("Controler") >= 0)]
-        for pos, elecCtrl in enumerate(lstControlers):
-            print("%d: %s" % (pos + 1, elecCtrl))
-        print('Please, choose your electronic controler:')
-        ctrl_choice = int(stdin.readline().strip())
-        ctrl_name = lstControlers[(ctrl_choice - 1) if 0 < ctrl_choice <= len(lstControlers) else 0]
-        dynamic_controler_name = "ElectronicControler.%s" % ctrl_name
-        print("Controler selected: %s" % dynamic_controler_name)
-
-    dynamic_controler = __import__(dynamic_controler_name, fromlist=["*"])
-    controler = dynamic_controler.Controler()
-    # print the controler type
-    print("Controler name loaded: %s" % dynamic_controler.__name__)
-    print("Controler class name: %s" % type(controler))
-
-    return controler
-# -- End Using ElectronicControler
-
+#End Class WebHttpThread
+    
 #-- Class Controlers (linked to the routes)
-class home_control:
-
+class home_controler(object):
+    """ This controler is used for the human interaction """
     def GET(self, name = ""):
-        json_app_resp()
+        WebHttpThread.json_app_resp()
         if not name == "":
             name = 'world'
-        return render_json( {'message': 'Hello, %s!' % name} )
+        return WebHttpThread.render_json( {'message': 'Hello, %s!' % name} )
 
     def POST(self, name = ""):
         json_app_resp()
-        params = get_post_json_params()
+        params = WebHttpThread.get_post_json_params()
 
         if not name == "":
             name = 'world'
-        return render_json( {'message': 'Hello, %s!' % name} )
+        return WebHttpThread.render_json( {'message': 'Hello, %s!' % name} )
 
-class demo:
+class demo_controler(object):
+    """ This is the Demo Controler """
 
     def GET(self, name):
-        json_app_resp()
+        WebHttpThread.json_app_resp()
 
-        return render_json( {'message': 'OK', 'action': name} )
+        return WebHttpThread.render_json( {'message': 'OK', 'action': name} )
 
     def POST(self, action_str):
-        json_app_resp()
-        params = get_post_json_params()
-        obj_response = _controler.start_demo() if action_str == "start" else _controler.stop_demo()
+        WebHttpThread.json_app_resp()
+        params = WebHttpThread.get_post_json_params()
+        ctrl = ControlerFactory.get_controler()
+        obj_response = ctrl.start_demo() if action_str == "start" else ctrl.stop_demo()
+        obj_response = {"result": "ok"}
 
-        return render_json( obj_response )
+        return WebHttpThread.render_json( obj_response )
 
-class train_control:
+class TrainControler(object):
+    """ This Controler is used for the web services communication (REST) with automate """
 
     def GET(self, str_params):
-        json_app_resp()
+        WebHttpThread.json_app_resp()
 
         dict_params = { k:v for k, v in [param.split("=") for param in str_params.split("&")] }
-        return render_json( dict_params )
+        return WebHttpThread.render_json( dict_params )
 
     def POST(self, action):
-        json_app_resp()
-        print(action)
-        json_params = get_post_json_params()
+
+        WebHttpThread.json_app_resp()
+        json_params = WebHttpThread.get_post_json_params()
+        print("POST requested : %s" % (action), end = ' ')
         print(json_params)
 
-        obj_response = _controler.do( action, json_params )
-
-        return render_json( obj_response )
-
-# End Class Controler
+        obj_response = ControlerFactory.get_controler().do( action, json_params )
+        return WebHttpThread.render_json( obj_response )
+    
+    # End Class Controler
 
 
 if __name__ == "__main__":
-    _controler = get_controler()
-
-    try:
-        web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", 8088))
-    except KeyboardInterrupt:
-        pass
-
-    print("Server stoped\nBye")
+    ControlerFactory.get_controler()
+    WebHttpThread.run_webhttp()
+    print("Bye")
 
 
 # ## Start this Web Service like
-# python .\TrainManagementWebServer.py
-# Or
-# python .\TrainManagementWebServer.py ElectronicControler.DummyControler
+# python .\TrainManagementWebServer.py [ ElectronicControler.DummyControler ]
 
 # ## Call this WebService in Powershell like
-# $acceptHeader = new-object 'collections.generic.dictionary[string,string]'
-# $acceptHeader.Add("Accept","application/json")
-# $acceptHeader = @{ "Accept" = "application/json" }
-# curl -Headers $acceptHeader "http://otter:8088/trainControl/test=34&tty=toto"
-# curl -Headers @{ "Accept" = "application/json" } "http://otter:8088/trainControl/test=34&tty=toto"
+# curl -Headers @{ "Accept" = "application/json" } "http://otter:8088/train_control/test=34&tty=toto"
+# curl -Headers @{ "Accept" = "application/json" } "http://otter:8088/demo/register_switch_value" -Body @{"name" = "tty"; "value" = 1} -ContentType "application/json; charset=utf-8"
