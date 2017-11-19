@@ -46,9 +46,9 @@ class WebHttpThread(object):
     # define routes for application
     _urls = (
         '/', 'home_controler',
-        '/home/(.*)', 'home_controler',
+        '/home/(.*)', 'HomeControler',
         '/train_control/(.*)', 'TrainControler',
-        '/demo/(.*)', 'demo_controler'
+        '/demo/(.*)', 'DemoControler'
     )
 
     @classmethod
@@ -82,7 +82,7 @@ class WebHttpThread(object):
 #End Class WebHttpThread
     
 #-- Class Controlers (linked to the routes)
-class home_controler(object):
+class HomeControler(object):
     """ This controler is used for the human interaction """
     def GET(self, name = ""):
         WebHttpThread.json_app_resp()
@@ -98,7 +98,7 @@ class home_controler(object):
             name = 'world'
         return WebHttpThread.render_json( {'message': 'Hello, %s!' % name} )
 
-class demo_controler(object):
+class DemoControler(object):
     """ This is the Demo Controler """
 
     def GET(self, name):
