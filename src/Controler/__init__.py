@@ -3,4 +3,4 @@
 from .TrainManagementControler import *
 from .FactoryControler import *
 
-__all__ = ["TrainManagementControler", "ControlerFactory"]
+__all__ = ["TrainManagementControler", "FactoryControler"]
