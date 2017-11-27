@@ -34,15 +34,15 @@
       </div>
     </nav>
       <div id="divContentHeader" class="jumbotron">
-          <h2>Dashboard</h2>
-
+          <h2>Dashboard<span style="float: right; font-style: none; font-size: 12px;" onclick="javascript:hide_div('divContentHeader');";>[X]</span></h2>
+          
       </div>
       <!-- Page content -->
       <div class="page" id="idPage">
 
-  <section>
+  <section id="module_presentation">
 
-    <h3>Presentation</h3>
+    <h3>Presentation<span style="float: right; font-style: none; font-size: 12px;" onclick="javascript:hide_div('module_presentation');hide_div('divContentHeader');";>[X]</span></h3>
 
     <article>
         <p>On this dashboard, you can control switchs, lights, railways sections of your train</p>
@@ -64,7 +64,7 @@
   </div> -->
 
   <section id="module_configuration">
-    <h3>Module Configuration</h3>
+    <h3>Module Configuration<span style="float: right; font-style: none; font-size: 12px;" onclick="javascript:hide_div('module_configuration');";>[X]</span></h3>
 
     <article>
       <p>Server name:&nbsp;<input type="text" id="server_name" value="localhost" /></p>
