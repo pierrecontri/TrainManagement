@@ -34,21 +34,21 @@
       </div>
     </nav>
       <div id="divContentHeader" class="jumbotron">
-          <h2>Dashboard</h2>
-
+          <h2>Dashboard<span style="float: right; font-style: none; font-size: 12px;" onclick="javascript:hide_div('divContentHeader');";>[X]</span></h2>
+          
       </div>
       <!-- Page content -->
       <div class="page" id="idPage">
 
-  <section>
+  <section id="module_presentation">
 
-    <h3>Presentation</h3>
+    <h3>Presentation<span style="float: right; font-style: none; font-size: 12px;" onclick="javascript:hide_div('module_presentation');hide_div('divContentHeader');";>[X]</span></h3>
 
     <article>
         <p>On this dashboard, you can control switchs, lights, railways sections of your train</p>
         <p>How to do:
           <ul>
-            <li>First, connect interface to the electronical controler (insert the name or ip address of the controler into Module Configuration)</li>
+            <li>First, connect interface to the electronical controler<br />(insert the name or ip address of the controler into Module Configuration)</li>
             <li>Second, click on "Initialize" button</li>
             <li>Last, play and have fun</li>
           </ul>
@@ -57,15 +57,24 @@
     </article>
   </section>
 
-  <div id="demo_part">
+<!--   <div id="demo_part">
     <input type="button" value="Start Demo" onclick="javascript:start_demo();" />
     <input type="button" value="Stop Demo" onclick="javascript:stop_demo();" />
     <div id="test_demo_result"></div>
-  </div>
+  </div> -->
+
+  <section id="module_configuration">
+    <h3>Module Configuration<span style="float: right; font-style: none; font-size: 12px;" onclick="javascript:hide_div('module_configuration');";>[X]</span></h3>
+
+    <article>
+      <p>Server name:&nbsp;<input type="text" id="server_name" value="localhost" /></p>
+      <p><input type="button" id="initializebutton" value="Initialize" onclick="javascript:initSwitchs();" />
+      <input type="button" id="resetbutton" value="Emergency Stop" onclick="javascript:emergencyStop();" /></p>
+    </article>
+  </section>
 
   <div class="paragrapheText">
   </div>
-
 
   <section id="module_visualization">
     <h3>Module Visualization</h3>
@@ -73,16 +82,6 @@
       <div id="graphicalSection">
         <canvas id="wayTracking" width="580" height="185" />
       </div>
-    </article>
-  </section>
-
-  <section id="module_configuration">
-    <h3>Module Configuration</h3>
-
-    <article>
-      Server name:&nbsp;<input type="text" id="server_name" value="localhost" />
-      <input type="button" id="initializebutton" value="Initialize" onclick="javascript:initSwitchs();" />
-      <input type="button" id="resetbutton" value="Emergency Stop" onclick="javascript:emergencyStop();" />
     </article>
   </section>
 
