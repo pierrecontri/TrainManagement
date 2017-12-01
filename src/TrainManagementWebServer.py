@@ -68,8 +68,8 @@ class WebHttpThread(object):
         web.header('Access-Control-Allow-Origin', WebHttpThread._allow_origin)
         web.header('Access-Control-Allow-Methods', WebHttpThread._allow_methods)
         web.header('Content-Type', 'application/json; charset=utf-8')
-    @classmethod
 
+    @classmethod
     def run_webhttp(cls):
         try:
             app = web.application(cls._urls, globals())
