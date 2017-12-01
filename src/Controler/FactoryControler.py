@@ -2,6 +2,7 @@ import sys, os
 import re
 
 local_directory = os.path.dirname(os.path.abspath(__file__))
+project_directory = os.path.realpath(os.path.join(local_directory, "..")) if "TrainLibraries.zip" not in local_directory else os.path.realpath(os.path.join(local_directory, "..", ".."))
 
 # -- Using ElectronicControler
 class ControlerFactory(object):
@@ -26,7 +27,7 @@ class ControlerFactory(object):
             dynamic_controler_name = sys.argv[1]
         else:
             # list the possible electronic controlers
-            lstControlers = [re.sub('\.py.?', "", tmpCtrlName) for tmpCtrlName in os.listdir(os.path.realpath(os.path.join(local_directory, "..", "ElectronicControler"))) if (tmpCtrlName.rfind("Controler") >= 0)]
+            lstControlers = [re.sub('\.py.?', "", tmpCtrlName) for tmpCtrlName in os.listdir(os.path.realpath(os.path.join(project_directory, "ElectronicControler"))) if (tmpCtrlName.rfind("Controler") >= 0)]
             print("\nNo Controler sent by parameters, but many controlers detected")
             for pos, elecCtrl in enumerate(lstControlers):
                 print("%d: %s" % (pos + 1, elecCtrl))

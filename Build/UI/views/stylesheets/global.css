@@ -163,37 +163,34 @@ code.script {
   visibility: hidden;
 }
 
-#demo_part {
-  display : none;
-  visibility: hidden;
-}
-
-#module_configuration {
-  display: left;
-  text-align: left;
-  width: 300px;
-}
-
 section {
-  margin-top: 10px;
+  margin: 10px;
+  float: left;
+  display: block;
 }
 
 section>article {
-  border-left: 1px;
-  border-top: 1px;
-  border-right: 1px;
-  border-bottom: 1px;
+  border-left: 0px;
+  border-top: 0px;
+  border-right: 0px;
+  border-bottom: 0px;
   border-radius: 0px 0px 20px 0px;
   border-color: black;
   border-style: solid;
-
+  /* background-color: #F2F2E4; */
   padding: 5px;
+}
+
+article {
+  margin: 0px;
+  display: block;
+  float: left;
 }
 
 section>h3 {
   border-left: 1px;
   border-top: 1px;
-  border-right: 1px;
+  border-right: 0px;
   border-bottom: 0px;
   border-color: black;
   border-style: solid;
@@ -207,6 +204,30 @@ section>h3 {
 }
 
 #graphicalSection [
+}
+
+#demo_part {
+  display : none;
+  visibility: hidden;
+}
+
+#module_configuration {
+  float: left;
+  display: block;
+  text-align: left;
+  width: 300px;
+}
+
+#dashboardCommand {
+  position: relative;
+  float: none;
+  display: inline-block;
+  text-align: center;
+}
+
+#module_command {
+  float: left;
+  width: 200px;
 }
 
 /** end Containers **/
