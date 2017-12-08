@@ -3,7 +3,7 @@
 This part present the global architecture for this project
 
 The complet architecture is define on this schem:
-![Complete Architecutre](diagrams/Diagramdedeploiement.png)
+![Complete Architecutre](diagrams/Diagrammededeploiement.png)
 
 We have many device configuration to use this software
 
