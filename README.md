@@ -36,3 +36,8 @@ pip3 install web
 pip3 install requests
 pip3 install smbus2 (new link to replace the smbus-cffi package)
 pip3 install pysmbus
+
+## Hardware architecture
+
+This project is split in multi hardware part
+![Deployment diagram](Documentation/diagrams/Diagrammededeploiement.png)
