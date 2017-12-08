@@ -39,5 +39,5 @@ pip3 install pysmbus
 
 ## Hardware architecture
 
-This project is split in multi hardware part
+This project is splitted in multi hardware part
 ![Deployment diagram](Documentation/diagrams/Diagrammededeploiement.png)
