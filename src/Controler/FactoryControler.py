@@ -6,12 +6,19 @@ project_directory = os.path.realpath(os.path.join(local_directory, "..")) if "Tr
 
 # -- Using ElectronicControler
 class ControlerFactory(object):
-
+    """
+    Controler Factory can analyse the driver library presented to the application
+    If the driver is transmit as a parameter, it load and return it to the application
+    """
     __controler = None
 
     # used as a singleton
     @classmethod
     def get_controler(cls):
+        """
+        Cause the physical driver point to electronic composant, it must be single
+        Used as a singleton
+        """
         if cls.__controler is None:
             cls.__controler = cls.instanciate_controler()
         return cls.__controler

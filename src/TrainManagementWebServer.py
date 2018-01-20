@@ -1,6 +1,13 @@
 #!/usr/bin/python3
-
+"""
+# ## Start this Web Service like
+# python .\TrainManagementWebServer.py [ ElectronicControler.DummyControler ]
 # ex in web browser : http://localhost:8088/TrainManagement.py?control=get_help&functionName=Switch&functionValue=Off
+
+# ## Call this WebService in Powershell like
+# curl -Headers @{ "Accept" = "application/json" } "http://otter:8088/train_control/test=34&tty=toto"
+# curl -Headers @{ "Accept" = "application/json" } "http://otter:8088/demo/register_switch_value" -Body @{"name" = "tty"; "value" = 1} -ContentType "application/json; charset=utf-8"
+"""
 
 import sys
 import os.path as pth
@@ -31,6 +38,7 @@ for to_import in import_list:
 from Controler.FactoryControler import ControlerFactory
 
 class WebHttpThread(object):
+    """ Main class (starting point) use into a thread to response on http requests """
 
     _allow_origin = '*'
     _allow_methods = 'PUT, GET, POST, DELETE, OPTIONS'
@@ -40,8 +48,6 @@ class WebHttpThread(object):
     render_json = lambda obj: json.dumps(obj, default='"')
     render_html = lambda message: '<html><body>%s</body></html>'%message
     render_txt = lambda message: message
-
-    # ctrl = get_controler()
 
     # define routes for application
     _urls = (
@@ -71,9 +77,10 @@ class WebHttpThread(object):
 
     @classmethod
     def run_webhttp(cls):
+        """Start the web server"""
         try:
             app = web.application(cls._urls, globals())
-            print("Web server for TrainManagement, listening on:", end =" ")
+            print("Web server for TrainManagement, listening on:", end=' ')
             web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", 8088))
         except KeyboardInterrupt:
             print("Server stopped")
@@ -85,12 +92,14 @@ class WebHttpThread(object):
 class HomeControler(object):
     """ This controler is used for the human interaction """
     def GET(self, name = ""):
+        """The get method is called for software control"""
         WebHttpThread.json_app_resp()
         if not name == "":
             name = 'world'
         return WebHttpThread.render_json( {'message': 'Hello, %s!' % name} )
 
     def POST(self, name = ""):
+        """This post method is use for the business communication"""
         json_app_resp()
         params = WebHttpThread.get_post_json_params()
 
@@ -142,10 +151,3 @@ if __name__ == "__main__":
     WebHttpThread.run_webhttp()
     print("Bye")
 
-
-# ## Start this Web Service like
-# python .\TrainManagementWebServer.py [ ElectronicControler.DummyControler ]
-
-# ## Call this WebService in Powershell like
-# curl -Headers @{ "Accept" = "application/json" } "http://otter:8088/train_control/test=34&tty=toto"
-# curl -Headers @{ "Accept" = "application/json" } "http://otter:8088/demo/register_switch_value" -Body @{"name" = "tty"; "value" = 1} -ContentType "application/json; charset=utf-8"
