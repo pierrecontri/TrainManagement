@@ -44,7 +44,7 @@ Main Abstract Class for Train Management Controler
     for i in range(0, self.number_of_switchs_blocks):
       self._command_switchs_list.append( EightIO( component_interface = None, bit_not_on = False, digits_rangs = i ) )
 
-  def contains_function(self, function_name):
+  def contains_function(self, function_name: str):
     """Check if the function name input is constaints into the controler (due to factory with external controler)"""
     return function_name in dir(self) and type(self.__getattribute__(function_name)).__name__ == 'method'
 
@@ -55,24 +55,22 @@ Main Abstract Class for Train Management Controler
 
     return { 'help': "This controler give some basics functions:\n%s" % concat_name_function }
 
-  def do(self, what, params = {}):
+  def do(self, what, params: dict = {}):
     """From json request, get the action and execute it with parameters"""
     if not self.contains_function(what):
       return {'result': 'NOK', 'errorMessage': "The \"%s\" function does not exists!" % what}
 
     fct_do = self.__getattribute__(what)
-    args_specs = inspect.getargspec(fct_do)
+    return fct_do(params) if len(inspect.getfullargspec(fct_do).args) > 1 else fct_do()
 
-    return fct_do(params) if len(args_specs.args) > 1 else fct_do()
-
-  def register_switch_value(self, switch_obj : SwitchCommand):
+  def register_switch_value(self, switch_obj: SwitchCommand):
     """
     From a switch object, save it into a switch dictionnary for matching with GUI
     """
     self._switchs_list[switch_obj.name] = switch_obj
     return
 
-  def switch_value(self, switch_params = {}):
+  def switch_value(self, switch_params: dict = {}):
     """
     From a json command with the switch name, find the switch object and inverse his value
     """
@@ -81,7 +79,9 @@ Main Abstract Class for Train Management Controler
 
     switch_params["result"] = "NOK"
 
-    if not sw_object.name in self._switchs_list.keys(): self.bind_switch(switch_params)
+    if not sw_object.name in self._switchs_list.keys():
+      self.bind_switch(switch_params)
+
     else:
 
       # get all connectors in the same group and put it to OFF
@@ -89,6 +89,7 @@ Main Abstract Class for Train Management Controler
                          for tmp_switch in self._switchs_list.values()
                          if tmp_switch.group == self._switchs_list[sw_object.name].group
                             and tmp_switch.name != sw_object.name]
+
       for t_switch in tmp_switch_list:
         t_switch.state = SwitchCommand.OFF
         if not(t_switch.is_press):
@@ -103,12 +104,12 @@ Main Abstract Class for Train Management Controler
 
     return switch_params
 
-  def bind_switch(self, switch_params):
+  def bind_switch(self, switch_params: dict):
     """
     From a json command (sent by GUI) bind a switch between is unique id name and his memory object
     """
     switch_object = SwitchCommand.switch_from_json(switch_params)
-    #instanciate the switch command object
+    #save the new switch object to the internal switchs list
     self._switchs_list[switch_object.name] = switch_object
 
     switch_obj_return = SwitchCommand.switch_to_json(switch_object)
@@ -116,7 +117,7 @@ Main Abstract Class for Train Management Controler
 
     return switch_obj_return
 
-  def get_switch(self, switch_name, is_press = True):
+  def get_switch(self, switch_name: str, is_press: bool = True) -> SwitchCommand:
     """
     From the unique id name switch find it into the switch dictionnary and return it
     If not exists, create a new entry in the dictionnary
@@ -126,7 +127,7 @@ Main Abstract Class for Train Management Controler
 
     return self._switchs_list[switch_name]
 
-  def get_switch_value(self, params):
+  def get_switch_value(self, params: dict) -> dict:
     """
     Return the switch value
     """
@@ -137,7 +138,7 @@ Main Abstract Class for Train Management Controler
     self.get_switch_value_handle ( get_value_txt )
     return params
   
-  def set_switch_value(self, params):
+  def set_switch_value(self, params: dict) -> dict:
     """
     Set the switch to other value
     Send order to the electronic component
@@ -182,7 +183,7 @@ Main Abstract Class for Train Management Controler
 
     return params
 
-  def emergency_stop(self):
+  def emergency_stop(self) -> dict:
     """
     Emmergency function: send a broadcast message to all electronic controlers
     """
