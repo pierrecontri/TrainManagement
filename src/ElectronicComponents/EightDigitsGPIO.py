@@ -3,12 +3,20 @@
 import RPi.GPIO as GPIO ## Import GPIO library
 
 class EightDigitsGPIO(object):
+    """
+    This class is used to work with 8 bits electronic components.
+    From a char matrice, it transform the needed result to an bits arrray.
+    """
 
     class BIT:
+        """
+        Define the high / low power state depends of the electronic component
+        """
         ON = True
         OFF = False
     
-    eight_digits_keys = [chr(i) for i in range(97,104)]
+    # define the authorized char as a value
+    eight_digits_keys = [chr(i) for i in range(97,104)] + [' ']
 
     val_matrix = {
         "a": [1,0,0,0,0,0,0,0],
@@ -29,7 +37,7 @@ class EightDigitsGPIO(object):
 
     @staticmethod
     def get_byte_array_from_int(val):
-        v = [(1 if val & pow(2,v_x) else 0) for v_x in range(0,8)]
+        v = [int(val & pow(2,v_x)) for v_x in range(0,8)]
         v.reverse()
         return v
 
@@ -40,6 +48,8 @@ class EightDigitsGPIO(object):
         self.led_not_on = led_not_on
         self.internal_matrix = EightDigitsGPIO.val_matrix
         
+        # if the electronic component is directly linked to this class, work with it
+        # else, the delegate will send informations
         if self.output_ports != None:
 
             if len(output_ports) != 8:
@@ -51,33 +61,39 @@ class EightDigitsGPIO(object):
             if use_direct_gpio: EightDigits.init_gpio(self)
 
     def init_gpio(self):
+        """
+        This embedded code is for Raspberry hardware in direct use.
+        """
         # init seven digits
         if self.use_direct_gpio:
             GPIO.setwarnings(False)
-            for val in self.seven_digits_matrix.values():
+            for val in self.val_matrix.values():
                 # switch off BITs as initial
                 GPIO.setup(val, GPIO.OUT, initial = self.led_not_on)
         elif self.component_interface != None:
             self.component_interface.clean(True)
             
     def write_output(self, val):
-
+        """
+        This function is the merging point to send information.
+        It will check the input type and redirect to the correct internal method
+        """
         value_type = type(val)
 
         if value_type is int:
             self.write_output_int( val )
-            return
-
-        if value_type is list:
+        elif value_type is list:
             self.write_output_byte_array( val )
-            return
-
-        if value_type is str:
+        elif value_type is str:
             leds_state = self.internal_matrix[val] if self.internal_matrix.has_key(val) else self.internal_matrix[" "]
             self.write_output_byte_array( leds_state )
-            return
+        
+        return
 
     def write_output_byte_array(self, leds_state):
+        """
+        As a bit array adaptor, this function send the input value to the electronic component or his interface
+        """
         if self.use_direct_gpio:
             self.write_gpio_output(leds_state)
         else:
@@ -88,30 +104,44 @@ class EightDigitsGPIO(object):
             self.component_interface.write_output(output_value)
 
     def write_output_int(self, value):
+        """
+        This function send the input value to the electronic component or his interface
+        """
         if self.use_direct_gpio:
             self.write_gpio_output( EightDigits.get_byte_array_from_int(value) )
         else:
             self.component_interface.write_output(255 ^ value if self.led_not_on else value)
 
     def write_gpio_output(self, byte_array):
+        """
+        Only for the Raspberry PI component, write directly on the IO ports the value from bits array
+        """
         for i in range (0, 7):
             out_value = (EightDigits.BIT.ON and byte_array[i]) ^ self.led_not_on
-            GPIO.output( self.seven_digits_matrix[chr(i + 97)], out_value )
+            GPIO.output( self.val_matrix[chr(i + 97)], out_value )
 
     def set_BIT_on(self, num):
+        """
+        Only for the Raspberry PI
+        """
         if self.use_direct_gpio:
-            GPIO.output(self.seven_digits_matrix[num], EightDigits.BIT.ON ^ self.led_not_on)
-        else:
-            pass
+            GPIO.output(self.val_matrix[num], EightDigits.BIT.ON ^ self.led_not_on)
+        
+        return
 
     def set_BIT_off(self, num):
+        """
+        Only for the Raspberry PI
+        """
         if self.use_direct_gpio:
-            GPIO.output(self.seven_digits_matrix[num], EightDigits.BIT.OFF ^ self.led_not_on)
-        else:
-            pass
+            GPIO.output(self.val_matrix[num], EightDigits.BIT.OFF ^ self.led_not_on)
+        
+        return
 
     def clean(self, clean_dc = False):
-        for i in range(97,103):
-            GPIO.output(self.seven_digits_matrix[chr(i)], EightDigits.BIT.OFF ^ self.led_not_on)
-        if clean_dc:
-            GPIO.output(self.seven_digits_matrix["dc"], EightDigits.BIT.OFF ^ self.led_not_on)
+        """
+        Only for the Raspberry PI
+        """
+        for car_matrix in EightDigitsGPIO.eight_digits_keys:
+            GPIO.output(self.val_matrix[car_matrix], EightDigits.BIT.OFF ^ self.led_not_on)
+        return
