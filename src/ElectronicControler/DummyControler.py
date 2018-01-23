@@ -29,6 +29,8 @@ from time import sleep
 
 class DummyElec(object):
 
+  """ Simulate an electronic component for the dummy controler """
+
   def __init__(self):
     self.value = 0
 
@@ -53,6 +55,7 @@ class Controler(TrainManagementControler):
 
   @property
   def number_of_switchs_blocks(self):
+    """ Define the cascade components for 8 bits serial """
     return self._number_of_switchs_blocks
 
   def get_status(self):

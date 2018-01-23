@@ -116,7 +116,7 @@ class EightDigitsGPIO(object):
         """
         Only for the Raspberry PI component, write directly on the IO ports the value from bits array
         """
-        for i in range (0, 7):
+        for i in range (0, 8):
             out_value = (EightDigits.BIT.ON and byte_array[i]) ^ self.led_not_on
             GPIO.output( self.val_matrix[chr(i + 97)], out_value )
 

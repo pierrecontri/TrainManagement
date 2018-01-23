@@ -205,6 +205,9 @@ Main Abstract Class for Train Management Controler
     sleep(0.8)
     return
 
+  # Abstract methods
+  # Force the end user to code his real electronic comportment
+
   @abc.abstractmethod
   def start_demo(self):
     pass
@@ -231,6 +234,7 @@ Main Abstract Class for Train Management Controler
 
   @abc.abstractproperty
   def number_of_switchs_blocks(self):
+    """ Define the cascade components for 8 bits serial """
     pass
 
   def get_light_info(self):
@@ -259,6 +263,7 @@ if __name__ == '__main__':
 
     @property
     def number_of_switchs_blocks(self):
+      """ Define the cascade components for 8 bits serial """
       return self._number_of_switchs_blocks
 
     def start_demo(self):
