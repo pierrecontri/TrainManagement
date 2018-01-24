@@ -31,8 +31,9 @@ import time
 thread_queues_demo = []
 
 def broadcast_thread_event(data, queue_obj):
-    for q in queue_obj:
-        q.put(data)
+    for q in queue_obj: q.put(data)
+
+#broadcast_thread_event = lambda data, queue_obj: (for q in queue_obj: q.put(data))
 
 class Controler(TrainManagementControler):
   """

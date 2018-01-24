@@ -40,7 +40,7 @@ def broadcast_thread_event(data, queue_obj):
 
 class Controler(TrainManagementControler):
   """
-PiControler the real controler to manage Raspberry Pi
+PiControler the real controler to manage Raspberry Pi wiand Arduino by I2C bus
   """
 
   _lock = threading.Lock()
@@ -104,7 +104,7 @@ PiControler the real controler to manage Raspberry Pi
   def send_message(self, message):
     
     if "\n" in message:
-        message = ''.join([tmp_msg.ljust(16, ' ') for tmp_msg in message.split('\n')])
+      message = ''.join([tmp_msg.ljust(16, ' ') for tmp_msg in message.split('\n')])
     else:
       message = message.ljust(32, ' ')
 
@@ -127,16 +127,14 @@ PiControler the real controler to manage Raspberry Pi
     print("value: %s" % value)
     print(arr_val)
     # append the command array for i2c ("SR:>" or "lcdl1:>")
-    sendShiftRegister = [ord(i) for i in 'SR:>']
-    sendShiftRegister.extend(arr_val)
+    sendShiftRegister = [ord(i) for i in 'SR:>'] + arr_val
     print(sendShiftRegister)
 
     with Controler._lock:
       self.bus.write_i2c_block_data(self.slave_addr, sendShiftRegister[0], sendShiftRegister[1:])
       sleep(WAIT_TIME_WRITE_BUS)
 
-    sendLcd = [ord(i) for i in 'lcdl2:>']
-    sendLcd.extend(arr_val)
+    sendLcd = [ord(i) for i in 'lcdl2:>'] + arr_val
     print(sendLcd)
     
     with Controler._lock:
