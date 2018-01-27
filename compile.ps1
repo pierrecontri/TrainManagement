@@ -24,12 +24,12 @@ $elecComponents = @("InitGPIO", "SevenDigitsGPIO", "SN74HC595", "StopButton", "E
 #Compile-PyModule -ModuleFolder "ElectronicComponents" -ModulesName $elecComponents
 
 # compile all independants libraries
-$electControlers = @("DummyControler", "I2CArduinoControler", "PiControler", "RSArduinoControler")
-Compile-PyModule -ModuleFolder "ElectronicControler" -ModulesName $electControlers
+$electControllers = @("DummyController", "I2CArduinoController", "PiController", "RSArduinoController")
+Compile-PyModule -ModuleFolder "ElectronicController" -ModulesName $electControllers
 
-# compile the Controler abstract base class
-$controlers = @("TrainManagementControler")
-#Compile-PyModule -ModuleFolder "Controler" -ModulesName $controlers
+# compile the Controller abstract base class
+$controllers = @("TrainManagementController")
+#Compile-PyModule -ModuleFolder "Controller" -ModulesName $controllers
 
 # compile the TrainIO
 $trainIO = @("SwitchsCommand", "TrainDirection")
@@ -41,8 +41,8 @@ Write-Output "Zip internal modules"
 Write-Output "Move libraries on Build folder"
 mv -Force "./src/TrainLibraries.zip" "./Build/"
 
-# compile web server and main controler
-Write-Output "Compile web server and main controler"
+# compile web server and main controller
+Write-Output "Compile web server and main controller"
 $mains = @("TrainManagementWebServer") # @("TrainManagement", "TrainManagementWebServer")
 Compile-PyModule -ModuleFolder "." -ModulesName $mains
 

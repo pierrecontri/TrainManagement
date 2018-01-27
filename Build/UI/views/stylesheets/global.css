@@ -1,0 +1,246 @@
+/**********************/
+/* feuille de style   */
+/* global.css         */
+/* Pierre Contri      */
+/* cree le 12/08/2011 */
+/* mdf  le 15/02/2015 */
+/**********************/
+
+@import "content/switchs.css";
+@import "content/multimedia.css";
+@import "content/pictures.css";
+@import "content/patienter.css";
+
+html, body {
+  /* height: 100%; */
+  /* overflow: auto; */
+  border: 0px none;
+  margin: 0px;
+  padding: 0px;
+  font-family: Calibri, "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight: 500;
+  font-size: 11pt;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.1;
+  color: inherit;
+}
+
+form {
+  visibility: hidden;
+  display: none;
+}
+
+/** Separator **/
+HR {
+clear: both;
+width: 95%;
+border: 0px none; /* enleve toute bordure */
+border-bottom: 1px black solid; /* une seule bordure (sinon firefox met une bordure en haut ET en bas mais pas IE */
+height: 1px; /* pour IE */
+}
+
+/** Link **/
+A {
+  /*text-align : left;*/
+  color : black;
+  text-decoration: none;
+}
+
+A:hover {
+  text-decoration: underline;
+}
+
+A.selected:link,
+A.unselected:link {
+  text-decoration: none;
+}
+/*
+A.unselected:hover {
+  font-style : italic;
+}
+*/
+.linkCategoryRight {
+  display: inline;
+}
+/** end link **/
+
+/** Classes **/
+
+/** Listes **/
+UL {
+  text-align: left;
+}
+
+OL {
+  list-style-type: decimal;
+  text-align: left;
+}
+/** end Listes **/
+
+/** Containers **/
+DIV.Content, DIV.DocumentContent,
+DIV.TextContent, Div.MusicContent, DIV.DocumentsListContent {
+  /* border : 0px none; */
+  /* padding : 4px; */
+  /* border-collapse: collapse; */
+}
+
+P, .paragrapheText, CODE {
+  text-align: left;
+  font-style: normal;
+  padding: 0px;
+  margin: 0px;
+}
+
+code>pre {
+  border: 1px dashed;
+}
+
+.caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 10px;
+  vertical-align: middle;
+  border-top: 4px solid;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+
+}
+
+.jumbotron {
+  border-radius: 6px;
+  padding: 15px;
+  color: inherit;
+  background-color: #eee;
+}
+
+.jumbotron h1 {
+  padding: 0px;
+  margin: 0px;
+}
+
+.Content {
+  border-collapse: collapse;
+  padding: 0px;
+}
+
+.ContentObj {
+  /*float: left;*/
+  width: 330px;
+  /*height: 300px;*/
+  display: inline-block;
+  vertical-align: top;
+  padding: 2px;
+  border: 0px none;
+  border-collapse: collapse;
+}
+
+.ContentObj ~ code {
+  width: 100%;
+  display: block;
+}
+
+.libele {
+  width: 320px;
+  border-left: 1px solid #6E8FA3;
+  border-bottom: 1px solid #6E8FA3;
+  text-align : center;
+  margin: auto;
+}
+
+DIV.DocumentContent, DIV.TextContent, DIV.ScriptContent {
+  text-align : left;
+  vertical-align : top;
+}
+
+code.script {
+  display : none;
+  visibility: hidden;
+}
+
+section {
+  margin: 10px;
+  float: left;
+  display: block;
+}
+
+section>article {
+  border-left: 0px;
+  border-top: 0px;
+  border-right: 0px;
+  border-bottom: 0px;
+  border-radius: 0px 0px 20px 0px;
+  border-color: black;
+  border-style: solid;
+  /* background-color: #F2F2E4; */
+  padding: 5px;
+}
+
+article {
+  margin: 0px;
+  display: block;
+  float: left;
+}
+
+section>h3 {
+  border-left: 1px;
+  border-top: 1px;
+  border-right: 0px;
+  border-bottom: 0px;
+  border-color: black;
+  border-style: solid;
+  border-radius: 20px 0px 0px 0px;
+
+  padding: 5px;
+  margin: 0px;
+
+  width: 200px;
+  background-color: #eee;
+}
+
+#graphicalSection [
+}
+
+#demo_part {
+  display : none;
+  visibility: hidden;
+}
+
+#module_configuration {
+  float: left;
+  display: block;
+  text-align: left;
+  width: 300px;
+}
+
+#dashboardCommand {
+  position: relative;
+  float: none;
+  display: inline-block;
+  text-align: center;
+}
+
+#module_command {
+  float: left;
+  width: 200px;
+}
+
+/** end Containers **/
+
+/** Buttons **/
+.btnsubmit {
+  color : rgb(120,10,2);
+  border-color: #6C8DA2;
+  background-color: #BECBC5;
+  border-style: solid;
+  border-width: thin;
+  width: 300px;
+  height: 20px;
+  text-align: center;
+}
+/** end Buttons **/
