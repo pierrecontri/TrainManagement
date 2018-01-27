@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """
 # ## Start this Web Service like
-# python .\TrainManagementWebServer.py [ ElectronicControler.DummyControler ]
+# python .\TrainManagementWebServer.py [ ElectronicController.DummyController ]
 # ex in web browser : http://localhost:8088/TrainManagement.py?control=get_help&functionName=Switch&functionValue=Off
 
 # ## Call this WebService in Powershell like
@@ -25,7 +25,7 @@ import_list = (
     local_directory
     , pth.realpath(pth.join(local_directory, "TrainLibraries.zip"))
     , pth.realpath(pth.join(local_directory, "Model"))
-    , pth.realpath(pth.join(local_directory, "Controler"))
+    , pth.realpath(pth.join(local_directory, "Controller"))
     , pth.realpath(pth.join(local_directory, "ElectronicComponents"))
     , pth.realpath(pth.join(local_directory, "ElectronicModel"))
 )
@@ -35,7 +35,7 @@ for to_import in import_list:
   if not to_import in sys.path: sys.path.append(to_import)
 # -----------------------------------------------------------------------------
 
-from Controler.FactoryControler import ControlerFactory
+from Controller.FactoryController import ControllerFactory
 
 class WebHttpThread(object):
     """ Main class (starting point) use into a thread to response on http requests """
@@ -51,10 +51,10 @@ class WebHttpThread(object):
 
     # define routes for application
     _urls = (
-        '/', 'home_controler',
-        '/home/(.*)', 'HomeControler',
-        '/train_control/(.*)', 'TrainControler',
-        '/demo/(.*)', 'DemoControler'
+        '/', 'home_controller',
+        '/home/(.*)', 'HomeController',
+        '/train_control/(.*)', 'TrainController',
+        '/demo/(.*)', 'DemoController'
     )
 
     @classmethod
@@ -70,7 +70,7 @@ class WebHttpThread(object):
 
     @classmethod
     def json_app_resp(cls):
-        """Define the response format fot web user"""
+        """Define the response format for web user"""
         web.header('Access-Control-Allow-Origin', WebHttpThread._allow_origin)
         web.header('Access-Control-Allow-Methods', WebHttpThread._allow_methods)
         web.header('Content-Type', 'application/json; charset=utf-8')
@@ -88,9 +88,9 @@ class WebHttpThread(object):
 
 #End Class WebHttpThread
     
-#-- Class Controlers (linked to the routes)
-class HomeControler(object):
-    """ This controler is used for the human interaction """
+#-- Class Controllers (linked to the routes)
+class HomeController(object):
+    """ This controller is used for the human interaction """
     def GET(self, name = ""):
         """The get method is called for software control"""
         WebHttpThread.json_app_resp()
@@ -107,8 +107,8 @@ class HomeControler(object):
             name = 'world'
         return WebHttpThread.render_json( {'message': 'Hello, %s!' % name} )
 
-class DemoControler(object):
-    """ This is the Demo Controler """
+class DemoController(object):
+    """ This is the Demo Controller """
 
     def GET(self, name):
         WebHttpThread.json_app_resp()
@@ -118,14 +118,14 @@ class DemoControler(object):
     def POST(self, action_str):
         WebHttpThread.json_app_resp()
         params = WebHttpThread.get_post_json_params()
-        ctrl = ControlerFactory.get_controler()
+        ctrl = ControllerFactory.get_controller()
         obj_response = ctrl.start_demo() if action_str == "start" else ctrl.stop_demo()
         obj_response = {"result": "ok"}
 
         return WebHttpThread.render_json( obj_response )
 
-class TrainControler(object):
-    """ This Controler is used for the web services communication (REST) with automate """
+class TrainController(object):
+    """ This Controller is used for the web services communication (REST) with automate """
 
     def GET(self, str_params):
         WebHttpThread.json_app_resp()
@@ -140,14 +140,14 @@ class TrainControler(object):
         print("POST requested : %s" % (action), end = ' ')
         print(json_params)
 
-        obj_response = ControlerFactory.get_controler().do( action, json_params )
+        obj_response = ControllerFactory.get_controller().do( action, json_params )
         return WebHttpThread.render_json( obj_response )
     
-    # End Class Controler
+    # End Class Controller
 
 
 if __name__ == "__main__":
-    ControlerFactory.get_controler()
+    ControllerFactory.get_controller()
     WebHttpThread.run_webhttp()
     print("Bye")
 

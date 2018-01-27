@@ -1,11 +1,11 @@
 """
-RSArduinoControler is the librairy for sending informations to a Arduino by serial connecion
+RSArduinoController is the library for sending informations to a Arduino by serial connexion
 Two protocols are supported:
 v1: message sending into a text msg (string)
-v2: message sending with specific type (float, complet, string) depends of the connected slave with Arduino
+v2: message sending with specific type (float, complex, string) depends of the connected slave with Arduino
 
 using:
-python -m ElectronicControler.RSArduinoControler COMPORT:COM10 or COMPORT:/dev/ttyACM0
+python -m ElectronicController.RSArduinoController COMPORT:COM10 or COMPORT:/dev/ttyACM0
 """
 
 import sys
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     import_list = (
             #local_directory
             pth.realpath(pth.join(local_directory, "..", "TrainLibraries.zip"))
-            , pth.realpath(pth.join(local_directory, "..", "Controler"))
+            , pth.realpath(pth.join(local_directory, "..", "Controller"))
             , pth.realpath(pth.join(local_directory, "..", "Model"))
     )
   
@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
 import threading
 import serial
-from Controler.TrainManagementControler import TrainManagementControler
+from Controller.TrainManagementController import TrainManagementController
 from time import sleep
 import queue
 import struct
@@ -87,7 +87,7 @@ WeftExchange class used to package a struct of bytes
     self.device_addr, self.data_type, self.data = (daddr, dtype, dat)
 
   def get_bytes(self) -> bytes:
-    """ Return an byte array of the complet weft """
+    """ Return an byte array of the complete weft """
 
     data_content = b''
     if self.data_type == DataType.t_byte:
@@ -166,9 +166,9 @@ class RSElec(object):
 
 rs_elec = RSElec(arg_com)
 
-class Controler(TrainManagementControler):
+class Controller(TrainManagementController):
   """
-PiControler the real controler to manage Raspberry Pi
+PiController the real controller to manage Raspberry Pi
   """
 
   _lock = threading.Lock()
@@ -176,7 +176,7 @@ PiControler the real controler to manage Raspberry Pi
 
   def __init__(self):
     self._number_of_switchs_blocks = 3
-    TrainManagementControler.__init__(self)
+    TrainManagementController.__init__(self)
 
   @property
   def number_of_switchs_blocks(self):
@@ -217,7 +217,7 @@ PiControler the real controler to manage Raspberry Pi
     data_msg_l2 = "lcdl2:>" + message[16:32]
 
     for data_msg in (data_msg_l1, data_msg_l2):
-      with Controler._lock:
+      with Controller._lock:
         rs_elec.write_msg((data_msg + '\n').encode('latin1'))
 
     return
@@ -231,13 +231,13 @@ PiControler the real controler to manage Raspberry Pi
     arr_infos = [ str(value >> (y * 8) & 0xff) for y in range(0, self.number_of_switchs_blocks) ]
     info_to_send = "%d;%d" % ( self.number_of_switchs_blocks, value )
 
-    p_version = int(Controler.get_protocol_version())
+    p_version = int(Controller.get_protocol_version())
 
     # append the command array for RS232 ("SR:>" or "lcdl1:>")
     # send 'SR:>3;1987126688\n'
     send_shift_register = ('SR:>' + info_to_send + '\n').encode('latin1')
 
-    with Controler._lock:
+    with Controller._lock:
       # send the character to the device
       print(send_shift_register)
       if p_version == 1:
@@ -247,7 +247,7 @@ PiControler the real controler to manage Raspberry Pi
 
     send_lcd = 'lcdl2:>%s\n' % " ".join(arr_infos)
     
-    with Controler._lock:
+    with Controller._lock:
       # send the character to the device
       print(send_lcd.encode('latin1'))
       if p_version == 1:
@@ -268,8 +268,8 @@ PiControler the real controler to manage Raspberry Pi
 
 # units tests
 if __name__ == "__main__":
-  print("PiControler")
-  ctrl = Controler()
+  print("PiController")
+  ctrl = Controller()
   ctrl.do("get_help")
   ctrl.async_send_message("Pont-a-Mousson\n5mm arret")
   sleep(3)
@@ -299,4 +299,4 @@ if __name__ == "__main__":
   print("s4: %s\n" % ctrl.get_switch("sw2_3").state )
 
 # using
-# python -m ElectronicControler.RSArduinoControler COMPORT:COM10 or COMPORT:/dev/ttyACM0
+# python -m ElectronicController.RSArduinoController COMPORT:COM10 or COMPORT:/dev/ttyACM0

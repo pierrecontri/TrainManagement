@@ -9,7 +9,7 @@ absFileDirectoryPath = pth.dirname(absFilePath)
 #Join into this directory sub module directory
 modulesZipPyc = pth.join(absFileDirectoryPath, 'TrainLibraries.zip')
 #Create the basename for writepy method
-lstModules = ('Model', 'ElectronicModel', 'Controler', 'ElectronicComponents', 'TrainIO')
+lstModules = ('Model', 'ElectronicModel', 'Controller', 'ElectronicComponents', 'TrainIO')
 with zipfile.PyZipFile(modulesZipPyc, 'w', zipfile.ZIP_DEFLATED) as zfile:
   for tmpModuleName in lstModules:
     pathNameWritePy = pth.join(absFileDirectoryPath, tmpModuleName)

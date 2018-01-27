@@ -8,7 +8,7 @@ if __name__ == "__main__":
     import_list = (
             local_directory
             , pth.realpath(pth.join(local_directory, "TrainManagement.zip"))
-            , pth.realpath(pth.join(local_directory,"../Controler"))
+            , pth.realpath(pth.join(local_directory,"../Controller"))
             , pth.realpath(pth.join(local_directory,"../Model"))
             , pth.realpath(pth.join(local_directory,"../ElectronicComponents"))
     )
@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
 import threading
 import smbus
-from Controler.TrainManagementControler import TrainManagementControler
+from Controller.TrainManagementController import TrainManagementController
 
 from ElectronicComponents import *
 
@@ -38,16 +38,16 @@ def broadcast_thread_event(data, queue_obj):
     for q in queue_obj:
         q.put(data)
 
-class Controler(TrainManagementControler):
+class Controller(TrainManagementController):
   """
-PiControler the real controler to manage Raspberry Pi wiand Arduino by I2C bus
+PiController the real controller to manage Raspberry Pi wiand Arduino by I2C bus
   """
 
   _lock = threading.Lock()
 
   def __init__(self):
     self._number_of_switchs_blocks = 3
-    TrainManagementControler.__init__(self)
+    TrainManagementController.__init__(self)
     InitGPIO.init_electronic()
     self.slave_addr = DEVICE_ADDRESS
     self.bus = smbus.SMBus(BUS_NUMBER)
@@ -112,7 +112,7 @@ PiControler the real controler to manage Raspberry Pi wiand Arduino by I2C bus
     data_msg_l2 = [ord(i) for i in "lcdl2:>"] + [ord(j) for j in message[16:32]]
 
     for data_msg in (data_msg_l1, data_msg_l2):
-      with Controler._lock:
+      with Controller._lock:
         self.bus.write_i2c_block_data(self.slave_addr, data_msg[0], data_msg[1:])
         sleep(WAIT_TIME_WRITE_BUS)
 
@@ -130,14 +130,14 @@ PiControler the real controler to manage Raspberry Pi wiand Arduino by I2C bus
     sendShiftRegister = [ord(i) for i in 'SR:>'] + arr_val
     print(sendShiftRegister)
 
-    with Controler._lock:
+    with Controller._lock:
       self.bus.write_i2c_block_data(self.slave_addr, sendShiftRegister[0], sendShiftRegister[1:])
       sleep(WAIT_TIME_WRITE_BUS)
 
     sendLcd = [ord(i) for i in 'lcdl2:>'] + arr_val
     print(sendLcd)
     
-    with Controler._lock:
+    with Controller._lock:
       self.bus.write_i2c_block_data(self.slave_addr, sendLcd[0], sendLcd[1:])
       sleep(WAIT_TIME_WRITE_BUS)
 
@@ -146,8 +146,8 @@ PiControler the real controler to manage Raspberry Pi wiand Arduino by I2C bus
 
 # units tests
 if __name__ == "__main__":
-    print("PiControler")
-    ctrl = Controler()
+    print("PiController")
+    ctrl = Controller()
     ctrl.do("get_help")
     ctrl.async_send_message("Pont-a-Mousson\n5mm arret")
     sleep(10)
@@ -158,4 +158,4 @@ if __name__ == "__main__":
     ctrl.stop_demo()
 
 # using
-# python -m ElectronicControler.I2CArduinoControler
+# python -m ElectronicController.I2CArduinoController
