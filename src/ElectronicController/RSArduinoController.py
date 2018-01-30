@@ -47,6 +47,7 @@ if arg_com == "":
   # raise Exception("No COM port defined !")
 
 class DataType(object):
+  """An enum DataType wich define the sending data type"""
   t_none = 0x0
   t_byte = 0x1
   t_string = 0x2
@@ -184,7 +185,6 @@ PiController the real controller to manage Raspberry Pi
 
   def get_status(self):
     return { 'Status': 'System OK' }
-
 
   def start_demo(self):
 
