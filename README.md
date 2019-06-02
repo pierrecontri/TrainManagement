@@ -10,6 +10,7 @@ In a future, a video recorder will give you back inforamtions on your PC.
 ## Compatibility
 
 Solaris, BSD, Linux or Windows plateforme compatible.
+Docker compatible too.
 
 
 ## Using with Raspberry
@@ -36,6 +37,40 @@ pip3 install web
 pip3 install requests
 pip3 install smbus2 (new link to replace the smbus-cffi package)
 pip3 install pysmbus
+
+## Start the complet tool
+
+### Build the project
+
+ - On Linux
+execute the script `./compile.sh` (make sur the executing mode is enabled chmod +x ./compile.sh)
+ 
+ - On Windows
+execute the script `./compile.ps1`
+
+ - On both platform (prereauisis PowerShell)
+execute the script `./compile.ps1` (make sur the executing mode is enabled chmod +x ./compile.ps1)
+
+### Run the project
+
+ - Start the Web Service API
+`python .\TrainManagementWebServer.py [ ElectronicController.DummyController ]`
+
+ - Use the User Interface
+open the `./Build/UI/TrainManagement.html` in your favorite browser
+
+### Debug the project
+
+ - in web browser
+ 
+ `http://localhost:8088/TrainManagement.py?control=get_help&functionName=Switch&functionValue=Off`
+
+ - Call this WebService in Powershell like
+ 
+`# curl -Headers @{ "Accept" = "application/json" } "http://[computer name]:8088/train_control/test=34&tty=toto"`
+
+`# curl -Headers @{ "Accept" = "application/json" } "http://[computer name]:8088/demo/register_switch_value" -Body @{"name" = "tty"; "value" = 1} -ContentType "application/json; charset=utf-8"`
+
 
 ## Hardware architecture
 
