@@ -23,20 +23,29 @@ A second UI will create in GTK+ for multi-plateform. A third maybe for mobiles (
 
 In Raspberry, install the requests and smbus python libraries like:
 (as su -u root)
-apt-get install pip3
-pip3 install web
-pip3 install requests
-pip3 install smbus
+
+`apt-get install pip3`
+
+`pip3 install web`
+
+`pip3 install requests`
+
+`pip3 install smbus`
 
 ## Using on Linux
 
 If you want to skip the RaspBerry part and use directly your Linux with the I2C and Arduino, install:
 (as su -u root)
-apt-get install pip3
-pip3 install web
-pip3 install requests
-pip3 install smbus2 (new link to replace the smbus-cffi package)
-pip3 install pysmbus
+
+`apt-get install pip3`
+
+`pip3 install web`
+
+`pip3 install requests`
+
+`pip3 install smbus2 (new link to replace the smbus-cffi package)`
+
+`pip3 install pysmbus`
 
 ## Start the complet tool
 
