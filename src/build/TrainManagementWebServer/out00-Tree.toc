@@ -1,0 +1,5 @@
+('c:\\program files\\python35\\lib\\site-packages\\web.py-0.40.dev0-py3.5.egg',
+ None,
+ {'*.pyd', '*.so', '*.py', 'EGG-INFO', '*.pyo', '*.pyc'},
+ 'DATA',
+ [])

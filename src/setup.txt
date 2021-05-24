@@ -1,0 +1,6 @@
+from distutils.core import setup
+from sys import path as sys_pth
+from os import path as pth
+import py2exe
+sys_pth.append(pth.dirname(pth.realpath(__file__)))
+setup(console=['TrainManagementWebServer.py'])
