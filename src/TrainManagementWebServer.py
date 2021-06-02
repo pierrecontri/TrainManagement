@@ -150,6 +150,6 @@ class TrainController(object):
 
 if __name__ == "__main__":
     ControllerFactory.get_controller()
-    WebHttpThread.run_webhttp()
+    WebHttpThread.run_webhttp(port=8088)
     print("Bye")
 
