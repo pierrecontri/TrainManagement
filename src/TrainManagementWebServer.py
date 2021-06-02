@@ -79,13 +79,9 @@ class WebHttpThread(object):
     def run_webhttp(cls, port=8080, *middleware):
         """Start the web server"""
         try:
-            print(globals())
             print("Starting the web server part")
-            print(cls._urls)
             app = web.application(cls._urls, globals())
-            print(app)
             func = app.wsgifunc(*middleware)
-            print(func)
             print("Web server for TrainManagement, listening on:", end=' ')
             return web.httpserver.runsimple(func, ('0.0.0.0', port))
         except KeyboardInterrupt:
