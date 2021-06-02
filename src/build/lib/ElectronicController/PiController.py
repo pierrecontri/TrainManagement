@@ -8,7 +8,7 @@ if __name__ == "__main__":
     import_list = (
             #local_directory
             pth.realpath(pth.join(local_directory, "..", "TrainLibraries.zip"))
-            , pth.realpath(pth.join(local_directory,"..", "Controler"))
+            , pth.realpath(pth.join(local_directory,"..", "Controller"))
             , pth.realpath(pth.join(local_directory,"..", "Model"))
             , pth.realpath(pth.join(local_directory,"..", "ElectronicComponents"))
     )
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     # -----------------------------------------------------------------------------
 
 import threading
-from Controler.TrainManagementControler import TrainManagementControler
+from Controller.TrainManagementController import TrainManagementController
 
 from ElectronicComponents import *
 
@@ -31,17 +31,18 @@ import time
 thread_queues_demo = []
 
 def broadcast_thread_event(data, queue_obj):
-    for q in queue_obj:
-        q.put(data)
+    for q in queue_obj: q.put(data)
 
-class Controler(TrainManagementControler):
+#broadcast_thread_event = lambda data, queue_obj: (for q in queue_obj: q.put(data))
+
+class Controller(TrainManagementController):
   """
-PiControler the real controler to manage Raspberry Pi
+PiController the real controller to manage Raspberry Pi
   """
 
   def __init__(self):
     self._number_of_switchs_blocks = 3
-    TrainManagementControler.__init__(self)
+    TrainManagementController.__init__(self)
     InitGPIO.init_electronic()
     self._shift_register = SN74HC595( inputs_ports = {'ser':5,'oe':6,'rclk':13,'srclk':19,'srclr':26}, outputs_len = 8 * len( self._command_switchs_list ) )
     self._shift_register.allow_output(True)
@@ -111,8 +112,8 @@ PiControler the real controler to manage Raspberry Pi
 
 # units tests
 if __name__ == "__main__":
-    print("PiControler")
-    ctrl = Controler()
+    print("PiController")
+    ctrl = Controller()
     ctrl.do("get_help")
     ctrl.set_switch_value_handle(52478561)
     from time import sleep
@@ -121,4 +122,4 @@ if __name__ == "__main__":
     ctrl.stop_demo()
 
 # using
-# python -m ElectronicControler.PiControler
+# python -m ElectronicController.PiController

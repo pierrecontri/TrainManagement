@@ -11,10 +11,7 @@ import os.path as pth
 local_directory = pth.dirname(pth.abspath(__file__))
 import_list = (
         pth.realpath(pth.join(local_directory, ".."))
-        # , pth.realpath(pth.join(local_directory, "..", "TrainLibraries.zip"))
         , pth.realpath(pth.join(local_directory, "..", "Model"))
-        # , pth.realpath(pth.join(local_directory, "..", "ElectronicModel"))
-        # , pth.realpath(pth.join(local_directory, "..", "Electronic"))
 )
 
 for to_import in import_list:
@@ -23,7 +20,7 @@ for to_import in import_list:
   if not abs_pth in sys_pth: sys_pth.append(abs_pth)
 # -----------------------------------------------------------------------------
 
-# TrainManagementControler
+# TrainManagementController
 
 import inspect
 import abc
@@ -34,49 +31,57 @@ from ElectronicModel import EightIO
 import threading
 from time import sleep
 
-class TrainManagementControler(metaclass=abc.ABCMeta):
+class TrainManagementController(metaclass=abc.ABCMeta):
   """
-Main Abstract Class for Train Management Controler
+Main Abstract Class for Train Management Controller
   """
 
   def __init__(self):
+    """Constructor: preset the switchs list, command_switch_list and switchs_calue"""
     self._switchs_list = dict()
     self._command_switchs_list = list()
     self._switchs_value = 0
     for i in range(0, self.number_of_switchs_blocks):
       self._command_switchs_list.append( EightIO( component_interface = None, bit_not_on = False, digits_rangs = i ) )
 
-  def contains_function(self, function_name):
+  def contains_function(self, function_name: str):
+    """Check if the function name input is contains into the controller (due to factory with external controller)"""
     return function_name in dir(self) and type(self.__getattribute__(function_name)).__name__ == 'method'
 
   def get_help(self):
+    """This controller give some basics functions"""
     fct_lst = [fct for fct in dir(self) if type(self.__getattribute__(fct)).__name__ == 'method']
     concat_name_function = "\n".join([("- " + fl) for fl in fct_lst])
 
-    return { 'help': "This controler give some basics functions:\n%s" % concat_name_function }
+    return { 'help': "This controller give some basics functions:\n%s" % concat_name_function }
 
-  def do(self, what, params = {}):
-
+  def do(self, what, params: dict = {}):
+    """From json request, get the action and execute it with parameters"""
     if not self.contains_function(what):
       return {'result': 'NOK', 'errorMessage': "The \"%s\" function does not exists!" % what}
 
     fct_do = self.__getattribute__(what)
-    args_specs = inspect.getargspec(fct_do)
+    return fct_do(params) if len(inspect.getfullargspec(fct_do).args) > 1 else fct_do()
 
-    return fct_do(params) if len(args_specs.args) > 1 else fct_do()
-
-  def register_switch_value(self, switch_obj : SwitchCommand):
+  def register_switch_value(self, switch_obj: SwitchCommand):
+    """
+    From a switch object, save it into a switch dictionary for matching with GUI
+    """
     self._switchs_list[switch_obj.name] = switch_obj
     return
 
-  def switch_value(self, switch_params = {}):
-
+  def switch_value(self, switch_params: dict = {}):
+    """
+    From a json command with the switch name, find the switch object and inverse his value
+    """
     sw_object = SwitchCommand.switch_from_json(switch_params)
     print("switchName: %s" % sw_object.name)
 
     switch_params["result"] = "NOK"
 
-    if not sw_object.name in self._switchs_list.keys(): self.bind_switch(switch_params)
+    if not sw_object.name in self._switchs_list.keys():
+      self.bind_switch(switch_params)
+
     else:
 
       # get all connectors in the same group and put it to OFF
@@ -84,6 +89,7 @@ Main Abstract Class for Train Management Controler
                          for tmp_switch in self._switchs_list.values()
                          if tmp_switch.group == self._switchs_list[sw_object.name].group
                             and tmp_switch.name != sw_object.name]
+
       for t_switch in tmp_switch_list:
         t_switch.state = SwitchCommand.OFF
         if not(t_switch.is_press):
@@ -98,9 +104,12 @@ Main Abstract Class for Train Management Controler
 
     return switch_params
 
-  def bind_switch(self, switch_params):
+  def bind_switch(self, switch_params: dict):
+    """
+    From a json command (sent by GUI) bind a switch between is unique id name and his memory object
+    """
     switch_object = SwitchCommand.switch_from_json(switch_params)
-    #instanciate the switch command object
+    #save the new switch object to the internal switches list
     self._switchs_list[switch_object.name] = switch_object
 
     switch_obj_return = SwitchCommand.switch_to_json(switch_object)
@@ -108,41 +117,42 @@ Main Abstract Class for Train Management Controler
 
     return switch_obj_return
 
-  def get_switch(self, switch_name, is_press = True):
+  def get_switch(self, switch_name: str, is_press: bool = True) -> SwitchCommand:
+    """
+    From the unique id name switch find it into the switch dictionary and return it
+    If not exists, create a new entry in the dictionary
+    """
     if not switch_name in self._switchs_list.keys():
       self.bind_switch( { 'switchName': switch_name, 'switchValue': '0', 'isPersistent': not(is_press) } )
 
     return self._switchs_list[switch_name]
 
-  def get_switch_value(self, params):
+  def get_switch_value(self, params: dict) -> dict:
     """
     Return the switch value
     """
-
     params["switchValue"] = self.get_switch(params["switchName"], not(params["isPersistent"] if "isPersistent" in params.keys() else False)).state
     params["result"] = "OK"
     get_value_txt = "get_switch_value : sw name '%(switchName)s', sw value '%(switchValue)d', result '%(result)s'" % params
-
+    # use the driver to get the real switch value
     self.get_switch_value_handle ( get_value_txt )
     return params
   
-  def set_switch_value(self, params):
+  def set_switch_value(self, params: dict) -> dict:
     """
     Set the switch to other value
     Send order to the electronic component
     """
+    if not "switchName" in params:
+      raise Exception("fct: set_switch_value; no switchName available into params")
 
-    switch_name, switch_persist = (params["switchName"], params["isPersistent"] if "isPersistent" in params.keys() else False)
+    sw_obj = self.get_switch(params["switchName"])
+    print( "set_switch_value : sw name '%s', sw value '%s'" % (sw_obj.name, str(sw_obj.state)) )
 
-    switch_value = (self.get_switch(switch_name)).state
-    print(switch_value)
-
-    print( "set_switch_value : sw name '%s', sw value '%s'" % (switch_name, str(switch_value)) )
-
-    sw_id = int(switch_name.split("_").pop())
+    sw_id = int(sw_obj.name.split("_").pop())
     block_switch_number = int(sw_id / 8)
 
-    params["result"] = "OK"
+    params["result"] = "NOK"
 
     # internal function for bit calcultation
     def write_output(switch_number, value):
@@ -153,17 +163,17 @@ Main Abstract Class for Train Management Controler
       self._switchs_value = (self._switchs_value & switch_mask ) | val_ret
       self.set_switch_value_handle ( self._switchs_value )
 
-    val_to_send = switch_value << (sw_id % 8)
+    val_to_send = sw_obj.state << (sw_id % 8)
 
     if sw_id >= (len(self._command_switchs_list) * 8):
       params["result"] = "NOK"
-      params["errorMessage"] = "no more switch block instanciate into controler"
+      params["errorMessage"] = "no more switch block instanciate into controller"
       raise Exception("Error: %s" % params["errorMessage"])
 
     write_output( sw_id, val_to_send )
     print("on press:    %d" % self._switchs_value)
 
-    if not(switch_persist):
+    if sw_obj.is_press:
       sleep(0.15)
 
       write_output( sw_id, SwitchCommand.OFF )
@@ -173,7 +183,10 @@ Main Abstract Class for Train Management Controler
 
     return params
 
-  def emergency_stop(self):
+  def emergency_stop(self) -> dict:
+    """
+    Emmergency function: send a broadcast message to all electronic controllers
+    """
     for cs in self._command_switchs_list:
       cs.write_output( SwitchCommand.OFF )
 
@@ -183,11 +196,17 @@ Main Abstract Class for Train Management Controler
     return {'emergency_stop': 'done'}
 
   def async_send_message(self, async_message):
+    """
+    Due to Python 2 migration, the oldest way to call a async method
+    """
     t_msg = threading.Thread( target=self.send_message, args=(async_message,) )
     t_msg.daemon = False
     t_msg.start()
     sleep(0.8)
     return
+
+  # Abstract methods
+  # Force the end user to code his real electronic comportment
 
   @abc.abstractmethod
   def start_demo(self):
@@ -215,6 +234,7 @@ Main Abstract Class for Train Management Controler
 
   @abc.abstractproperty
   def number_of_switchs_blocks(self):
+    """ Define the cascade components for 8 bits serial """
     pass
 
   def get_light_info(self):
@@ -232,17 +252,18 @@ Main Abstract Class for Train Management Controler
 
 # Unit Tests
 if __name__ == '__main__':
-  # due to the abstractmethod, the tests is deported on DummyControler
+  # due to the abstractmethod, the tests is deported on DummyController
   # I'm so stupid guy, I can make test even if it is abstract !
 
-  class TestControler(TrainManagementControler):
+  class TestController(TrainManagementController):
 
     def __init__(self):
       self._number_of_switchs_blocks = 3
-      TrainManagementControler.__init__(self)
+      TrainManagementController.__init__(self)
 
     @property
     def number_of_switchs_blocks(self):
+      """ Define the cascade components for 8 bits serial """
       return self._number_of_switchs_blocks
 
     def start_demo(self):
@@ -275,38 +296,38 @@ if __name__ == '__main__':
     def send_message(self, msg):
       print("Message sent: %s" % msg)
 
-  test_controler = TestControler()
-  test_controler.register_switch_value(SwitchCommand("sw1_0", "grp1"))
-  test_controler.register_switch_value(SwitchCommand("sw1_1", "grp1"))
-  test_controler.register_switch_value(SwitchCommand("sw2_2", "grp2", False))
-  test_controler.register_switch_value(SwitchCommand("sw2_3", "grp2", False))
+  test_controller = TestController()
+  test_controller.register_switch_value(SwitchCommand("sw1_0", "grp1"))
+  test_controller.register_switch_value(SwitchCommand("sw1_1", "grp1"))
+  test_controller.register_switch_value(SwitchCommand("sw2_2", "grp2", False))
+  test_controller.register_switch_value(SwitchCommand("sw2_3", "grp2", False))
 
-  test_controler.register_switch_value(SwitchCommand("sw3_4", "grp3"))
+  test_controller.register_switch_value(SwitchCommand("sw3_4", "grp3"))
 
-  print( test_controler.get_help()['help'] )
+  print( test_controller.get_help()['help'] )
 
-  print( test_controler.do("start_demo", {}) )
-  print( test_controler.do("stop_demo", {}) )
-  print( test_controler.do("get_status", {}) )
-  print( test_controler.do("get_switch_value", {"switchName":"sw1_0"}) )
-  print( test_controler.do("get_switch_value", {"switchName":"sw1_1"}) )
-  print( test_controler.do("set_switch_value", {"switchName":"sw1_0"}) )
-  print( test_controler.do("set_switch_value", {"switchName":"sw1_1"}) )
-  print( test_controler.do("get_light_info", {}) )
-  print( test_controler.do("set_light", {}) )
-  print( test_controler.do("get_direction_info", {}) )
-  print( test_controler.do("set_direction", {}) )
+  print( test_controller.do("start_demo", {}) )
+  print( test_controller.do("stop_demo", {}) )
+  print( test_controller.do("get_status", {}) )
+  print( test_controller.do("get_switch_value", {"switchName":"sw1_0"}) )
+  print( test_controller.do("get_switch_value", {"switchName":"sw1_1"}) )
+  print( test_controller.do("set_switch_value", {"switchName":"sw1_0"}) )
+  print( test_controller.do("set_switch_value", {"switchName":"sw1_1"}) )
+  print( test_controller.do("get_light_info", {}) )
+  print( test_controller.do("set_light", {}) )
+  print( test_controller.do("get_direction_info", {}) )
+  print( test_controller.do("set_direction", {}) )
 
-  print("sw1_0: %s" % test_controler.do("get_switch_value", {"switchName":"sw1_0"}))
-  print("sw1_0: %s" % test_controler.get_switch("sw1_0").state )
-  test_controler.do("switch_value", {"switchName":"sw1_0", "switchValue":1} )
-  print("sw1_0: %s" %  test_controler.get_switch("sw1_0").state )
-  print("sw1_1: %s\n" %  test_controler.get_switch("sw1_1").state )
+  print("sw1_0: %s" % test_controller.do("get_switch_value", {"switchName":"sw1_0"}))
+  print("sw1_0: %s" % test_controller.get_switch("sw1_0").state )
+  test_controller.do("switch_value", {"switchName":"sw1_0", "switchValue":1} )
+  print("sw1_0: %s" %  test_controller.get_switch("sw1_0").state )
+  print("sw1_1: %s\n" %  test_controller.get_switch("sw1_1").state )
 
-  print("sw1_0: %s" % test_controler.do("get_switch_value", {"switchName":"sw1_1"}))
-  print("sw1_1: %s" % test_controler.get_switch("sw1_1").state )
-  test_controler.do("switch_value", {"switchName":"sw1_1", "switchValue":1} )
-  print("sw1_0: %s" %  test_controler.get_switch("sw1_0").state )
-  print("sw1_1: %s" %  test_controler.get_switch("sw1_1").state )
+  print("sw1_0: %s" % test_controller.do("get_switch_value", {"switchName":"sw1_1"}))
+  print("sw1_1: %s" % test_controller.get_switch("sw1_1").state )
+  test_controller.do("switch_value", {"switchName":"sw1_1", "switchValue":1} )
+  print("sw1_0: %s" %  test_controller.get_switch("sw1_0").state )
+  print("sw1_1: %s" %  test_controller.get_switch("sw1_1").state )
 
   pass

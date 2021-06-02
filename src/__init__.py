@@ -1,5 +1,5 @@
 
-# from . import Controler
+# from . import Controller
 # from . import Model
 # from . import ElectronicComponents
 # from . import ElectronicModel

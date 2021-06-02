@@ -1,5 +1,5 @@
 """
-DummyControler: simulator of the electronic controler. Used for Unit Tests and GUI developpement
+DummyController: simulator of the electronic controller. Used for Unit Tests and GUI developpement
 """
 
 # ---------------- Add Path  --------------------------------------------------
@@ -13,7 +13,7 @@ import_list = (
           #local_directory
           pth.realpath(pth.join(local_directory, ".."))
           , pth.realpath(pth.join(local_directory, "..", "TrainLibraries.zip"))
-          , pth.realpath(pth.join(local_directory, "..", "Controler"))
+          , pth.realpath(pth.join(local_directory, "..", "Controller"))
           , pth.realpath(pth.join(local_directory, "..", "Model"))
 )
 
@@ -23,11 +23,13 @@ for to_import in import_list:
 # -----------------------------------------------------------------------------
 
 
-from Controler import TrainManagementControler
+from Controller import TrainManagementController
 import random
 from time import sleep
 
 class DummyElec(object):
+
+  """ Simulate an electronic component for the dummy controller """
 
   def __init__(self):
     self.value = 0
@@ -40,17 +42,20 @@ class DummyElec(object):
   def hold_value(self) -> int:
     return self.value
 
-class Controler(TrainManagementControler):
+class Controller(TrainManagementController):
+
+  """ This is the dummy Controller to simulate the real electronic communication """
 
   def __init__(self):
     self._number_of_switchs_blocks = 4
-    TrainManagementControler.__init__(self)
+    TrainManagementController.__init__(self)
     dummy_elec = DummyElec()
     for t_cmd_switch in self._command_switchs_list:
       t_cmd_switch.component_interface = dummy_elec
 
   @property
   def number_of_switchs_blocks(self):
+    """ Define the cascade components for 8 bits serial """
     return self._number_of_switchs_blocks
 
   def get_status(self):
@@ -81,8 +86,8 @@ if __name__ == "__main__":
 
   from Model import SwitchCommand
 
-  print("DummyControler")
-  ctrl = Controler()
+  print("DummyController")
+  ctrl = Controller()
   print( dir(ctrl) )
 
   ctrl.register_switch_value(SwitchCommand("sw0_0", "grp0"))
@@ -140,4 +145,4 @@ if __name__ == "__main__":
   print("s3: %s\n" % ctrl.get_switch("sw5_3").state )
 
 # using
-# python -m ElectronicControler.DummyControler
+# python -m ElectronicController.DummyController
